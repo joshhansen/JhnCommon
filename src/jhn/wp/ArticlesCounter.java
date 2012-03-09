@@ -1,7 +1,9 @@
 package jhn.wp;
 
+import jhn.wp.exceptions.BadLabel;
 import jhn.wp.exceptions.BadLabelPrefix;
 import jhn.wp.exceptions.BadWikiTextException;
+import jhn.wp.exceptions.DisambiguationPage;
 import jhn.wp.exceptions.RedirectException;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.exceptions.ArticleTooShort;
@@ -16,7 +18,8 @@ import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 public class ArticlesCounter extends CorpusCounter {
 	private final String wpdumpFilename;
 	
-	public ArticlesCounter(String wpdumpFilename) {
+	public ArticlesCounter(String wpdumpFilename, String logFilename, String errLogFilename) {
+		super(logFilename, errLogFilename);
 		this.wpdumpFilename = wpdumpFilename;
 	}
 
@@ -28,15 +31,17 @@ public class ArticlesCounter extends CorpusCounter {
 			WikiXMLParser wxsp = WikiXMLParserFactory.getSAXParser(wpdumpFilename);
 			
 			wxsp.setPageCallback(new PageCallbackHandler() {
-				int badLabel = 0;
+				int badLabelPrefix = 0;
+				int disambiguation = 0;
 				int redirect = 0;
 				int ok = 0;
 				int tooShort = 0;
 				int total = 0;
 				public void process(WikiPage page) {
 					total++;
+					final String label = page.getTitle().trim();
 					try {
-						final String label = page.getTitle().trim();
+						
 						assertLabelOK(label);
 						
 						final String wikiText = page.getText();
@@ -51,13 +56,13 @@ public class ArticlesCounter extends CorpusCounter {
 								System.out.println();
 								float okPct = (float)ok / (float)total;
 								float redirectPct = (float)redirect / (float)total;
-								float badLabelPct = (float)badLabel / (float)total;
+								float badLabelPrefixPct = (float)badLabelPrefix / (float)total;
+								float disambigPct = (float)disambiguation / (float) total;
 								float tooShortPct = (float)tooShort / (float)total;
 								
-								
-								System.out.printf("-----%s-----\n", label);
-								System.out.printf("ok:%d (%.2f) redirect:%d (%.2f) badLabel:%d (%.2f) tooShort:%d (%.2f) total:%d\n",
-										ok, okPct, redirect, redirectPct, badLabel, badLabelPct, tooShort, tooShortPct, total);
+								println(String.format("-----%s-----\n", label));
+								println(String.format("ok:%d (%.2f) redirect:%d (%.2f) badLabel:%d (%.2f) disambig:%d (%.df) tooShort:%d (%.2f) total:%d\n",
+										ok, okPct, redirect, redirectPct, badLabelPrefix, badLabelPrefixPct, disambiguation, disambigPct, tooShort, tooShortPct, total));
 							}
 						}
 						
@@ -66,8 +71,9 @@ public class ArticlesCounter extends CorpusCounter {
 							ArticlesCounter.this.visitLabel(label);
 						} catch (CountException e) {
 							e.printStackTrace();
+							e.printStackTrace(errLog);
 						}
-						System.out.print('.');
+						print(".");
 //						System.out.println(label);
 						
 						String text = wikiToText3(wikiText).trim();
@@ -80,18 +86,29 @@ public class ArticlesCounter extends CorpusCounter {
 						
 						ArticlesCounter.this.afterLabel();
 					} catch(RedirectException e) {
-						System.err.print('r');
+						print("r");
+						printlnErr("Redirect: " + e.label());
 						redirect++;
 					} catch(BadWikiTextException e) {
-						System.err.print('t');
+						print("t");
+						printlnErr("Other text problem: " + e.label());
 					} catch (ArticleTooShort e) {
-						System.err.print('s');
+						print("s");
+						printlnErr("Too short: " + e.label());
 						tooShort++;
-					} catch(CountException e) {
-						System.err.print('l');
-						badLabel++;
+					} catch(BadLabelPrefix e) {
+						print("l");
+						printlnErr("Bad prefix: " + e.label());
+						badLabelPrefix++;
+					} catch(DisambiguationPage e) {
+						print("d");
+						printlnErr("Disambiguation: " + e.label());
+						disambiguation++;
 					} catch (Exception e) {
 						e.printStackTrace();
+						e.printStackTrace(errLog);
+						print("u");
+						printlnErr("Unknown: " + label);
 					}
 				}
 			});
@@ -129,14 +146,14 @@ public class ArticlesCounter extends CorpusCounter {
 //		"ISO 639:" /* redirects to languages */
 	};
 	
-	private void assertLabelOK(String label) throws CountException {
-		boolean notOK = false;
+	private void assertLabelOK(String label) throws BadLabel {
 		for(String badStart : dontStartWithThese) {
-			notOK |= label.startsWith(badStart);
+			if(label.startsWith(badStart)) throw new BadLabelPrefix(label);
 		}
-		notOK |= label.contains("(disambiguation)");
 		
-		if(notOK) throw new BadLabelPrefix(label);
+		if(label.contains("(disambiguation)")) {
+			throw new DisambiguationPage(label);
+		}
 	}
 	
 	private void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {

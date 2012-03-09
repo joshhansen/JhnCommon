@@ -15,7 +15,8 @@ public class AbstractsCounter extends CorpusCounter {
 	private String triplesFilename;
 	private static final Pattern subjectRgx = Pattern.compile("^http://dbpedia\\.org/resource/(.+)$");
 	
-	public AbstractsCounter(String triplesFilename) {
+	public AbstractsCounter(String triplesFilename, String logFilename, String errLogFilename) {
+		super(logFilename, errLogFilename);
 		this.triplesFilename = triplesFilename;
 	}
 	

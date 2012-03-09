@@ -1,27 +1,72 @@
 package jhn.wp;
 
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 import jhn.util.Util;
-import jhn.wp.exceptions.CountException;
 import jhn.wp.exceptions.ArticleTooShort;
+import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
 
 public abstract class CorpusCounter {
-	private Set<String> stopwords = Util.stopwords();
 	private List<Visitor> visitors = new ArrayList<Visitor>();
 	
+	protected PrintStream log;
+	protected PrintStream errLog;
+	
+	private final String logFilename;
+	private final String errLogFilename;
+	
+	public CorpusCounter(String logFilename, String errLogFilename) {
+		this.logFilename = logFilename;
+		this.errLogFilename = errLogFilename;
+	}
+
 	public abstract void count();
 	
+	protected void print(String s) {
+		System.out.print(s);
+		log.append(s);
+	}
+	
+	protected void println(String s) {
+		print(s);
+		print("\n");
+	}
+	
+	protected void printErr(String s) {
+//		System.err.print(s);
+		errLog.append(s);
+	}
+	
+	protected void printlnErr(String s) {
+		printErr(s);
+		printErr("\n");
+	}
+	
+	protected void printBoth(String s) {
+		System.out.print(s);
+		log.append(s);
+		errLog.append(s);
+	}
+	
+	protected void printlnBoth(String s) {
+		printBoth(s);
+		printBoth("\n");
+	}
+	
 	protected boolean isStopword(String s) {
-		return stopwords.contains(s);
+		return Util.stopwords().contains(s);
 	}
 	
 	protected void beforeEverything() throws Exception {
+		log = new PrintStream(new FileOutputStream(logFilename), true);
+		errLog = new PrintStream(new FileOutputStream(errLogFilename), true);
+		
 		for (Visitor v : visitors)
 			v.beforeEverything();
 	}
@@ -60,8 +105,12 @@ public abstract class CorpusCounter {
 	}
 
 	protected void afterEverything() {
-		for (Visitor v : visitors)
+		for (Visitor v : visitors) {
 			v.afterEverything();
+		}
+		
+		log.close();
+		errLog.close();
 	}
 
 	public void addVisitor(Visitor v) {
