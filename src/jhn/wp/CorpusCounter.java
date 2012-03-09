@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import jhn.util.Util;
-import jhn.wp.exceptions.SkipException;
-import jhn.wp.exceptions.TooShortException;
+import jhn.wp.exceptions.CountException;
+import jhn.wp.exceptions.ArticleTooShort;
 import jhn.wp.visitors.Visitor;
 
 public abstract class CorpusCounter {
@@ -31,21 +31,21 @@ public abstract class CorpusCounter {
 			v.beforeLabel();
 	}
 
-	protected void visitLabel(final String label) throws SkipException {
+	protected void visitLabel(final String label) throws CountException {
 		boolean tooShort = false;
 		int length = -1;
 		for (Visitor v : visitors) {
 			try {
 				v.visitLabel(label);
-			} catch(TooShortException e) {
+			} catch(ArticleTooShort e) {
 				tooShort = true;
 				length = e.length();
-			} catch(SkipException e) {
+			} catch(CountException e) {
 				throw e;
 			}
 		}
 		
-		if(tooShort) throw new TooShortException(label, length);
+		if(tooShort) throw new ArticleTooShort(label, length);
 	}
 
 	protected void visitWord(final String word) {

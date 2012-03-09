@@ -1,10 +1,10 @@
 package jhn.wp;
 
-import jhn.wp.exceptions.BadLabelException;
+import jhn.wp.exceptions.BadLabelPrefix;
 import jhn.wp.exceptions.BadWikiTextException;
 import jhn.wp.exceptions.RedirectException;
-import jhn.wp.exceptions.SkipException;
-import jhn.wp.exceptions.TooShortException;
+import jhn.wp.exceptions.CountException;
+import jhn.wp.exceptions.ArticleTooShort;
 import info.bliki.wiki.filter.ITextConverter;
 import info.bliki.wiki.filter.PlainTextConverter;
 import info.bliki.wiki.model.WikiModel;
@@ -64,7 +64,7 @@ public class ArticlesCounter extends CorpusCounter {
 						ArticlesCounter.this.beforeLabel();
 						try {
 							ArticlesCounter.this.visitLabel(label);
-						} catch (SkipException e) {
+						} catch (CountException e) {
 							e.printStackTrace();
 						}
 						System.out.print('.');
@@ -84,14 +84,12 @@ public class ArticlesCounter extends CorpusCounter {
 						redirect++;
 					} catch(BadWikiTextException e) {
 						System.err.print('t');
-					} catch(BadLabelException e) {
-						System.err.print('l');
-						badLabel++;
-					} catch (TooShortException e) {
+					} catch (ArticleTooShort e) {
 						System.err.print('s');
 						tooShort++;
-					} catch (SkipException e) {
-						e.printStackTrace();
+					} catch(CountException e) {
+						System.err.print('l');
+						badLabel++;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -110,28 +108,35 @@ public class ArticlesCounter extends CorpusCounter {
 	private static final WikiModel wikiModel = new WikiModel("http://www.mywiki.com/wiki/${image}", "http://www.mywiki.com/wiki/${title}");
 	private static final ITextConverter conv = new PlainTextConverter();
 	private String wikiToText3(String markup) {
-        return wikiModel.render(conv, markup);
+		return wikiModel.render(conv, markup);
 	}
 	
 	private static String[] dontStartWithThese = {
-		"List of ", "Portal:", "Glossary of ", "Index of ", "Wikipedia:",
-		"Category:", "File:", "Template:",
+		"List of ",
+		"Portal:",
+		"Glossary of ",
+		"Index of ",
+		"Wikipedia:",
+		"Category:",
+		"File:",
+		"Template:",
 		"Book:", /* collections of pages */
 		"MediaWiki:", /* wiki software info */
-//		"UN/LOCODE:", /* redirects to locations */
 		"Help:", /* wikipedia help */
 		"P:", /* redirects to portals */
+//		"UN/LOCODE:", /* redirects to locations */
 //		"ISO:", /* redirects to ISO standards */
 //		"ISO 639:" /* redirects to languages */
 	};
-	private void assertLabelOK(String label) throws BadLabelException {
+	
+	private void assertLabelOK(String label) throws CountException {
 		boolean notOK = false;
 		for(String badStart : dontStartWithThese) {
 			notOK |= label.startsWith(badStart);
 		}
 		notOK |= label.contains("(disambiguation)");
 		
-		if(notOK) throw new BadLabelException(label);
+		if(notOK) throw new BadLabelPrefix(label);
 	}
 	
 	private void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {

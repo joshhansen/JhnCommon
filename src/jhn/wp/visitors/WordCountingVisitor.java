@@ -2,15 +2,13 @@ package jhn.wp.visitors;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import jhn.util.Util;
-import jhn.wp.exceptions.SkipException;
+import jhn.wp.exceptions.CountException;
 
-public class LabelAggregatingVisitor extends Visitor {
+public class WordCountingVisitor extends LabelAwareVisitor {
 	protected int wordsInLabel = 0;
 	protected Map<String,Integer> currentLabelWordCounts;
-	protected final Set<String> stopwords = Util.stopwords();
 	
 	@Override
 	public void beforeEverything() throws Exception {
@@ -19,7 +17,7 @@ public class LabelAggregatingVisitor extends Visitor {
 	}
 	
 	@Override
-	public void visitLabel(String label) throws SkipException {
+	public void visitLabel(String label) throws CountException {
 		super.visitLabel(label);
 		wordsInLabel = 0;
 	}
@@ -27,7 +25,7 @@ public class LabelAggregatingVisitor extends Visitor {
 	@Override
 	public void visitWord(String word) {
 		super.visitWord(word);
-		if(word.isEmpty() || stopwords.contains(word)) return;
+		if(word.isEmpty() || Util.stopwords().contains(word)) return;
 		
 		Integer count = currentLabelWordCounts.get(word);
 		count = count==null? 1 : count+1;

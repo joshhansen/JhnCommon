@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jhn.util.Util;
-import jhn.wp.exceptions.SkipException;
+import jhn.wp.exceptions.CountException;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.semanticweb.yars.nx.Node;
@@ -38,7 +38,7 @@ public class AbstractsCounter extends CorpusCounter {
 						if(!isStopword(word))
 							visitWord(word);
 					afterLabel();
-				} catch(SkipException e) {
+				} catch(CountException e) {
 					System.err.write('s');
 				}
 			}

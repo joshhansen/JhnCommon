@@ -1,9 +1,11 @@
 package jhn.wp.exceptions;
 
 
-public class TooShortException extends SkipException {
+public class ArticleTooShort extends CountException {
+	private static final long serialVersionUID = 1L;
+	
 	private final int length;
-	public TooShortException(String label, int length) {
+	public ArticleTooShort(String label, int length) {
 		super("Too short (length " + length + ")", label);
 		this.length = length;
 	}
