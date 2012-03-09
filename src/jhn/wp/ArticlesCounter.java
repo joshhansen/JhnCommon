@@ -61,7 +61,7 @@ public class ArticlesCounter extends CorpusCounter {
 								float tooShortPct = (float)tooShort / (float)total;
 								
 								println(String.format("-----%s-----\n", label));
-								println(String.format("ok:%d (%.2f) redirect:%d (%.2f) badLabel:%d (%.2f) disambig:%d (%.df) tooShort:%d (%.2f) total:%d\n",
+								println(String.format("ok:%d (%.2f) redirect:%d (%.2f) badLabel:%d (%.2f) disambig:%d (%.2f) tooShort:%d (%.2f) total:%d\n",
 										ok, okPct, redirect, redirectPct, badLabelPrefix, badLabelPrefixPct, disambiguation, disambigPct, tooShort, tooShortPct, total));
 							}
 						}
