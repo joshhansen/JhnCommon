@@ -1,5 +1,6 @@
 package jhn.util;
 
+import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,6 +13,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
 import org.apache.tools.bzip2.CBZip2OutputStream;
@@ -31,12 +33,20 @@ public final class Util {
 	}
 	
 	public static OutputStream smartOutputStream(final String filename) throws IOException {
+		return smartOutputStream(filename, false);
+	}
+	
+	public static OutputStream smartOutputStream(final String filename, final boolean buffered) throws IOException {
+		OutputStream os = new FileOutputStream(filename);
+		
+		if(buffered) os = new BufferedOutputStream(os);
+		
 		if(filename.endsWith(".bz2")) {
-			OutputStream os = new FileOutputStream(filename);
-			return new CBZip2OutputStream(os);
-		} else {
-			return new FileOutputStream(filename);
+			os = new CBZip2OutputStream(os);
+		} else if(filename.endsWith(".gz")) {
+			os = new GZIPOutputStream(os);
 		}
+		return os;
 	}
 	
 	public static Reader smartReader(final String filename) throws IOException {
@@ -153,4 +163,14 @@ public final class Util {
 			// "based",
 			// "approach"
 	};
+	
+	private static Integer charCount = 0;
+	private static final int CHAROUT_NEWLINE_INTERVAL = 120;
+	public static void charout(char c) {
+		System.out.print(c);
+		synchronized(charCount) {
+			charCount++;
+			if(charCount % CHAROUT_NEWLINE_INTERVAL == 0) System.out.println();
+		}
+	}
 }
