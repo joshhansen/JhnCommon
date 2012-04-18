@@ -5,12 +5,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jhn.util.Util;
-import jhn.wp.CorpusCounter;
+import jhn.wp.CorpusProcessor;
 import jhn.wp.exceptions.CountException;
 
-public class ArticleCategoryCounter extends CorpusCounter {
+public class ArticleCategoryProcessor extends CorpusProcessor {
 	private final String articleCategoriesFilename;
-	public ArticleCategoryCounter(String logFilename, String errLogFilename, String articleCategoriesFilename) {
+	public ArticleCategoryProcessor(String logFilename, String errLogFilename, String articleCategoriesFilename) {
 		super(logFilename, errLogFilename);
 		this.articleCategoriesFilename = articleCategoriesFilename;
 	}

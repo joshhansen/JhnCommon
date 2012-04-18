@@ -12,7 +12,7 @@ import jhn.wp.exceptions.ArticleTooShort;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
 
-public abstract class CorpusCounter {
+public abstract class CorpusProcessor {
 	private List<Visitor> visitors = new ArrayList<Visitor>();
 	
 	protected PrintStream log;
@@ -21,7 +21,7 @@ public abstract class CorpusCounter {
 	private final String logFilename;
 	private final String errLogFilename;
 	
-	public CorpusCounter(String logFilename, String errLogFilename) {
+	public CorpusProcessor(String logFilename, String errLogFilename) {
 		this.logFilename = logFilename;
 		this.errLogFilename = errLogFilename;
 	}

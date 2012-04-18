@@ -15,10 +15,10 @@ import edu.jhu.nlp.wikipedia.WikiPage;
 import edu.jhu.nlp.wikipedia.WikiXMLParser;
 import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 
-public class ArticlesCounter extends CorpusCounter {
+public class ArticlesProcessor extends CorpusProcessor {
 	private final String wpdumpFilename;
 	
-	public ArticlesCounter(String wpdumpFilename, String logFilename, String errLogFilename) {
+	public ArticlesProcessor(String wpdumpFilename, String logFilename, String errLogFilename) {
 		super(logFilename, errLogFilename);
 		this.wpdumpFilename = wpdumpFilename;
 	}
@@ -66,9 +66,9 @@ public class ArticlesCounter extends CorpusCounter {
 							}
 						}
 						
-						ArticlesCounter.this.beforeLabel();
+						ArticlesProcessor.this.beforeLabel();
 						try {
-							ArticlesCounter.this.visitLabel(label);
+							ArticlesProcessor.this.visitLabel(label);
 						} catch (CountException e) {
 							e.printStackTrace();
 							e.printStackTrace(errLog);
@@ -81,10 +81,10 @@ public class ArticlesCounter extends CorpusCounter {
 //						System.out.println();
 						
 						for(String word : tokenize(text)) {
-							ArticlesCounter.this.visitWord(word);
+							ArticlesProcessor.this.visitWord(word);
 						}
 						
-						ArticlesCounter.this.afterLabel();
+						ArticlesProcessor.this.afterLabel();
 					} catch(RedirectException e) {
 						print("r");
 						printlnErr("Redirect: " + e.label());

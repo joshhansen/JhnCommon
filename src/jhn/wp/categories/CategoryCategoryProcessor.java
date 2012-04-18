@@ -5,13 +5,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import jhn.util.Util;
-import jhn.wp.CorpusCounter;
+import jhn.wp.CorpusProcessor;
 import jhn.wp.exceptions.CountException;
 
 
-public class CategoryCategoryCounter extends CorpusCounter {
+public class CategoryCategoryProcessor extends CorpusProcessor {
 	private final String categoryCategoriesFilename;
-	public CategoryCategoryCounter(String logFilename, String errLogFilename, String categoryCategoriesFilename) {
+	public CategoryCategoryProcessor(String logFilename, String errLogFilename, String categoryCategoriesFilename) {
 		super(logFilename, errLogFilename);
 		this.categoryCategoriesFilename = categoryCategoriesFilename;
 	}

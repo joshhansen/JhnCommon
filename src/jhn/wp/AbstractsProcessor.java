@@ -11,11 +11,11 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.semanticweb.yars.nx.Node;
 import org.semanticweb.yars.nx.parser.NxParser;
 
-public class AbstractsCounter extends CorpusCounter {
+public class AbstractsProcessor extends CorpusProcessor {
 	private String triplesFilename;
 	private static final Pattern subjectRgx = Pattern.compile("^http://dbpedia\\.org/resource/(.+)$");
 	
-	public AbstractsCounter(String triplesFilename, String logFilename, String errLogFilename) {
+	public AbstractsProcessor(String triplesFilename, String logFilename, String errLogFilename) {
 		super(logFilename, errLogFilename);
 		this.triplesFilename = triplesFilename;
 	}
