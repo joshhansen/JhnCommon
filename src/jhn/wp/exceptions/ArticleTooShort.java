@@ -6,7 +6,7 @@ public class ArticleTooShort extends CountException {
 	
 	private final int length;
 	public ArticleTooShort(String label, int length) {
-		super("Too short (length " + length + ")", label);
+		super("Too short (length " + length + ")", label, "s");
 		this.length = length;
 	}
 	
