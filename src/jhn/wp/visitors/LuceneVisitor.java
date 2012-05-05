@@ -7,28 +7,33 @@ import java.util.Collections;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.TermVector;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
+import jhn.wp.Fields;
+
 public class LuceneVisitor extends LabelAwareVisitor {
 	private final String luceneIndexDir;
+	private final String field;
 	private final boolean removeStopwords;
 	private final boolean storeText;
 	private IndexWriter writer;
 	private StringBuilder text;
-	public LuceneVisitor(String luceneIndexDir) {
-		this(luceneIndexDir, true);
+	public LuceneVisitor(String luceneIndexDir, String field) {
+		this(luceneIndexDir, field, true);
 	}
 	
-	public LuceneVisitor(String luceneIndexDir, boolean removeStopwords) {
-		this(luceneIndexDir, removeStopwords, false);
+	public LuceneVisitor(String luceneIndexDir, String field, boolean removeStopwords) {
+		this(luceneIndexDir, field, removeStopwords, false);
 	}
 	
-	public LuceneVisitor(String luceneIndexDir, boolean removeStopwords, boolean storeText) {
+	public LuceneVisitor(String luceneIndexDir, String field, boolean removeStopwords, boolean storeText) {
 		this.luceneIndexDir = luceneIndexDir;
+		this.field = field;
 		this.removeStopwords = removeStopwords;
 		this.storeText = storeText;
 //		Runtime.getRuntime().addShutdownHook(new Thread(){
@@ -76,10 +81,16 @@ public class LuceneVisitor extends LabelAwareVisitor {
 	@Override
 	public void afterLabel() throws Exception {
 		Document doc = new Document();
-		doc.add(new Field("label", currentLabel, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+		final Field labelField = new Field(Fields.label, currentLabel, Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS);
+		
 		
 		Field.Store textStorage = storeText ? Field.Store.YES : Field.Store.NO;
-		doc.add(new Field("text", text.toString(), textStorage, Field.Index.ANALYZED_NO_NORMS));
+		
+		final Field textField = new Field(field, text.toString(), textStorage, Field.Index.ANALYZED_NO_NORMS, TermVector.WITH_POSITIONS_OFFSETS);
+		
+		doc.add(labelField);
+		doc.add(textField);
+		
 		writer.addDocument(doc);
 		
 		super.afterLabel();

@@ -18,7 +18,7 @@ public class IndexCategoryCategories {
 		
 		final String luceneDir = outputDir + "/" + name;
 		
-		ccc.addVisitor(new LuceneVisitor(luceneDir, false, true));
+		ccc.addVisitor(new LuceneVisitor(luceneDir, Fields.categoryCategories, false, true));
 		ccc.addVisitor(new PrintingVisitor());
 		
 		ccc.count();
