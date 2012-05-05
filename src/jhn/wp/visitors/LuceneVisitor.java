@@ -17,6 +17,7 @@ import org.apache.lucene.util.Version;
 import jhn.wp.Fields;
 
 public class LuceneVisitor extends LabelAwareVisitor {
+	private static final Version version = Version.LUCENE_36;
 	private final String luceneIndexDir;
 	private final String field;
 	private final boolean removeStopwords;
@@ -54,10 +55,10 @@ public class LuceneVisitor extends LabelAwareVisitor {
 		
 		FSDirectory dir = FSDirectory.open(file);
 
-		StandardAnalyzer analyzer = removeStopwords ? new StandardAnalyzer(Version.LUCENE_35)
-													: new StandardAnalyzer(Version.LUCENE_35, Collections.emptySet());
+		StandardAnalyzer analyzer = removeStopwords ? new StandardAnalyzer(version)
+													: new StandardAnalyzer(version, Collections.emptySet());
 
-		IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_35, analyzer);
+		IndexWriterConfig config = new IndexWriterConfig(version, analyzer);
 
 		writer = new IndexWriter(dir, config);
 	}
