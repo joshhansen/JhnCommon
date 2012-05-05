@@ -1,5 +1,6 @@
 package jhn.wp.categories;
 
+import jhn.wp.Fields;
 import jhn.wp.visitors.LuceneVisitor;
 import jhn.wp.visitors.PrintingVisitor;
 
