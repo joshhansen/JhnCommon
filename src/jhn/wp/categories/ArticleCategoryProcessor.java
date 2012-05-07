@@ -6,7 +6,10 @@ import java.util.regex.Pattern;
 
 import jhn.util.Util;
 import jhn.wp.CorpusProcessor;
+import jhn.wp.Fields;
 import jhn.wp.exceptions.CountException;
+import jhn.wp.visitors.LuceneVisitor2;
+import jhn.wp.visitors.PrintingVisitor;
 
 public class ArticleCategoryProcessor extends CorpusProcessor {
 	private final String articleCategoriesFilename;
@@ -65,5 +68,26 @@ public class ArticleCategoryProcessor extends CorpusProcessor {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public static void main(String[] args) {
+		final String outputDir = System.getenv("HOME") + "/Projects/eda_output/indices";
+		final String name = "article_categories";
+		
+		final String logFilename = outputDir + "/" + name + ".log";
+		final String errLogFilename = outputDir + "/" + name + ".error.log";
+		
+		final String srcDir = System.getenv("HOME") + "/Data/dbpedia.org/3.7";
+		final String articleCategoriesFilename = srcDir + "/article_categories_en.nt.bz2";
+		
+		ArticleCategoryProcessor acc = new ArticleCategoryProcessor(logFilename, errLogFilename, articleCategoriesFilename);
+		
+		
+		final String luceneDir = outputDir + "/" + name;
+		
+		acc.addVisitor(new LuceneVisitor2(luceneDir, Fields.articleCategory, false, true));
+		acc.addVisitor(new PrintingVisitor());
+		
+		acc.count();
 	}
 }
