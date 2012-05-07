@@ -1,6 +1,7 @@
 package jhn.wp.categories;
 
 import java.io.BufferedReader;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,8 +41,8 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 					if(m.matches()) {
 						everMatched |= true;
 						
-						final String childCat = m.group(1);
-						final String parentCat = m.group(2);
+						final String childCat = URLDecoder.decode(m.group(1), "UTF-8");
+						final String parentCat = URLDecoder.decode(m.group(2), "UTF-8");
 	
 						if(!childCat.equals(prevLabel)) {
 							if(prevLabel != null) {
