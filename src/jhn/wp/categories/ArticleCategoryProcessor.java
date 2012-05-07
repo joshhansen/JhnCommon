@@ -32,7 +32,7 @@ public class ArticleCategoryProcessor extends CorpusProcessor {
 			String line = null;
 			
 			boolean everMatched = false;
-			while( (line=r.readLine()) != null ) {//&& count < 1000) {
+			while( (line=r.readLine()) != null) {// && count < 10000) {
 				Matcher m = articleRgx.matcher(line);
 				if(m.matches()) {
 					everMatched |= true;

@@ -34,7 +34,7 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 			String line = null;
 			
 			boolean everMatched = false;
-			while( (line=r.readLine()) != null) {// && count < 1000) {
+			while( (line=r.readLine()) != null) {// && count < 10000) {
 				if(line.contains("<http://www.w3.org/2004/02/skos/core#broader>")) {
 					Matcher m = categoryRgx.matcher(line);
 					if(m.matches()) {
