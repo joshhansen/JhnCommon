@@ -1,6 +1,7 @@
 package jhn.wp.links;
 
 import java.io.BufferedReader;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,8 +39,8 @@ public class PageLinkProcessor extends CorpusProcessor {
 				if(m.matches()) {
 					everMatched |= true;
 					
-					final String src = m.group(1);
-					final String dest = m.group(2);
+					final String src = URLDecoder.decode(m.group(1), "UTF-8");
+					final String dest = URLDecoder.decode(m.group(2), "UTF-8");
 
 					if(!src.equals(prevLabel)) {
 						if(prevLabel != null) {
