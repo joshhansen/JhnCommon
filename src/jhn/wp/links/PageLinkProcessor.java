@@ -9,7 +9,7 @@ import jhn.util.Util;
 import jhn.wp.CorpusProcessor;
 import jhn.wp.Fields;
 import jhn.wp.exceptions.CountException;
-import jhn.wp.visitors.LuceneVisitor;
+import jhn.wp.visitors.LuceneVisitor2;
 import jhn.wp.visitors.PrintingVisitor;
 
 public class PageLinkProcessor extends CorpusProcessor {
@@ -86,7 +86,7 @@ public class PageLinkProcessor extends CorpusProcessor {
 		
 		final String luceneDir = outputDir + "/" + name;
 		
-		acc.addVisitor(new LuceneVisitor(luceneDir, Fields.linkedPage, false, true));
+		acc.addVisitor(new LuceneVisitor2(luceneDir, Fields.linkedPage, false, true));
 		acc.addVisitor(new PrintingVisitor());
 		
 		acc.count();
