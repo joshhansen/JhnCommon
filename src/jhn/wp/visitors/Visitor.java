@@ -2,6 +2,7 @@ package jhn.wp.visitors;
 
 import jhn.wp.exceptions.CountException;
 
+
 public class Visitor {
 	public void beforeEverything() throws Exception {}
 	public void beforeLabel() {}

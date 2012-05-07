@@ -2,6 +2,7 @@ package jhn.wp.visitors;
 
 import jhn.wp.exceptions.CountException;
 
+
 public class LabelAwareVisitor extends Visitor {
 	protected String currentLabel;
 	
