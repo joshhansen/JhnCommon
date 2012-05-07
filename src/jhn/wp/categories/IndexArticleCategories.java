@@ -20,7 +20,7 @@ public class IndexArticleCategories {
 		
 		final String luceneDir = outputDir + "/" + name;
 		
-		acc.addVisitor(new LuceneVisitor(luceneDir, Fields.articleCategories, false, true));
+		acc.addVisitor(new LuceneVisitor(luceneDir, Fields.articleCategory, false, true));
 		acc.addVisitor(new PrintingVisitor());
 		
 		acc.count();

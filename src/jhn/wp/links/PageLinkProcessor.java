@@ -86,7 +86,7 @@ public class PageLinkProcessor extends CorpusProcessor {
 		
 		final String luceneDir = outputDir + "/" + name;
 		
-		acc.addVisitor(new LuceneVisitor(luceneDir, Fields.links, false, true));
+		acc.addVisitor(new LuceneVisitor(luceneDir, Fields.linkedPage, false, true));
 		acc.addVisitor(new PrintingVisitor());
 		
 		acc.count();
