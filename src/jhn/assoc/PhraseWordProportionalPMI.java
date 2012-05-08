@@ -19,11 +19,12 @@ import org.apache.lucene.util.Version;
 
 import jhn.wp.Fields;
 
-public class PhraseWordProportionalPMI extends AbstractProportionalPMI<Label,Word> {
+public class PhraseWordProportionalPMI implements AssociationMeasure<Label,Word> {
 	private static final Version defaultLuceneVersion = Version.LUCENE_36;
 	private static final int defaultMaxHits = 1000000;
 	
 	private final IndexSearcher s;
+	private final IndexReader r;
 	private final QueryParser qp;
 	private final int maxHits;
 	private final String field;
@@ -45,29 +46,51 @@ public class PhraseWordProportionalPMI extends AbstractProportionalPMI<Label,Wor
 			e.printStackTrace();
 		}
 		this.s = s;
+		this.r = this.s.getIndexReader();
+		
 		this.field = field;
 	}
 	
+	private static double smartLog(int x) {
+		if(x==0) return 0.0;
+		return Math.log(x);
+	}
 	
 	@Override
-	protected int jointCount(Label l, Word w) throws ParseException, IOException {
-		int count = 0;
+	public double association(Label l, Word... words) throws Exception {
+		TopDocs labelDocs = labelHits(l);
 		
-		// The sum of the frequency of word w across all documents containing the label l
-		TopDocs td = labelHits(l);
-		for(int i = 0; i < td.totalHits; i++) {
-			ScoreDoc sd = td.scoreDocs[i];
+		int[] jointCounts = jointCounts(labelDocs, words);
+		int[] wordCounts = counts(words);
+		int labelCount = labelDocs.totalHits;
+		double logLabelCount = Math.log(labelCount);
+		
+		double totalPMI = 0.0;
+		for(int i = 0; i < words.length; i++) {
+			totalPMI += smartLog(jointCounts[i]) - logLabelCount - smartLog(wordCounts[i]);
+		}
+		return totalPMI / (double) words.length;
+	}
+	
+	protected int[] jointCounts(TopDocs labelHits, Word... words) throws ParseException, IOException {
+		int[] counts = new int[words.length];
+		
+		for(int i = 0; i < labelHits.totalHits; i++) {
+			ScoreDoc sd = labelHits.scoreDocs[i];
 			
-			TermFreqVector tfv = s.getIndexReader().getTermFreqVector(sd.doc, field);
-			int wordIdx = tfv.indexOf(w.word);
-			if(wordIdx != -1) {
-				count += tfv.getTermFrequencies()[wordIdx];
+			TermFreqVector tfv = r.getTermFreqVector(sd.doc, field);
+			int[] termFreqs = tfv.getTermFrequencies();
+			
+			for(int wordNum = 0; wordNum < words.length; wordNum++) {
+				int wordIdx = tfv.indexOf(words[wordNum].word);
+				if(wordIdx != -1) {
+					counts[wordNum] += termFreqs[wordIdx];
+				}
 			}
 		}
 		
-		return count;
+		return counts;
 	}
-
 
 	private TopDocs labelHits(Label l) throws ParseException, IOException {
 		StringBuilder query = new StringBuilder();
@@ -77,18 +100,21 @@ public class PhraseWordProportionalPMI extends AbstractProportionalPMI<Label,Wor
 		return s.search(q, maxHits);
 	}
 	
-	@Override
-	protected int count1(Label l) throws ParseException, IOException {
-		return labelHits(l).totalHits;
+	protected int[] counts(Word... words) {
+		int[] counts = new int[words.length];
+		
+		for(int i = 0; i < words.length; i++) {
+			counts[i] = count(words[i]);
+		}
+		
+		return counts;
 	}
 
-
-	@Override
-	protected int count2(Word w) {
+	protected int count(Word w) {
 		try {
 			Term t = new Term(Fields.text, w.word);
 			int freq = s.docFreq(t);
-			System.out.println("c(" + w + ") = " + freq);
+//			System.out.println("c(" + w + ") = " + freq);
 			return freq;
 		} catch(Exception e) {
 			throw new IllegalArgumentException();
@@ -98,4 +124,5 @@ public class PhraseWordProportionalPMI extends AbstractProportionalPMI<Label,Wor
 	public void close() throws IOException {
 		s.close();
 	}
+
 }
