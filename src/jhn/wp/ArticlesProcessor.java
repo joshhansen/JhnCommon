@@ -7,6 +7,11 @@ import jhn.wp.exceptions.DisambiguationPage;
 import jhn.wp.exceptions.RedirectException;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.exceptions.ArticleTooShort;
+import jhn.wp.visitors.LabelDictionaryBuildingVisitor;
+import jhn.wp.visitors.LuceneVisitor;
+import jhn.wp.visitors.PrintingVisitor;
+import jhn.wp.visitors.TrieWordCountVisitor;
+
 import info.bliki.wiki.filter.ITextConverter;
 import info.bliki.wiki.filter.PlainTextConverter;
 import info.bliki.wiki.model.WikiModel;
@@ -158,5 +163,59 @@ public class ArticlesProcessor extends CorpusProcessor {
 	
 	private void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {
 		if(wikiText.startsWith("#REDIRECT")) throw new RedirectException(label);
+	}
+	
+//	// Index article text in Lucene
+//	public static void main(String[] args) {
+//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
+//		final String idxDir = outputDir + "/indices/topic_words";
+//		final String name = "wp_lucene4";
+//		final String luceneDir = idxDir + "/" + name;
+//		final String logFilename = idxDir + "/" + name + ".log";
+//		final String errLogFilename = idxDir + "/" + name + ".error.log";
+//		
+//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
+//		
+//		
+//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+//		ac.addVisitor(new PrintingVisitor());
+//		ac.addVisitor(new LuceneVisitor(luceneDir, Fields.text));
+//		ac.count();
+//	}
+	
+//	// Create a dictionary of article titles in a trie
+//	public static void main(String[] args) {
+//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
+//		
+//		final String dictFilename = outputDir + "/labelDictionary.ser";
+//		final String logFilename = outputDir + "/labelDictionary.log";
+//		final String errLogFilename = outputDir + "/labelDictionary.err.log";
+//		
+//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
+//		
+//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+//		ac.addVisitor(new PrintingVisitor());
+//		ac.addVisitor(new LabelDictionaryBuildingVisitor(dictFilename));
+//		ac.count();
+//	}
+	
+	// Count words in a trie
+	public static void main(String[] args) {
+		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
+		
+		final String outputFilename = outputDir + "/trieWordCounts.ser";
+		final String logFilename = outputDir + "/trieWordCounts.log";
+		final String errLogFilename = outputDir + "/trieWordCounts.err.log";
+		
+		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
+		
+		
+		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+		ac.addVisitor(new PrintingVisitor());
+		ac.addVisitor(new TrieWordCountVisitor(outputFilename));
+		ac.count();
 	}
 }
