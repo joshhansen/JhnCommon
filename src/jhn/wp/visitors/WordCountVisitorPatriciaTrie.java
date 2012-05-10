@@ -6,11 +6,11 @@ import org.ardverk.collection.Trie;
 
 import jhn.util.Util;
 
-public class TrieWordCountVisitor extends Visitor {
+public class WordCountVisitorPatriciaTrie extends Visitor {
 	private Trie<String,Integer> counts;
 	private final String outputFilename;
 	
-	public TrieWordCountVisitor(String outputFilename) {
+	public WordCountVisitorPatriciaTrie(String outputFilename) {
 		this.outputFilename = outputFilename;
 	}
 
