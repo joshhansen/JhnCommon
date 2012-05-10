@@ -30,7 +30,11 @@ public class PhraseWordProportionalPMI implements AssociationMeasure<Label,Word>
 	private final String field;
 	
 	public PhraseWordProportionalPMI(String topicWordIdxLuceneDir) {
-		this(topicWordIdxLuceneDir, Fields.text, defaultMaxHits, defaultLuceneVersion);
+		this(topicWordIdxLuceneDir, Fields.text, defaultMaxHits);
+	}
+	
+	public PhraseWordProportionalPMI(String topicWordIdxLuceneDir, String field, int maxHits) {
+		this(topicWordIdxLuceneDir, field, maxHits, defaultLuceneVersion);
 	}
 	
 	
