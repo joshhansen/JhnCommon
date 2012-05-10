@@ -21,7 +21,7 @@ import jhn.wp.Fields;
 
 public class PhraseWordProportionalPMI implements AssociationMeasure<Label,Word> {
 	private static final Version defaultLuceneVersion = Version.LUCENE_36;
-	private static final int defaultMaxHits = 1000000;
+	private static final int defaultMaxHits = 100; /* 1000000 */
 	
 	private final IndexSearcher s;
 	private final IndexReader r;
