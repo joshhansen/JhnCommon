@@ -62,7 +62,7 @@ public class PhraseWordProportionalPMI implements AssociationMeasure<Label,Word>
 	
 	@Override
 	public double association(Label l, Word... words) throws Exception {
-		TopDocs labelDocs = labelHits(l);
+		ScoreDoc[] labelDocs = labelHits(l).scoreDocs;
 		
 		int[] jointCounts = jointCounts(labelDocs, words);
 		int[] wordCounts = counts(words);
@@ -76,11 +76,11 @@ public class PhraseWordProportionalPMI implements AssociationMeasure<Label,Word>
 		return totalPMI / (double) words.length;
 	}
 	
-	protected int[] jointCounts(TopDocs labelHits, Word... words) throws ParseException, IOException {
+	protected int[] jointCounts(ScoreDoc[] labelDocs, Word... words) throws ParseException, IOException {
 		int[] counts = new int[words.length];
 		
-		for(int i = 0; i < labelHits.totalHits; i++) {
-			ScoreDoc sd = labelHits.scoreDocs[i];
+		for(int i = 0; i < labelDocs.length; i++) {
+			ScoreDoc sd = labelDocs[i];
 			
 			TermFreqVector tfv = r.getTermFreqVector(sd.doc, field);
 			int[] termFreqs = tfv.getTermFrequencies();
