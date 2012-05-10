@@ -62,8 +62,8 @@ public class PhraseWordProportionalPMI implements AssociationMeasure<Label,Word>
 		
 		int[] jointCounts = jointCounts(labelDocs, words);
 		int[] wordCounts = counts(words);
-		int labelCount = labelDocs.totalHits;
-		double logLabelCount = Math.log(labelCount);
+
+		double logLabelCount = smartLog(labelDocs.length);
 		
 		double totalPMI = 0.0;
 		for(int i = 0; i < words.length; i++) {
