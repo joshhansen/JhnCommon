@@ -49,7 +49,8 @@ public class ArticlesProcessor extends CorpusProcessor {
 						
 						assertLabelOK(label);
 						
-						final String wikiText = page.getText();
+//						final String wikiText = page.getText();
+						final String wikiText = page.getWikiText().replaceAll("<ref", " <ref");
 						assertWikiTextOK(wikiText, label);
 						
 						ok++;
