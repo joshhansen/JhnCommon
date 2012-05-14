@@ -14,16 +14,30 @@ public class Config {
 		return map.containsKey(key);
 	}
 	
-	public void put(String key, int value) {
+	public void putDouble(String key, double value) {
+		map.put(key, Double.valueOf(value));
+	}
+	
+	public void putInt(String key, int value) {
 		map.put(key, Integer.valueOf(value));
 	}
 	
-	public void put(String key, boolean value) {
+	public void putBool(String key, boolean value) {
 		map.put(key, Boolean.valueOf(value));
 	}
 	
-	public void put(String key, String value) {
+	public void putString(String key, String value) {
 		map.put(key, value);
+	}
+	
+	public void putObj(String key, Object value) {
+		map.put(key, value);
+	}
+	
+	
+	
+	public double getDouble(String key) {
+		return ((Double)map.get(key)).doubleValue();
 	}
 	
 	public int getInt(String key) {
@@ -36,6 +50,10 @@ public class Config {
 	
 	public String getString(String key) {
 		return (String) map.get(key);
+	}
+	
+	public Object getObj(String key) {
+		return map.get(key);
 	}
 	
 	private static final Comparator<Entry<String,Object>> itemCmptor = new Comparator<Entry<String,Object>>(){
