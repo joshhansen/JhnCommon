@@ -63,7 +63,12 @@ public class Config {
 		}
 	};
 	
+	@Override
 	public String toString() {
+		return toString(0);
+	}
+	
+	public String toString(int tabs) {
 		StringBuilder s = new StringBuilder();
 		
 		@SuppressWarnings("unchecked")
@@ -71,9 +76,17 @@ public class Config {
 		Arrays.sort(entries, itemCmptor);
 		
 		for(Entry<String,Object> entry : entries) {
+			for(int i = 0; i < tabs; i++) {
+				s.append('\t');
+			}
 			s.append(entry.getKey());
 			s.append(':');
-			s.append(entry.getValue());
+			String valString = entry.getValue().toString();
+			if(valString.length() > 200) {
+				s.append("<OBJ>");
+			} else {
+				s.append(valString);
+			}
 			s.append('\n');
 		}
 		
