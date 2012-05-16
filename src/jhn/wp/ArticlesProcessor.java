@@ -1,5 +1,8 @@
 package jhn.wp;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+
 import edu.jhu.nlp.wikipedia.PageCallbackHandler;
 import edu.jhu.nlp.wikipedia.WikiPage;
 import edu.jhu.nlp.wikipedia.WikiXMLParser;
@@ -21,15 +24,15 @@ import jhn.wp.visitors.WordCountVisitorTrie;
 public class ArticlesProcessor extends CorpusProcessor {
 	private final String wpdumpFilename;
 	
-	public ArticlesProcessor(String wpdumpFilename, String logFilename, String errLogFilename) {
+	public ArticlesProcessor(String wpdumpFilename, String logFilename, String errLogFilename) throws FileNotFoundException {
 		super(logFilename, errLogFilename);
 		this.wpdumpFilename = wpdumpFilename;
 	}
 
 	@Override
-	public void count() {
+	public void process() {
 		try {
-			super.beforeEverything();
+			events.beforeEverything();
 			
 			WikiXMLParser wxsp = WikiXMLParserFactory.getSAXParser(wpdumpFilename);
 			
@@ -69,23 +72,28 @@ public class ArticlesProcessor extends CorpusProcessor {
 								float disambigPct = (float)disambiguation / (float) total;
 								float tooShortPct = (float)tooShort / (float)total;
 								
-								println(String.format("-----%s-----\n", label));
-								println(String.format("ok:%d (%.2f) redirect:%d (%.2f) badLabel:%d (%.2f) disambig:%d (%.2f) tooShort:%d (%.2f) total:%d\n",
+								log.println(String.format("-----%s-----\n", label));
+								log.println(String.format("ok:%d (%.2f) redirect:%d (%.2f) badLabel:%d (%.2f) disambig:%d (%.2f) tooShort:%d (%.2f) total:%d\n",
 										ok, okPct, redirect, redirectPct, badLabelPrefix, badLabelPrefixPct, disambiguation, disambigPct, tooShort, tooShortPct, total));
 							}
 						}
 						
-						ArticlesProcessor.this.beforeLabel();
+						events.beforeLabel();
 						try {
-							ArticlesProcessor.this.visitLabel(label);
+							events.visitLabel(label);
 						} catch (CountException e) {
-							e.printStackTrace();
-							e.printStackTrace(errLog);
+							for(PrintStream errLogPS : errLog.logs()) {
+								e.printStackTrace(errLogPS);
+							}
 						}
-						print(".");
+						log.print(".");
 //						System.out.println(label);
 						
 						String text = wikiToText3(wikiText).trim();
+						
+						events.visitDocument(text);
+						
+						
 //						System.out.println("-----------------------------PLAIN TEXT----------------------------");
 //						System.out.println(text);
 //						System.out.println();
@@ -100,34 +108,35 @@ public class ArticlesProcessor extends CorpusProcessor {
 //						System.out.println();
 						
 						for(String word : tokens) {
-							ArticlesProcessor.this.visitWord(word);
+							events.visitWord(word);
 						}
 						
-						ArticlesProcessor.this.afterLabel();
+						events.afterLabel();
 					} catch(RedirectException e) {
-						print("r");
-						printlnErr("Redirect: " + e.label());
+						log.print("r");
+						errLog.println("Redirect: " + e.label());
 						redirect++;
 					} catch(BadWikiTextException e) {
-						print("t");
-						printlnErr("Other text problem: " + e.label());
+						log.print("t");
+						errLog.println("Other text problem: " + e.label());
 					} catch (ArticleTooShort e) {
-						print("s");
-						printlnErr("Too short: " + e.label());
+						log.print("s");
+						errLog.println("Too short: " + e.label());
 						tooShort++;
 					} catch(BadLabelPrefix e) {
-						print("l");
-						printlnErr("Bad prefix: " + e.label());
+						log.print("l");
+						errLog.println("Bad prefix: " + e.label());
 						badLabelPrefix++;
 					} catch(DisambiguationPage e) {
-						print("d");
-						printlnErr("Disambiguation: " + e.label());
+						log.print("d");
+						errLog.println("Disambiguation: " + e.label());
 						disambiguation++;
 					} catch (Exception e) {
-						e.printStackTrace();
-						e.printStackTrace(errLog);
-						print("u");
-						printlnErr("Unknown: " + label);
+						for(PrintStream errLogPS : errLog.logs()) {
+							e.printStackTrace(errLogPS);
+						}
+						log.print("u");
+						errLog.println("Unknown: " + label);
 					}
 				}
 			});
@@ -137,7 +146,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 			e.printStackTrace();
 		}
 		
-		super.afterEverything();
+		events.afterEverything();
 	}
 	
 	
@@ -216,9 +225,8 @@ public class ArticlesProcessor extends CorpusProcessor {
 //	}
 	
 	// Count words in a trie
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
-		
 		
 		final String name = "wordCountsTrie";
 		final String outputFilename = outputDir + "/" + name + ".ser";
@@ -233,7 +241,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 		ac.addVisitor(new PrintingVisitor());
 //		ac.addVisitor(new WordCountVisitorPatriciaTrie(outputFilename));
 		ac.addVisitor(new WordCountVisitorTrie(outputFilename));
-		ac.count();
+		ac.process();
 	}
 	
 //	// Index words in a trie

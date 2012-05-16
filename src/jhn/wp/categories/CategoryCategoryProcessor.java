@@ -1,6 +1,7 @@
 package jhn.wp.categories;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,13 +10,13 @@ import jhn.util.Util;
 import jhn.wp.CorpusProcessor;
 import jhn.wp.Fields;
 import jhn.wp.exceptions.CountException;
-import jhn.wp.visitors.LuceneVisitor2;
 import jhn.wp.visitors.PrintingVisitor;
+import jhn.wp.visitors.lucene.LuceneVisitor2;
 
 
 public class CategoryCategoryProcessor extends CorpusProcessor {
 	private final String categoryCategoriesFilename;
-	public CategoryCategoryProcessor(String logFilename, String errLogFilename, String categoryCategoriesFilename) {
+	public CategoryCategoryProcessor(String logFilename, String errLogFilename, String categoryCategoriesFilename) throws FileNotFoundException {
 		super(logFilename, errLogFilename);
 		this.categoryCategoriesFilename = categoryCategoriesFilename;
 	}
@@ -25,10 +26,10 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 	private static final Pattern categoryRgx = Pattern.compile(categoryS);
 	
 	@Override
-	public void count() {
+	public void process() {
 		int count = 0;
 		try {
-			beforeEverything();
+			events.beforeEverything();
 			
 			String prevLabel = null;
 			BufferedReader r = new BufferedReader(Util.smartReader(categoryCategoriesFilename));
@@ -46,18 +47,18 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 	
 						if(!childCat.equals(prevLabel)) {
 							if(prevLabel != null) {
-								afterLabel();
+								events.afterLabel();
 							}
-							beforeLabel();
+							events.beforeLabel();
 							
 							try {
-								visitLabel(childCat);
+								events.visitLabel(childCat);
 							} catch(CountException e) {
 								System.err.print(e.shortCode());
 							}
 						}
 						
-						visitWord(parentCat);
+						events.visitWord(parentCat);
 						
 						prevLabel = childCat;
 					} else {
@@ -68,14 +69,14 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 			}
 			r.close();
 			
-			if(everMatched) afterLabel();
-			afterEverything();
+			if(everMatched) events.afterLabel();
+			events.afterEverything();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		final String outputDir = System.getenv("HOME") + "/Projects/eda_output/indices";
 		final String name = "category_categories";
 		
@@ -85,13 +86,13 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 		final String srcDir = System.getenv("HOME") + "/Data/dbpedia.org/3.7";
 		final String categoryCategoriesFilename = srcDir + "/skos_categories_en.nt.bz2";
 		
-		CategoryCategoryProcessor ccc = new CategoryCategoryProcessor(logFilename, errLogFilename, categoryCategoriesFilename);
+		CorpusProcessor ccc = new CategoryCategoryProcessor(logFilename, errLogFilename, categoryCategoriesFilename);
 		
 		final String luceneDir = outputDir + "/" + name;
 		
-		ccc.addVisitor(new LuceneVisitor2(luceneDir, Fields.categoryCategory, false, true));
+		ccc.addVisitor(new LuceneVisitor2(luceneDir, Fields.categoryCategory));
 		ccc.addVisitor(new PrintingVisitor());
 		
-		ccc.count();
+		ccc.process();
 	}
 }

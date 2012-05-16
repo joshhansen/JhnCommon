@@ -1,6 +1,7 @@
 package jhn.wp.links;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,13 +10,13 @@ import jhn.util.Util;
 import jhn.wp.CorpusProcessor;
 import jhn.wp.Fields;
 import jhn.wp.exceptions.CountException;
-import jhn.wp.visitors.LuceneVisitor2;
 import jhn.wp.visitors.PrintingVisitor;
+import jhn.wp.visitors.lucene.LuceneVisitor2;
 
 public class PageLinkProcessor extends CorpusProcessor {
 
 	private final String pageLinksFilename;
-	public PageLinkProcessor(String logFilename, String errLogFilename, String pageLinksFilename) {
+	public PageLinkProcessor(String logFilename, String errLogFilename, String pageLinksFilename) throws FileNotFoundException {
 		super(logFilename, errLogFilename);
 		this.pageLinksFilename = pageLinksFilename;
 	}
@@ -24,10 +25,10 @@ public class PageLinkProcessor extends CorpusProcessor {
 	private static final String lineS = "<http://dbpedia\\.org/resource/([^>]+)> <http://dbpedia\\.org/ontology/wikiPageWikiLink> <http://dbpedia\\.org/resource/([^>]+)> \\.";
 	private static final Pattern lineRgx = Pattern.compile(lineS);
 	@Override
-	public void count() {
+	public void process() {
 		int count = 0;
 		try {
-			beforeEverything();
+			events.beforeEverything();
 			
 			String prevLabel = null;
 			BufferedReader r = new BufferedReader(Util.smartReader(pageLinksFilename));
@@ -44,18 +45,18 @@ public class PageLinkProcessor extends CorpusProcessor {
 
 					if(!src.equals(prevLabel)) {
 						if(prevLabel != null) {
-							afterLabel();
+							events.afterLabel();
 						}
-						beforeLabel();
+						events.beforeLabel();
 						
 						try {
-							visitLabel(src);
+							events.visitLabel(src);
 						} catch(CountException e) {
 							System.err.print(e.shortCode());
 						}
 					}
 					
-					visitWord(dest);
+					events.visitWord(dest);
 					
 					prevLabel = src;
 				} else {
@@ -65,14 +66,14 @@ public class PageLinkProcessor extends CorpusProcessor {
 			}
 			r.close();
 			
-			if(everMatched) afterLabel();
-			afterEverything();
+			if(everMatched) events.afterLabel();
+			events.afterEverything();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		final String outputDir = System.getenv("HOME") + "/Projects/eda_output/indices";
 		final String name = "page_links";
 		
@@ -82,13 +83,13 @@ public class PageLinkProcessor extends CorpusProcessor {
 		final String srcDir = System.getenv("HOME") + "/Data/dbpedia.org/3.7";
 		final String pageLinksFilename = srcDir + "/page_links_en.nt.bz2";
 		
-		PageLinkProcessor acc = new PageLinkProcessor(logFilename, errLogFilename, pageLinksFilename);
+		CorpusProcessor acc = new PageLinkProcessor(logFilename, errLogFilename, pageLinksFilename);
 		
 		final String luceneDir = outputDir + "/" + name;
 		
-		acc.addVisitor(new LuceneVisitor2(luceneDir, Fields.linkedPage, false, true));
+		acc.addVisitor(new LuceneVisitor2(luceneDir, Fields.linkedPage));
 		acc.addVisitor(new PrintingVisitor());
 		
-		acc.count();
+		acc.process();
 	}
 }

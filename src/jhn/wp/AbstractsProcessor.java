@@ -1,5 +1,6 @@
 package jhn.wp;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,30 +17,30 @@ public class AbstractsProcessor extends CorpusProcessor {
 	private String triplesFilename;
 	private static final Pattern subjectRgx = Pattern.compile("^http://dbpedia\\.org/resource/(.+)$");
 	
-	public AbstractsProcessor(String triplesFilename, String logFilename, String errLogFilename) {
+	public AbstractsProcessor(String triplesFilename, String logFilename, String errLogFilename) throws FileNotFoundException {
 		super(logFilename, errLogFilename);
 		this.triplesFilename = triplesFilename;
 	}
 	
-	public void count() {
+	public void process() {
 		try {
-			beforeEverything();
+			events.beforeEverything();
 			NxParser nxp = new NxParser(Util.smartInputStream(triplesFilename));
 			for(Node[] ns : nxp) {
-				beforeLabel();
+				events.beforeLabel();
 				if(ns.length != 3) System.err.println("Not a triple");
 				final Matcher m = subjectRgx.matcher(ns[0].toString());
 				m.matches();
 				final String label = m.group(1);
 				
 				try {
-					visitLabel(label);
+					events.visitLabel(label);
 					
 					final String abstrakt = StringEscapeUtils.unescapeHtml4(ns[2].toString());
 					for(String word : tokenize(abstrakt))
 						if(!isStopword(word))
-							visitWord(word);
-					afterLabel();
+							events.visitWord(word);
+					events.afterLabel();
 				} catch(CountException e) {
 					System.err.write('s');
 				}
@@ -49,7 +50,7 @@ public class AbstractsProcessor extends CorpusProcessor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		afterEverything();
+		events.afterEverything();
 	}
 
 //		private static final int LABEL_COUNT = 3550567;
@@ -57,8 +58,9 @@ public class AbstractsProcessor extends CorpusProcessor {
 	
 	/**
 	 * Index DBPedia article abstracts
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException {
 		final String srcDir = System.getenv("HOME") + "/Data/dbpedia.org/3.7";
 		final String name = "eda_output";
 		final String destDir = System.getenv("HOME") + "/Projects/" + name;
@@ -69,13 +71,13 @@ public class AbstractsProcessor extends CorpusProcessor {
 //		final String wordIdxFilename = destDir + "/dbpedia37_longabstracts_alphabet.ser";
 //		final String topicIdxFilename = destDir + "/dbpedia37_longabstracts_label_alphabet.ser";
 		
-		AbstractsProcessor ac = new AbstractsProcessor(abstractsFilename, logFilename, errLogFilename);
+		CorpusProcessor ac = new AbstractsProcessor(abstractsFilename, logFilename, errLogFilename);
 		ac.addVisitor(new PrintingVisitor());//Provide some console output
 //			ac.addVisitor(new OldMapReduceVisitor(topicIdxFilename, wordIdxFilename));
 //			ap.addVisitor(new LabelIndexingVisitor(destDir+"/labelAlphabet.ser"));
 //			ap.addVisitor(new WordIndexingVisitor(destDir+"/alphabet.ser"));
 //			ap.addVisitor(new LabelCountingVisitor());
 //			ap.addVisitor(new WordCountingVisitor());
-		ac.count();
+		ac.process();
 	}
 }
