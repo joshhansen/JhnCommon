@@ -20,6 +20,7 @@ import jhn.wp.exceptions.DisambiguationPage;
 import jhn.wp.exceptions.RedirectException;
 import jhn.wp.visitors.PrintingVisitor;
 import jhn.wp.visitors.WordCountVisitorTrie;
+import jhn.wp.visitors.lucene.LuceneVisitor3;
 
 public class ArticlesProcessor extends CorpusProcessor {
 	private final String wpdumpFilename;
@@ -98,7 +99,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 //						System.out.println(text);
 //						System.out.println();
 						
-						String[] tokens = tokenize(text);
+//						String[] tokens = tokenize(text);
 //						System.out.println("-----------------------------TOKENS----------------------------");
 //						
 //						for(String token : tokens) {
@@ -107,9 +108,9 @@ public class ArticlesProcessor extends CorpusProcessor {
 //						}
 //						System.out.println();
 						
-						for(String word : tokens) {
-							events.visitWord(word);
-						}
+//						for(String word : tokens) {
+//							events.visitWord(word);
+//						}
 						
 						events.afterLabel();
 					} catch(RedirectException e) {
@@ -188,24 +189,24 @@ public class ArticlesProcessor extends CorpusProcessor {
 		if(wikiText.startsWith("#REDIRECT")) throw new RedirectException(label);
 	}
 	
-//	// Index article text in Lucene
-//	public static void main(String[] args) {
-//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
-//		final String idxDir = outputDir + "/indices/topic_words";
-//		final String name = "wp_lucene4";
-//		final String luceneDir = idxDir + "/" + name;
-//		final String logFilename = idxDir + "/" + name + ".log";
-//		final String errLogFilename = idxDir + "/" + name + ".error.log";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-//		
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new LuceneVisitor(luceneDir, Fields.text));
-//		ac.count();
-//	}
+	// Index article text in Lucene
+	public static void main(String[] args) throws FileNotFoundException {
+		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
+		final String idxDir = outputDir + "/indices/topic_words";
+		final String name = "wp_lucene5";
+		final String luceneDir = idxDir + "/" + name;
+		final String logFilename = idxDir + "/" + name + ".log";
+		final String errLogFilename = idxDir + "/" + name + ".error.log";
+		
+		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
+		
+		
+		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+		ac.addVisitor(new PrintingVisitor());
+		ac.addVisitor(new LuceneVisitor3(luceneDir, Fields.text));
+		ac.process();
+	}
 	
 //	// Create a dictionary of article titles in a trie
 //	public static void main(String[] args) {
@@ -224,25 +225,25 @@ public class ArticlesProcessor extends CorpusProcessor {
 //		ac.count();
 //	}
 	
-	// Count words in a trie
-	public static void main(String[] args) throws FileNotFoundException {
-		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
-		
-		final String name = "wordCountsTrie";
-		final String outputFilename = outputDir + "/" + name + ".ser";
-		final String logFilename = outputDir + "/" + name + ".log";
-		final String errLogFilename = outputDir + "/" + name + ".err.log";
-		
-		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-		
-		
-		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new WordCountVisitorPatriciaTrie(outputFilename));
-		ac.addVisitor(new WordCountVisitorTrie(outputFilename));
-		ac.process();
-	}
+//	// Count words in a trie
+//	public static void main(String[] args) throws FileNotFoundException {
+//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
+//		
+//		final String name = "wordCountsTrie";
+//		final String outputFilename = outputDir + "/" + name + ".ser";
+//		final String logFilename = outputDir + "/" + name + ".log";
+//		final String errLogFilename = outputDir + "/" + name + ".err.log";
+//		
+//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
+//		
+//		
+//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+//		ac.addVisitor(new PrintingVisitor());
+////		ac.addVisitor(new WordCountVisitorPatriciaTrie(outputFilename));
+//		ac.addVisitor(new WordCountVisitorTrie(outputFilename));
+//		ac.process();
+//	}
 	
 //	// Index words in a trie
 //	public static void main(String[] args) {
