@@ -13,7 +13,7 @@ public class Log {
 	}
 	
 	public Log(String filename) throws FileNotFoundException {
-		this(System.out, filename);
+		this(new PrintStream(new FileOutputStream(filename)));
 	}
 	
 	public Log(PrintStream logTo, String filename) throws FileNotFoundException {
@@ -33,6 +33,13 @@ public class Log {
 	public void print(char c) {
 		for(PrintStream log : logs) {
 			log.print(c);
+		}
+		flush();
+	}
+	
+	public void print(int i) {
+		for(PrintStream log : logs) {
+			log.print(i);
 		}
 		flush();
 	}
