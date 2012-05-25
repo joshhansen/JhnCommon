@@ -48,6 +48,10 @@ public class Config {
 		return ((Boolean)map.get(key)).booleanValue();
 	}
 	
+	public boolean isTrue(String key) {
+		return containsKey(key) && getBool(key);
+	}
+	
 	public String getString(String key) {
 		return (String) map.get(key);
 	}
