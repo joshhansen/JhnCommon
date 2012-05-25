@@ -14,7 +14,7 @@ public abstract class CorpusProcessor {
 	
 	public CorpusProcessor(String logFilename, String errLogFilename) throws FileNotFoundException {
 		this.log = new Log(System.out, logFilename);
-		this.errLog = new Log(System.err, errLogFilename);
+		this.errLog = new Log(errLogFilename);
 		this.events = new CorpusEventDispatcher();
 	}
 
