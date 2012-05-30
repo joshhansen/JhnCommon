@@ -18,6 +18,10 @@ public class Config {
 		map.put(key, Double.valueOf(value));
 	}
 	
+	public void putDoubleArr(String key, double... arr) {
+		map.put(key, arr);
+	}
+	
 	public void putInt(String key, int value) {
 		map.put(key, Integer.valueOf(value));
 	}
@@ -38,6 +42,10 @@ public class Config {
 	
 	public double getDouble(String key) {
 		return ((Double)map.get(key)).doubleValue();
+	}
+	
+	public double[] getDoubleArr(String key) {
+		return (double[]) map.get(key);
 	}
 	
 	public int getInt(String key) {
