@@ -32,4 +32,12 @@ public class IntIndex {
 	public int size() {
 		return list.size();
 	}
+	
+	public IntList list() {
+		return list;
+	}
+	
+	public Int2IntMap map() {
+		return map;
+	}
 }
