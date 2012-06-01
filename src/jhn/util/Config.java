@@ -1,5 +1,6 @@
 package jhn.util;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -7,7 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 
-public class Config {
+public class Config implements Serializable {
+	private static final long serialVersionUID = 1L;
+	
 	private final Map<String,Object> map = new HashMap<String,Object>();
 	
 	public boolean containsKey(String key) {
