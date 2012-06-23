@@ -67,6 +67,12 @@ public class Log {
 		}
 	}
 	
+	public void println(double x) {
+		for(PrintStream log : logs) {
+			log.println(x);
+		}
+	}
+	
 	public void close() {
 		for(PrintStream log : logs) {
 			log.close();
