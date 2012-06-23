@@ -175,4 +175,16 @@ public final class Util {
 			if(charCount % CHAROUT_NEWLINE_INTERVAL == 0) System.out.println();
 		}
 	}
+	
+	public static int compareInts(int i1, int i2) {
+        if (i1 < i2) {
+            return -1;
+        }
+        
+        if (i1 > i2) {
+            return 1;
+        }
+        
+        return 0;
+	}
 }
