@@ -11,6 +11,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import jhn.counts.Counter;
+import jhn.counts.IntIntCounter;
+
 public class IntIntCounterTest {
 
 	@BeforeClass
@@ -31,7 +34,7 @@ public class IntIntCounterTest {
 
 	@Test
 	public void test() {
-		IntIntCounter c = new IntIntCounter();
+		Counter c = new IntIntCounter();
 		
 		c.set(1, 10);
 		c.set(2, 5);
