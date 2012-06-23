@@ -65,8 +65,10 @@ public final class Util {
 	}
 	
 	public static Object deserialize(final String filename) throws FileNotFoundException, IOException, ClassNotFoundException {
-		ObjectInputStream obj = new ObjectInputStream(new FileInputStream(filename));
-		return obj.readObject();
+		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename));
+		Object obj = ois.readObject();
+		ois.close();
+		return obj;
 	}
 	
 	/** From Mallet 2.0.7 */
