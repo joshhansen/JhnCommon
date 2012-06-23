@@ -12,33 +12,61 @@ public class Config implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private final Map<String,Object> map = new HashMap<String,Object>();
-	
+
 	public boolean containsKey(String key) {
 		return map.containsKey(key);
+	}
+	
+	public boolean containsKey(Enum<?> key) {
+		return containsKey(key.toString());
 	}
 	
 	public void putDouble(String key, double value) {
 		map.put(key, Double.valueOf(value));
 	}
 	
+	public void putDouble(Enum<?> key, double value) {
+		putDouble(key.toString(), value);
+	}
+	
 	public void putDoubleArr(String key, double... arr) {
 		map.put(key, arr);
+	}
+	
+	public void putDoubleArr(Enum<?> key, double... arr) {
+		putDoubleArr(key.toString(), arr);
 	}
 	
 	public void putInt(String key, int value) {
 		map.put(key, Integer.valueOf(value));
 	}
 	
+	public void putInt(Enum<?> key, int value) {
+		putInt(key.toString(), value);
+	}
+	
 	public void putBool(String key, boolean value) {
 		map.put(key, Boolean.valueOf(value));
+	}
+	
+	public void putBool(Enum<?> key, boolean value) {
+		putBool(key.toString(), value);
 	}
 	
 	public void putString(String key, String value) {
 		map.put(key, value);
 	}
 	
+	public void putString(Enum<?> key, String value) {
+		map.put(key.toString(), value);
+	}
+	
 	public void putObj(String key, Object value) {
 		map.put(key, value);
+	}
+	
+	public void putObj(Enum<?> key, Object value) {
+		putObj(key.toString(), value);
 	}
 	
 	
@@ -47,28 +75,60 @@ public class Config implements Serializable {
 		return ((Double)map.get(key)).doubleValue();
 	}
 	
+	public double getDouble(Enum<?> key) {
+		return getDouble(key.toString());
+	}
+	
 	public double[] getDoubleArr(String key) {
 		return (double[]) map.get(key);
+	}
+	
+	public double[] getDoubleArr(Enum<?> key) {
+		return getDoubleArr(key.toString());
 	}
 	
 	public int getInt(String key) {
 		return ((Integer)map.get(key)).intValue();
 	}
 	
+	public int getInt(Enum<?> key) {
+		return getInt(key.toString());
+	}
+	
 	public boolean getBool(String key) {
 		return ((Boolean)map.get(key)).booleanValue();
+	}
+	
+	public boolean getBool(Enum<?> key) {
+		return getBool(key.toString());
 	}
 	
 	public boolean isTrue(String key) {
 		return containsKey(key) && getBool(key);
 	}
 	
+	public boolean isTrue(Enum<?> key) {
+		return isTrue(key.toString());
+	}
+	
 	public String getString(String key) {
 		return (String) map.get(key);
 	}
 	
+	public String getString(Enum<?> key) {
+		return getString(key.toString());
+	}
+	
 	public Object getObj(String key) {
 		return map.get(key);
+	}
+	
+	public Object getObj(Enum<?> key) {
+		return getObj(key.toString());
+	}
+	
+	public void update(Config other) {
+		this.map.putAll(other.map);
 	}
 	
 	private static final Comparator<Entry<String,Object>> itemCmptor = new Comparator<Entry<String,Object>>(){
