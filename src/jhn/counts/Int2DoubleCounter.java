@@ -40,6 +40,12 @@ public class Int2DoubleCounter implements DoubleCounter<Integer> {
 		totalCount += count;
 	}
 	
+
+	@Override
+	public void set(Integer key, double count) {
+		set(key.intValue(), count);
+	}
+	
 	public double getCountD(int key) {
 		return counts.get(key);
 	}
@@ -124,4 +130,5 @@ public class Int2DoubleCounter implements DoubleCounter<Integer> {
 			((Int2DoubleOpenHashMap)counts).trim();
 		}
 	}
+
 }

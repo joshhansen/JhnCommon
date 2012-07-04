@@ -64,4 +64,23 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer> {
 		}
 		((IntIntCounter)counter).inc(value, inc);
 	}
+
+	@Override
+	public void set(Integer key, Integer value, Integer count) {
+		set(key.intValue(), value.intValue(), count.intValue());
+	}
+
+	@Override
+	public void set(Integer key, Integer value, int count) {
+		set(key.intValue(), value.intValue(), count);
+	}
+	
+	public void set(int key, int value, int count) {
+		Counter<Integer,Integer> counter = counters.get(key);
+		if(counter==null) {
+			counter = new IntIntCounter();
+			counters.put(key, counter);
+		}
+		((IntIntCounter)counter).set(value, count);
+	}
 }

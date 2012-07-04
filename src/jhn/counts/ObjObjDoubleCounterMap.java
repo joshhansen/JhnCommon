@@ -47,4 +47,19 @@ public class ObjObjDoubleCounterMap<K,V> implements DoubleCounterMap<K, V> {
 		}
 		((DoubleCounter<V>)counter).inc(value, inc);
 	}
+
+	@Override
+	public void set(K key, V value, Double count) {
+		set(key, value, count.doubleValue());
+	}
+
+	@Override
+	public void set(K key, V value, double count) {
+		Counter<V,Double> counter = counters.get(key);
+		if(counter==null) {
+			counter = new ObjDoubleCounter<V>();
+			counters.put(key, counter);
+		}
+		((DoubleCounter<V>)counter).set(value, count);
+	}
 }
