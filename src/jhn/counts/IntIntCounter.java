@@ -1,16 +1,16 @@
 package jhn.counts;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 import jhn.util.Util;
 
@@ -20,7 +20,7 @@ public class IntIntCounter implements IntCounter<Integer> {
 	private int totalCount = 0;
 	
 	public IntIntCounter() {
-		this(new Int2IntArrayMap());
+		this(new Int2IntOpenHashMap());
 	}
 	
 	public IntIntCounter(Int2IntMap map) {
