@@ -37,6 +37,16 @@
 		<artifactId>bliki-core</artifactId>
 		<version>3.0.18</version>
 	</dependency>
+	<dependency>
+		<groupId>bzip2</groupId>
+		<artifactId>bzip2</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	<dependency>
+		<groupId>wikixml-j</groupId>
+		<artifactId>wikixml-j</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
   </dependencies>
   
    <repositories>
@@ -51,4 +61,22 @@
 	       </snapshots>
 	   </repository>
   </repositories>
+   <build>
+   	<plugins>
+   		<plugin>
+   			<groupId>org.codehaus.mojo</groupId>
+   			<artifactId>exec-maven-plugin</artifactId>
+   			<version>1.2.1</version>
+   			
+ 		    <executions>
+                <execution>
+		            <goals>
+		              <goal>java</goal>
+		            </goals>
+                </execution>
+            </executions>
+   			
+   		</plugin>
+   	</plugins>
+   </build>
 </project>
