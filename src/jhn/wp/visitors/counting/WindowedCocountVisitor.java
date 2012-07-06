@@ -61,15 +61,16 @@ public class WindowedCocountVisitor extends Visitor {
 	
 	private void pairFound(int word1idx, int word2idx) throws Exception {
 		counts.inc(word1idx, word2idx);
-		currentChunkSize += 1;//FIXME This is lame
+		currentChunkSize += 1;
 		if(currentChunkSize >= chunkSize) {
 			System.err.println("Serializing");
 			currentChunkSize = 0;
 			ObjectOutputStream oos = nextStream();
-			oos.writeObject(counts);
+			counts.writeObject(oos);
 			oos.flush();
 			oos.close();
 			counts.reset();
+			System.gc();
 		}
 	}
 	
@@ -99,6 +100,7 @@ public class WindowedCocountVisitor extends Visitor {
 
 	@Override
 	public void afterEverything() {
+		words.trim();
 		Util.serialize(words, outputDir + "/words.idx");
 	}
 }
