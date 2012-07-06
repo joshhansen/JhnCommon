@@ -112,10 +112,9 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		}
 	};
 
-	private static final int END_OF_KEY = -1;
-	private static final int END_OF_FILE = -2;
+	public static final int END_OF_KEY = -1;
 	private static final int NULL_IDX = -3;
-	private void writeObject (ObjectOutputStream oos) throws IOException {
+	public void writeObject (ObjectOutputStream oos) throws IOException {
 		@SuppressWarnings("unchecked")
 		Int2ObjectMap.Entry<Counter<Integer,Integer>>[] entries = int2ObjectEntrySet().toArray(new Int2ObjectMap.Entry[0]);
 		Arrays.sort(entries, entryCmp);
@@ -134,8 +133,6 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 			
 			oos.writeInt(END_OF_KEY);
 		}
-		
-		oos.writeInt(END_OF_FILE);
 	}
 	
 	private void readObject (ObjectInputStream ois) throws IOException, ClassNotFoundException {
@@ -146,9 +143,6 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		 int count;
 		 while(ois.available() > 0) {
 			 word1idx = ois.readInt();
-			 if(word1idx==END_OF_FILE) {
-				 break;
-			 }
 			 
 			 word2idx = NULL_IDX;
 			 while(true) {
