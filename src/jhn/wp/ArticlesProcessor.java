@@ -217,7 +217,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 		final String errLogFilename = indexDir + "/main.err";
 		
 		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-		final String articlesFilename = srcDir + "/enwiki-20120104-pages-articles.xml.bz2";
+		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
 		
 		
 		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
