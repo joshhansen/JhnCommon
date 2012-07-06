@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntSet;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -29,9 +30,9 @@ public class CountReducer {
 		this.dir = dir;
 	}
 	
-	private boolean someStreamNotEmpty() throws Exception {
-		for(ObjectInputStream ois : in) {
-			if(ois.available() > 0) {
+	private boolean someStreamNotEmpty(int[] keys) throws Exception {
+		for(int key : keys) {
+			if(key != EMPTY_STREAM) {
 				return true;
 			}
 		}
@@ -71,27 +72,25 @@ public class CountReducer {
 		}
 	}
 	
-	private void readInts(int[] dest, int... indices) throws Exception {
-		for(int index : indices) {
-			if(in[index].available() <= 0) {
-				dest[index] = EMPTY_STREAM;
-			} else {
-				dest[index] = in[index].readInt();
-			} 
-		}
-	}
-	
 	private void reduce(String destFilename, File... srcFiles) throws Exception {
+		out = new ObjectOutputStream(new FileOutputStream(destFilename));
 		in = new ObjectInputStream[srcFiles.length];
 		for(int i = 0; i < srcFiles.length; i++) {
 			in[i] = new ObjectInputStream(new FileInputStream(srcFiles[i]));
 		}
 		
 		int[] keys = null;
-		while(someStreamNotEmpty()) {
+		do {
 			keys = updateKeys(keys);
 			processMinKeys(keys);
+		} while(someStreamNotEmpty(keys));
+		
+		// Clean up
+		out.close();
+		for(ObjectInputStream ois : in) {
+			ois.close();
 		}
+		
 	}
 	
 	private int[] updateKeys(int[] keys) throws Exception {
@@ -101,13 +100,11 @@ public class CountReducer {
 		}
 		for(int i = 0; i < keys.length; i++) {
 			if(keys[i]==KEY_READ) {
-				readInts(keys, i);
-				
-				if(in[i].available() <= 0) {
-					keys[i] = EMPTY_STREAM;
-				} else {
+				try {
 					keys[i] = in[i].readInt();
-				} 
+				} catch(EOFException e) {
+					keys[i] = EMPTY_STREAM;
+				}
 			}
 		}
 		return keys;
@@ -142,11 +139,10 @@ public class CountReducer {
 		out.writeInt(minKey);
 		
 		int[] subkeys = getSubkeys(keys, indices);
-		int minSubkey = minKey(subkeys);
-		IntList minSubkeyIndices = indicesMatching(keys, minKey);
-		
 		int sum;
 		do {
+			int minSubkey = minKey(subkeys);
+			IntList minSubkeyIndices = indicesMatching(subkeys, minSubkey);
 			sum = subValueSum(minSubkeyIndices);
 			
 			out.writeInt(minSubkey);
@@ -165,7 +161,7 @@ public class CountReducer {
 		out.writeInt(IntIntIntCounterMap.END_OF_KEY);
 	}
 	
-	private int subValueSum(IntList subkeyIndices) throws Exception {
+	private int subValueSum(IntList subkeyIndices) throws Exception {//FIXME
 		int[] values = new int[subkeyIndices.size()];
 		for(int i = 0; i < values.length; i++) {
 			values[i] = in[subkeyIndices.getInt(i)].readInt();
