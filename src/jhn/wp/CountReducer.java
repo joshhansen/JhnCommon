@@ -1,9 +1,7 @@
 package jhn.wp;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntArraySet;
 import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntSet;
 
 import java.io.EOFException;
 import java.io.File;
@@ -61,18 +59,28 @@ public class CountReducer {
 		return max+1;
 	}
 	
-	private static final int REDUCE_AT_A_TIME = 2;
+	private static final int REDUCE_AT_A_TIME = 3;
 	public void reduce() throws Exception {
 		while(true) {
 			File[] files = dir.listFiles(filter);
 			if(files.length <= 1) {
 				break;
 			}
-			reduce(nextFilename(), Arrays.copyOf(files, REDUCE_AT_A_TIME));
+			File[] subset = Arrays.copyOf(files, Math.min(files.length, REDUCE_AT_A_TIME));
+			reduce(nextFilename(), subset);
+			
+			for(File f : subset) {
+				f.delete();
+			}
 		}
 	}
 	
 	private void reduce(String destFilename, File... srcFiles) throws Exception {
+		System.out.println(destFilename);
+		for(File f : srcFiles) {
+			System.out.println("\t" + f.getName());
+		}
+		
 		out = new ObjectOutputStream(new FileOutputStream(destFilename));
 		in = new ObjectInputStream[srcFiles.length];
 		for(int i = 0; i < srcFiles.length; i++) {
@@ -82,15 +90,18 @@ public class CountReducer {
 		int[] keys = null;
 		do {
 			keys = updateKeys(keys);
+			if(!someStreamNotEmpty(keys)) {
+				break;
+			}
+			
 			processMinKeys(keys);
-		} while(someStreamNotEmpty(keys));
+		} while(true);
 		
 		// Clean up
 		out.close();
 		for(ObjectInputStream ois : in) {
 			ois.close();
 		}
-		
 	}
 	
 	private int[] updateKeys(int[] keys) throws Exception {
@@ -118,7 +129,7 @@ public class CountReducer {
 	private static int minKey(int... ints) {
 		int min = Integer.MAX_VALUE;
 		for(int i : ints) {
-			if(i < min && i != EMPTY_STREAM) {
+			if(i < min && i >= 0) {// gte 0 so we don't count error codes
 				min = i;
 			}
 		}
@@ -161,33 +172,23 @@ public class CountReducer {
 		out.writeInt(IntIntIntCounterMap.END_OF_KEY);
 	}
 	
-	private int subValueSum(IntList subkeyIndices) throws Exception {//FIXME
-		int[] values = new int[subkeyIndices.size()];
-		for(int i = 0; i < values.length; i++) {
-			values[i] = in[subkeyIndices.getInt(i)].readInt();
-		}
-		return sum(values);
-	}
-	
-	private static int sum(int... values) {
+	private int subValueSum(IntList subkeyIndices) throws Exception {
 		int sum = 0;
-		for(int value : values) {
-			sum += value;
+		for(int idx : subkeyIndices) {
+			sum += in[idx].readInt();
 		}
 		return sum;
 	}
 	
 	private void updateActiveSubkeys(int[] subkeys, IntList minSubkeyIndices) throws Exception {
 		for(int i : minSubkeyIndices) {
-			if(subkeys[i] != IntIntIntCounterMap.END_OF_KEY) {
-				subkeys[i] = in[i].readInt();
-			}
+			subkeys[i] = in[i].readInt();
 		}
 	}
 
 	private static boolean subkeysRemain(int[] subkeys) {
 		for(int i = 0; i < subkeys.length; i++) {
-			if(subkeys[i] != NULL && subkeys[i] != IntIntIntCounterMap.END_OF_KEY) {
+			if(subkeys[i] >= 0) {// gte 0 makes sure error code values are ignored
 				return true;
 			}
 		}
