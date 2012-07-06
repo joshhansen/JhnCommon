@@ -1,18 +1,17 @@
 package jhn.idx;
 
-import java.util.List;
-import java.util.Map;
-
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
+
+import java.util.List;
+import java.util.Map;
 
 public class StringIndex implements Index<String> {
 	public static final int KEY_NOT_FOUND = -1;
 	
 	private ObjectList<String> list = new ObjectArrayList<String>();
-	private Object2IntMap<String> map = new Object2IntOpenHashMap<String>();
+	private Object2IntOpenHashMap<String> map = new Object2IntOpenHashMap<String>();
 	
 	public StringIndex() {
 		map.defaultReturnValue(KEY_NOT_FOUND);
@@ -57,5 +56,9 @@ public class StringIndex implements Index<String> {
 	@Override
 	public boolean contains(String value) {
 		return map.containsKey(value);
+	}
+	
+	public void trim() {
+		map.trim();
 	}
 }
