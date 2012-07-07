@@ -1,5 +1,10 @@
 package jhn.wp.visitors;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import jhn.idx.StringIndex;
 import jhn.util.Util;
 
@@ -18,7 +23,26 @@ public class WordIndexingVisitor extends Visitor {
 
 	@Override
 	public void afterEverything() {
-		idx.trim();
-		Util.serialize(idx, outputFilename);
+		Util.serialize(idx, outputFilename+"_full");
+		
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outputFilename+"_reverse"));
+			idx.writeReverseIndex(out);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(outputFilename+"_fwd"));
+			idx.writeForwardIndex(out);
+			out.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

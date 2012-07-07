@@ -17,6 +17,7 @@ import jhn.wp.exceptions.DisambiguationPage;
 import jhn.wp.exceptions.RedirectException;
 import jhn.wp.visitors.PrintingVisitor;
 import jhn.wp.visitors.WordIndexingVisitor;
+import jhn.wp.visitors.WordSetVisitor;
 import jhn.wp.visitors.counting.WindowedCocountVisitor;
 import edu.jhu.nlp.wikipedia.PageCallbackHandler;
 import edu.jhu.nlp.wikipedia.WikiPage;
@@ -209,9 +210,26 @@ public class ArticlesProcessor extends CorpusProcessor {
 //		ac.process();
 //	}
 	
-	// Index words
+//	// Index words
+//	public static void main(String[] args) throws Exception {
+//		final String indexDir = Paths.outputDir("JhnCommon") + "/indices/words";
+//		
+//		final String logFilename = indexDir + "/main.log";
+//		final String errLogFilename = indexDir + "/main.err";
+//		
+//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
+//		
+//		
+//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+//		ac.addVisitor(new PrintingVisitor());
+//		ac.addVisitor(new WordIndexingVisitor(indexDir + "/words.idx"));
+//		ac.process();
+//	}
+	
+	// Aggregate words
 	public static void main(String[] args) throws Exception {
-		final String indexDir = Paths.outputDir("JhnCommon") + "/indices/words";
+		final String indexDir = Paths.outputDir("JhnCommon") + "/word_sets";
 		
 		final String logFilename = indexDir + "/main.log";
 		final String errLogFilename = indexDir + "/main.err";
@@ -222,7 +240,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 		
 		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
 		ac.addVisitor(new PrintingVisitor());
-		ac.addVisitor(new WordIndexingVisitor(indexDir + "/words.idx"));
+		ac.addVisitor(new WordSetVisitor(indexDir + "/words.set"));
 		ac.process();
 	}
 	
