@@ -15,6 +15,7 @@ import jhn.wp.exceptions.BadWikiTextException;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.exceptions.DisambiguationPage;
 import jhn.wp.exceptions.RedirectException;
+import jhn.wp.visitors.ChunkedWordSetVisitor;
 import jhn.wp.visitors.PrintingVisitor;
 import jhn.wp.visitors.WordIndexingVisitor;
 import jhn.wp.visitors.WordSetVisitor;
@@ -240,7 +241,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 		
 		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
 		ac.addVisitor(new PrintingVisitor());
-		ac.addVisitor(new WordSetVisitor(indexDir + "/words.set"));
+		ac.addVisitor(new ChunkedWordSetVisitor(1000, indexDir));
 		ac.process();
 	}
 	
