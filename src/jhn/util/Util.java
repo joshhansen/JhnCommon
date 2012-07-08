@@ -15,8 +15,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.tools.bzip2.CBZip2InputStream;
-import org.apache.tools.bzip2.CBZip2OutputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 
 public final class Util {
 	private Util(){}
@@ -26,7 +26,7 @@ public final class Util {
 			InputStream is = new FileInputStream(filename);
 			is.read();
 			is.read();
-			return new CBZip2InputStream(is);
+			return new BZip2CompressorInputStream(is);
 		} else {
 			return new FileInputStream(filename);
 		}
@@ -42,7 +42,7 @@ public final class Util {
 		if(buffered) os = new BufferedOutputStream(os);
 		
 		if(filename.endsWith(".bz2")) {
-			os = new CBZip2OutputStream(os);
+			os = new BZip2CompressorOutputStream(os);
 		} else if(filename.endsWith(".gz")) {
 			os = new GZIPOutputStream(os);
 		}
