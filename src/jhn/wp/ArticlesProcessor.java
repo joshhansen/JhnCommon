@@ -241,7 +241,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 		
 		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
 		ac.addVisitor(new PrintingVisitor());
-		ac.addVisitor(new ChunkedWordSetVisitor(10000000, indexDir+"/chunks"));
+		ac.addVisitor(new ChunkedWordSetVisitor(500000, 1000000, indexDir+"/chunks"));
 		ac.process();
 	}
 	
