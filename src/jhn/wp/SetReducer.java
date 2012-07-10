@@ -154,7 +154,7 @@ public class SetReducer {
 	
 	
 	public static void main(String[] args) throws Exception {
-		SetReducer sr = new SetReducer(new File(Paths.outputDir("JhnCommon") + "/word_sets/chunks2"));
+		SetReducer sr = new SetReducer(new File(Paths.outputDir("JhnCommon") + "/word_sets/chunks"));
 		sr.reduce();
 	}
 }
