@@ -47,12 +47,10 @@ public class StringIndex implements Index<String>, Serializable {
 		return list.size();
 	}
 
-	@Override
 	public List<String> list() {
 		return list;
 	}
 
-	@Override
 	public Map<String, Integer> map() {
 		return map;
 	}

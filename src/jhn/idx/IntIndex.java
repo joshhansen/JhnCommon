@@ -65,12 +65,10 @@ public class IntIndex implements Index<Integer>, Serializable {
 		return indexOfI(value.intValue(), addIfNotPresent);
 	}
 
-	@Override
 	public List<Integer> list() {
 		return list;
 	}
 
-	@Override
 	public Map<Integer, Integer> map() {
 		return map;
 	}
