@@ -30,7 +30,7 @@ public class CountReducer {
 	
 	private boolean someStreamNotEmpty(int[] keys) throws Exception {
 		for(int key : keys) {
-			if(key != EMPTY_STREAM) {
+			if(key >= 0) {
 				return true;
 			}
 		}
