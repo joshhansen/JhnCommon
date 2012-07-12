@@ -16,6 +16,8 @@ public interface Counter<T,N extends Number> {
 
 	Set<Entry<T, N>> entries();
 
+	int size();
+	
 	N totalCount();
 
 	List<Entry<T, N>> topN(int n);

@@ -73,4 +73,9 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	public Double getCount(T key) {
 		return counts.get(key);
 	}
+
+	@Override
+	public int size() {
+		return counts.size();
+	}
 }

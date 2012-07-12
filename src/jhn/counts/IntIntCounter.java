@@ -112,4 +112,9 @@ public class IntIntCounter implements IntCounter<Integer> {
 		return counts.int2IntEntrySet();
 	}
 
+	@Override
+	public int size() {
+		return counts.size();
+	}
+
 }

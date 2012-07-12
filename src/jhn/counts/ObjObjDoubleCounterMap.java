@@ -62,4 +62,14 @@ public class ObjObjDoubleCounterMap<K,V> implements DoubleCounterMap<K, V> {
 		}
 		((DoubleCounter<V>)counter).set(value, count);
 	}
+
+	@Override
+	public boolean containsKey(K key) {
+		return counters.containsKey(key);
+	}
+
+	@Override
+	public boolean containsValue(K key, V value) {
+		return getCount(key, value) > 0;
+	}
 }

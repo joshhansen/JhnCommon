@@ -14,5 +14,9 @@ public interface CounterMap<K, V, N extends Number> {
 	void set(K key, V value, N count);
 
 	Set<Entry<K, Counter<V,N>>> entrySet();
+	
+	boolean containsKey(K key);
+	
+	boolean containsValue(K key, V value);
 
 }

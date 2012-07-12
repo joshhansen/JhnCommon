@@ -160,4 +160,31 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 	public void reset() {
 		counters = newMap();
 	}
+	
+	/** The total number of (key,value) pairs in all counters */
+	public int totalSize() {
+		int total = 0;
+		for(Int2ObjectMap.Entry<Counter<Integer,Integer>> entry : int2ObjectEntrySet()) {
+			total += entry.getValue().size();
+		}
+		return total;
+	}
+
+	@Override
+	public boolean containsKey(Integer key) {
+		return counters.containsKey(key);
+	}
+	
+	public boolean containsKey(int key) {
+		return counters.containsKey(key);
+	}
+
+	@Override
+	public boolean containsValue(Integer key, Integer value) {
+		return containsValue(key.intValue(), value.intValue());
+	}
+	
+	public boolean containsValue(int key, int value) {
+		return getCount(key, value) > 0;
+	}
 }

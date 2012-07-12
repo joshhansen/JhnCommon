@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import jhn.ifaces.Trimmable;
+
 import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
 import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
-public class Int2DoubleCounter implements DoubleCounter<Integer> {
+public class Int2DoubleCounter implements DoubleCounter<Integer>, Trimmable {
 	private final Int2DoubleMap counts;
 	
 	private double totalCount = 0;
@@ -125,10 +127,16 @@ public class Int2DoubleCounter implements DoubleCounter<Integer> {
 		return getCountD(key.intValue());
 	}
 
+	@Override
 	public void trim() {
 		if(counts instanceof Int2DoubleOpenHashMap) {
 			((Int2DoubleOpenHashMap)counts).trim();
 		}
+	}
+
+	@Override
+	public int size() {
+		return counts.size();
 	}
 
 }
