@@ -6,28 +6,30 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import jhn.ifaces.Trimmable;
+
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public class StringIndex implements Index<String>, Serializable {
+public class RAMIndex<T> implements Index<T>, Serializable, Trimmable {
 	private static final long serialVersionUID = 1L;
 
 	public static final int KEY_NOT_FOUND = -1;
 	
-	private ObjectArrayList<String> list = new ObjectArrayList<String>();
-	private Object2IntOpenHashMap<String> map = new Object2IntOpenHashMap<String>();
+	private ObjectArrayList<T> list = new ObjectArrayList<T>();
+	private Object2IntOpenHashMap<T> map = new Object2IntOpenHashMap<T>();
 	
-	public StringIndex() {
+	public RAMIndex() {
 		map.defaultReturnValue(KEY_NOT_FOUND);
 	}
 	
 	@Override
-	public int indexOf(String value) {
+	public int indexOf(T value) {
 		return indexOf(value, true);
 	}
 
 	@Override
-	public int indexOf(String value, boolean addIfNotPresent) {
+	public int indexOf(T value, boolean addIfNotPresent) {
 		int idx = map.getInt(value);
 		if(addIfNotPresent && idx==KEY_NOT_FOUND) {
 			list.add(value);
@@ -38,7 +40,7 @@ public class StringIndex implements Index<String>, Serializable {
 	}
 
 	@Override
-	public String objectAt(int idx) {
+	public T objectAt(int idx) {
 		return list.get(idx);
 	}
 
@@ -47,19 +49,20 @@ public class StringIndex implements Index<String>, Serializable {
 		return list.size();
 	}
 
-	public List<String> list() {
+	public List<T> list() {
 		return list;
 	}
 
-	public Map<String, Integer> map() {
+	public Map<T, Integer> map() {
 		return map;
 	}
 
 	@Override
-	public boolean contains(String value) {
+	public boolean contains(T value) {
 		return map.containsKey(value);
 	}
 	
+	@Override
 	public void trim() {
 		list.trim();
 		map.trim();
