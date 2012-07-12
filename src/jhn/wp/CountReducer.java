@@ -59,7 +59,7 @@ public class CountReducer {
 		return max+1;
 	}
 	
-	private static final int REDUCE_AT_A_TIME = 3;
+	private static final int REDUCE_AT_A_TIME = 500;
 	public void reduce() throws Exception {
 		while(true) {
 			File[] files = dir.listFiles(filter);
@@ -75,7 +75,7 @@ public class CountReducer {
 		}
 	}
 	
-	private void reduce(String destFilename, File... srcFiles) throws Exception {
+	public void reduce(String destFilename, File... srcFiles) throws Exception {
 		System.out.println(destFilename);
 		for(File f : srcFiles) {
 			System.out.println("\t" + f.getName());
@@ -207,9 +207,45 @@ public class CountReducer {
 		return subkeys;
 	}
 	
+	private static class Monitor implements Runnable {
+		private static final int MIN_FILES = 10;
+		private static final int MAX_FILES = 200;
+		private final File dir;
+		private final CountReducer cr;
+		public Monitor(String dirPath) {
+			this.dir = new File(dirPath);
+			this.cr = new CountReducer(this.dir);
+		}
+		
+		@Override
+		public void run() {
+			while(true) {
+				File[] files = dir.listFiles(filter);
+				if()
+				
+				try {
+					Thread.sleep(60000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+//			while(true) {
+//				File[] files = dir.listFiles(filter);
+//				if(files.length <= 1) {
+//					break;
+//				}
+//				File[] subset = Arrays.copyOf(files, Math.min(files.length, REDUCE_AT_A_TIME));
+//				reduce(nextFilename(), subset);
+//				
+//				for(File f : subset) {
+//					f.delete();
+//				}
+//			}
+		}};
 	
 	public static void main(String[] args) throws Exception {
-		CountReducer cr = new CountReducer(new File(Paths.outputDir("JhnCommon") + "/cocounts/counts"));
+		CountReducer cr = new CountReducer(new File(Paths.outputDir("JhnCommon") + "/cocounts/counts/reduceme"));
 		cr.reduce();
 	}
 }
