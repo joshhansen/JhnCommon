@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import jhn.counts.IntIntIntCounterMap;
-import jhn.idx.StringIndex;
+import jhn.idx.DiskStringIndex;
+import jhn.idx.ReverseIndex;
+import jhn.ifaces.Trimmable;
 import jhn.util.Util;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
@@ -16,7 +18,7 @@ import jhn.wp.visitors.Visitor;
 public class WindowedCocountVisitor extends Visitor {
 	private int[] wordArr = new int[2];
 	private final int windowSize;
-	private StringIndex words = new StringIndex();
+	private final ReverseIndex<String> words;
 	private LinkedList<Integer> ll = new LinkedList<Integer>();
 	private final int chunkSize;
 	private int currentChunkSize = 0;
@@ -26,6 +28,7 @@ public class WindowedCocountVisitor extends Visitor {
 	private IntIntIntCounterMap counts = new IntIntIntCounterMap();
 	public WindowedCocountVisitor(String outputDir, int chunkSize, int windowSize) throws Exception {
 		this.outputDir = new File(outputDir);
+		this.words = new DiskStringIndex(indexFilename);
 		if(!this.outputDir.exists()) {
 			this.outputDir.mkdirs();
 		}
@@ -100,7 +103,9 @@ public class WindowedCocountVisitor extends Visitor {
 
 	@Override
 	public void afterEverything() {
-		words.trim();
+		if(words instanceof Trimmable) {
+			((Trimmable)words).trim();
+		}
 		Util.serialize(words, outputDir + "/words.idx");
 	}
 }

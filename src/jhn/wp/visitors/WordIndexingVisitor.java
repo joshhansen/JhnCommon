@@ -5,12 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import jhn.idx.StringIndex;
+import jhn.idx.RAMIndex;
 import jhn.util.Util;
 
 public class WordIndexingVisitor extends Visitor {
 	private final String outputFilename;
-	private final StringIndex idx = new StringIndex();
+	private final RAMIndex idx = new RAMIndex();
 	
 	public WordIndexingVisitor(String outputFilename) {
 		this.outputFilename = outputFilename;
