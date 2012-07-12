@@ -15,7 +15,15 @@ import jhn.util.Util;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+
 public class WindowedCocountVisitor extends Visitor {
+	private enum Compression {
+		NONE,
+		BZIP2,
+		GZIP
+	}
 	private int[] wordArr = new int[2];
 	private final int windowSize;
 	private final ReverseIndex<String> words;
@@ -37,7 +45,24 @@ public class WindowedCocountVisitor extends Visitor {
 	}
 	
 	private ObjectOutputStream nextStream() throws Exception {
-		return new ObjectOutputStream(new FileOutputStream(nextFilename()));
+		return nextStream(Compression.BZIP2);
+	}
+	
+	private ObjectOutputStream nextStream(Compression compression) throws Exception {
+		OutputStream os = new FileOutputStream(nextFilename());
+		
+		switch(compression) {
+			case BZIP2:
+				os = new BZip2CompressorOutputStream(os);
+				break;
+			case GZIP:
+				os = new GzipCompressorOutputStream(os);
+				break;
+			case NONE: default:
+				break;
+		}
+		
+		return new ObjectOutputStream(os);
 	}
 	
 	private String nextFilename() {
