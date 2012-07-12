@@ -53,7 +53,7 @@ public class AbstractLuceneVisitor extends LabelAwareVisitor {
 	}
 	
 	@Override
-	public void afterEverything() {
+	public void afterEverything() throws Exception {
 		try {
 			writer.close();
 		} catch (CorruptIndexException e) {

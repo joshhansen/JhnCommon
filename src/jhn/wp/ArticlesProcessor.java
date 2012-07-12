@@ -150,7 +150,11 @@ public class ArticlesProcessor extends CorpusProcessor {
 			e.printStackTrace();
 		}
 		
-		events.afterEverything();
+		try {
+			events.afterEverything();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	

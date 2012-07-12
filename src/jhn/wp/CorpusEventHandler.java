@@ -15,5 +15,5 @@ public interface CorpusEventHandler {
 
 	void afterLabel() throws Exception;
 
-	void afterEverything();
+	void afterEverything() throws Exception;
 }

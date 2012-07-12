@@ -68,7 +68,7 @@ public class CorpusEventDispatcher implements CorpusEventHandler {
 	}
 
 	@Override
-	public void afterEverything() {
+	public void afterEverything() throws Exception {
 		for (Visitor v : visitors) {
 			v.afterEverything();
 		}

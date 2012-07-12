@@ -27,7 +27,7 @@ public class WordCountVisitorTrie extends Visitor {
 	}
 
 	@Override
-	public void afterEverything() {
+	public void afterEverything() throws Exception {
 		super.afterEverything();
 		Util.serialize(counts, outputFilename);
 	}

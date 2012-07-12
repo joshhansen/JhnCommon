@@ -21,7 +21,7 @@ public class Visitor implements CorpusEventHandler {
 	public void afterLabel() throws Exception {}
 	
 	@Override
-	public void afterEverything() {}
+	public void afterEverything() throws Exception {}
 	
 	@Override
 	public void visitDocument(String text) {}

@@ -102,7 +102,7 @@ public class WindowedCocountVisitor extends Visitor {
 	}
 
 	@Override
-	public void afterEverything() {
+	public void afterEverything() throws Exception {
 		if(words instanceof Trimmable) {
 			((Trimmable)words).trim();
 		}
