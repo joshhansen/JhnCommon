@@ -6,6 +6,8 @@ import info.bliki.wiki.model.WikiModel;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jhn.Paths;
 import jhn.wp.exceptions.ArticleTooShort;
@@ -26,6 +28,9 @@ import edu.jhu.nlp.wikipedia.WikiXMLParser;
 import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 
 public class ArticlesProcessor extends CorpusProcessor {
+	private static final boolean PRINT_WIKI_TEXT = false;
+	private static final boolean PRINT_PLAIN_TEXT = PRINT_WIKI_TEXT;
+	
 	private final String wpdumpFilename;
 	
 	public ArticlesProcessor(String wpdumpFilename, String logFilename, String errLogFilename) throws FileNotFoundException {
@@ -58,10 +63,12 @@ public class ArticlesProcessor extends CorpusProcessor {
 						final String wikiText = page.getWikiText().replaceAll("<ref", " <ref");
 						assertWikiTextOK(wikiText, label);
 						
-//						System.out.println("-----------------------------WIKI TEXT----------------------------");
-//						
-//						System.out.println(wikiText);
-//						System.out.println();
+						if(PRINT_WIKI_TEXT) {
+							System.out.println("-----------------------------WIKI TEXT----------------------------");
+							
+							System.out.println(wikiText);
+							System.out.println();
+						}
 						
 						ok++;
 						if(ok % 100 == 0){
@@ -92,15 +99,21 @@ public class ArticlesProcessor extends CorpusProcessor {
 						}
 						log.print(".");
 //						System.out.println(label);
-						
-						String text = wikiToText3(wikiText).trim();
+						String headingsCleaned = cleanHeadings(wikiText);
+						String sansRefs = removeRefUrls(headingsCleaned);
+						String text = wikiToText3(sansRefs).trim();
 						
 						events.visitDocument(text);
 						
-						
-//						System.out.println("-----------------------------PLAIN TEXT----------------------------");
-//						System.out.println(text);
-//						System.out.println();
+						if(PRINT_PLAIN_TEXT) {
+//							System.out.println("-----------------------------HEADINGS------------------");
+//							System.out.println(headingsCleaned);
+//							System.out.println();
+							
+							System.out.println("-----------------------------PLAIN TEXT----------------------------");
+							System.out.println(text);
+							System.out.println();
+						}
 						
 						String[] tokens = tokenize(text);
 //						System.out.println("-----------------------------TOKENS----------------------------");
@@ -111,8 +124,8 @@ public class ArticlesProcessor extends CorpusProcessor {
 //						}
 //						System.out.println();
 						
-						for(String word : tokens) {
-							events.visitWord(word);
+						for(int tokenIdx = 0; tokenIdx < tokens.length; tokenIdx++) {
+							events.visitWord(tokens[tokenIdx]);
 						}
 						
 						events.afterLabel();
@@ -160,8 +173,26 @@ public class ArticlesProcessor extends CorpusProcessor {
 	
 	private static final WikiModel wikiModel = new WikiModel("http://www.mywiki.com/wiki/${image}", "http://www.mywiki.com/wiki/${title}");
 	private static final ITextConverter conv = new PlainTextConverter();
-	private String wikiToText3(String markup) {
+	private static String wikiToText3(String markup) {
 		return wikiModel.render(conv, markup);
+	}
+	
+	private static final Pattern refUrlRgx = Pattern.compile("<ref>[^<]+?</ref>");
+	private static String removeRefUrls(String markup) {
+		Matcher m = refUrlRgx.matcher(markup);
+//		while(m.find()) {
+//			System.err.println(m.group());
+//		}
+		return m.replaceAll(" ");
+	}
+	
+	private static final Pattern headingRgx = Pattern.compile("(==+)([^=]+?)\\1");
+	private static String cleanHeadings(String markup) {
+		Matcher m = headingRgx.matcher(markup);
+//		while(m.find()) {
+//			System.err.println(m.group());
+//		}
+		return m.replaceAll(" $2. ");
 	}
 	
 	private static String[] dontStartWithThese = {
@@ -196,24 +227,25 @@ public class ArticlesProcessor extends CorpusProcessor {
 		if(wikiText.startsWith("#REDIRECT")) throw new RedirectException(label);
 	}
 	
-//	// Generate chunked co-occurrence counts
-//	public static void main(String[] args) throws Exception {
-//		final String cocountsDir = Paths.outputDir("JhnCommon") + "/cocounts";
-//		final String outputDir = cocountsDir + "/counts";
-//		
-//		final String logFilename = cocountsDir + "/main.log";
-//		final String errLogFilename = cocountsDir + "/main.err";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120104-pages-articles.xml.bz2";
-//		
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new WindowedCocountVisitor(outputDir, 100000000, 20));
-////		ac.addVisitor(new WindowedCocountVisitor(outputDir, 1000, 20));
-//		ac.process();
-//	}
+	// Generate chunked co-occurrence counts
+	public static void main(String[] args) throws Exception {
+		final String cocountsDir = Paths.outputDir("JhnCommon") + "/cocounts";
+		final String outputDir = cocountsDir + "/phase1";
+		
+		final String logFilename = cocountsDir + "/main.log";
+		final String errLogFilename = cocountsDir + "/main.err";
+		
+		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+		final String articlesFilename = srcDir + "/enwiki-20120104-pages-articles.xml.bz2";
+		
+		final String wordIdxFilename = Paths.outputDir("JhnCommon") + "/word_sets/chunks/19.set";
+		
+		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+		ac.addVisitor(new PrintingVisitor());
+		ac.addVisitor(new WindowedCocountVisitor(outputDir, wordIdxFilename, 5000000, 6500000, 20));
+//		ac.addVisitor(new WindowedCocountVisitor(outputDir, 1000, 20));
+		ac.process();
+	}
 	
 //	// Index words
 //	public static void main(String[] args) throws Exception {
@@ -232,22 +264,22 @@ public class ArticlesProcessor extends CorpusProcessor {
 //		ac.process();
 //	}
 	
-	// Aggregate words
-	public static void main(String[] args) throws Exception {
-		final String indexDir = Paths.outputDir("JhnCommon") + "/word_sets";
-		
-		final String logFilename = indexDir + "/main.log";
-		final String errLogFilename = indexDir + "/main.err";
-		
-		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-		
-		
-		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-		ac.addVisitor(new PrintingVisitor());
-		ac.addVisitor(new ChunkedWordSetVisitor(500000, 1000000, indexDir+"/chunks"));
-		ac.process();
-	}
+//	// Aggregate words
+//	public static void main(String[] args) throws Exception {
+//		final String indexDir = Paths.outputDir("JhnCommon") + "/word_sets";
+//		
+//		final String logFilename = indexDir + "/main.log";
+//		final String errLogFilename = indexDir + "/main.err";
+//		
+//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
+//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
+//		
+//		
+//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
+//		ac.addVisitor(new PrintingVisitor());
+//		ac.addVisitor(new ChunkedWordSetVisitor(500000, 1000000, indexDir+"/chunks"));
+//		ac.process();
+//	}
 	
 //	// Index article text in Lucene
 //	public static void main(String[] args) throws FileNotFoundException {
