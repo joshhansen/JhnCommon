@@ -1,23 +1,20 @@
 package jhn.wp.visitors.counting;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
+
 import jhn.counts.IntIntIntCounterMap;
 import jhn.idx.DiskStringIndex;
 import jhn.idx.ReverseIndex;
-import jhn.ifaces.Trimmable;
-import jhn.util.Util;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
-
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
 public class WindowedCocountVisitor extends Visitor {
 	private enum Compression {
@@ -84,22 +81,9 @@ public class WindowedCocountVisitor extends Visitor {
 		return path + "/" + i + FILE_EXT;
 	}
 	
-	private static final FileFilter filter = new FileFilter(){
-		@Override
-		public boolean accept(File f) {
-			return f.getName().endsWith(FILE_EXT);
-		}
-	};
+	private int nextInt = 0;
 	private int nextInt() {
-		int max = -1;
-		int value;
-		for(File f : outputDir.listFiles(filter)) {
-			value = Integer.parseInt(f.getName().split("\\.")[0]);
-			if(value > max) {
-				max = value;
-			}
-		}
-		return max+1;
+		return nextInt++;
 	}
 	
 	private void pairFound(int word1idx, int word2idx) throws Exception {
@@ -164,10 +148,5 @@ public class WindowedCocountVisitor extends Visitor {
 	@Override
 	public void afterEverything() throws Exception {
 		writeCounts(baseCounts);
-		
-		if(words instanceof Trimmable) {
-			((Trimmable)words).trim();
-		}
-		Util.serialize(words, outputDir + "/words.idx");
 	}
 }
