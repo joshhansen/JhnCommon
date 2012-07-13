@@ -33,9 +33,9 @@ public class IntIntRAMCounter implements IntIntCounter {
 	}
 	
 	@Override
-	public void inc(final int key, final int count) {
-		counts.put(key, getCountI(key)+count);
-		totalCount += count;
+	public void inc(final int key, final int inc) {
+		counts.put(key, getCountI(key)+inc);
+		totalCount += inc;
 	}
 	
 	@Override

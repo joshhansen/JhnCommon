@@ -1,9 +1,12 @@
 package jhn.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Map.Entry;
+
+import jhn.counts.IntIntCounter;
+import jhn.counts.IntIntRAMCounter;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -11,10 +14,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import jhn.counts.Counter;
-import jhn.counts.IntIntCounter;
-
-public class IntIntCounterTest {
+public class IntIntRAMCounterTest {
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -34,7 +34,7 @@ public class IntIntCounterTest {
 
 	@Test
 	public void test() {
-		Counter c = new IntIntCounter();
+		IntIntCounter c = new IntIntRAMCounter();
 		
 		c.set(1, 10);
 		c.set(2, 5);

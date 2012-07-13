@@ -71,12 +71,12 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 	}
 	
 	public void inc(int key, int value, int inc) {
-		Counter<Integer,Integer> counter = counters.get(key);
+		IntIntCounter counter = (IntIntCounter) counters.get(key);
 		if(counter==null) {
 			counter = new IntIntRAMCounter();
 			counters.put(key, counter);
 		}
-		((IntIntRAMCounter)counter).inc(value, inc);
+		counter.inc(value, inc);
 	}
 
 	@Override
@@ -185,10 +185,10 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 	}
 	
 	public boolean containsValue(int key, int value) {
-		Counter<Integer,Integer> counter = counters.get(key);
+		IntIntCounter counter = (IntIntCounter) counters.get(key);
 		if(counter==null) {
 			return false;
 		}
-		return ((IntCounter<Integer>)counter).containsKey(value);
+		return counter.containsKey(value);
 	}
 }
