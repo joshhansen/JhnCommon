@@ -1,7 +1,7 @@
 package jhn.util;
 
 public class RandUtil {
-	private static final java.util.Random rand = new java.util.Random();
+	public static final java.util.Random rand = new java.util.Random();
 	public static <T> T randItem(T[] arr) {
 		return arr[rand.nextInt(arr.length)];
 	}
