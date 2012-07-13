@@ -15,16 +15,16 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
-public class Int2DoubleCounter implements DoubleCounter<Integer>, Trimmable {
+public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	private final Int2DoubleMap counts;
 	
 	private double totalCount = 0;
 	
-	public Int2DoubleCounter() {
+	public IntDoubleRAMCounter() {
 		this(new Int2DoubleOpenHashMap());
 	}
 	
-	public Int2DoubleCounter(Int2DoubleMap map) {
+	public IntDoubleRAMCounter(Int2DoubleMap map) {
 		this.counts = map;
 	}
 	
@@ -137,6 +137,21 @@ public class Int2DoubleCounter implements DoubleCounter<Integer>, Trimmable {
 	@Override
 	public int size() {
 		return counts.size();
+	}
+
+	@Override
+	public boolean containsKey(Integer key) {
+		return containsKey(key.intValue());
+	}
+
+	@Override
+	public boolean containsKey(int key) {
+		return counts.containsKey(key);
+	}
+
+	@Override
+	public double getCount(int key) {
+		return counts.get(key);
 	}
 
 }

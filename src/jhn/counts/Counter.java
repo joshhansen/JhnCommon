@@ -4,21 +4,23 @@ import java.util.List;
 import java.util.Set;
 import java.util.Map.Entry;
 
-public interface Counter<T,N extends Number> {
+public interface Counter<K,N extends Number> {
 
-	void inc(T key);
+	void inc(K key);
 
-	void inc(T key, N count);
+	void inc(K key, N count);
 
-	void set(T key, N count);
+	void set(K key, N count);
 
-	N getCount(T key);
+	N getCount(K key);
 
-	Set<Entry<T, N>> entries();
+	Set<Entry<K, N>> entries();
 
 	int size();
 	
 	N totalCount();
 
-	List<Entry<T, N>> topN(int n);
+	List<Entry<K, N>> topN(int n);
+	
+	boolean containsKey(K key);
 }

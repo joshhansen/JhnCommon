@@ -73,10 +73,10 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 	public void inc(int key, int value, int inc) {
 		Counter<Integer,Integer> counter = counters.get(key);
 		if(counter==null) {
-			counter = new IntIntCounter();
+			counter = new IntIntRAMCounter();
 			counters.put(key, counter);
 		}
-		((IntIntCounter)counter).inc(value, inc);
+		((IntIntRAMCounter)counter).inc(value, inc);
 	}
 
 	@Override
@@ -92,10 +92,10 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 	public void set(int key, int value, int count) {
 		Counter<Integer,Integer> counter = counters.get(key);
 		if(counter==null) {
-			counter = new IntIntCounter();
+			counter = new IntIntRAMCounter();
 			counters.put(key, counter);
 		}
-		((IntIntCounter)counter).set(value, count);
+		((IntIntRAMCounter)counter).set(value, count);
 	}
 	
 	private static final Comparator<Int2ObjectMap.Entry<?>> entryCmp = new Comparator<Int2ObjectMap.Entry<?>>(){
@@ -122,7 +122,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 			// Write word1idx
 			oos.writeInt(entry.getIntKey());
 			
-			Int2IntMap.Entry[] arr = ((IntIntCounter)entry.getValue()).int2IntEntrySet().toArray(new Int2IntMap.Entry[0]);
+			Int2IntMap.Entry[] arr = ((IntIntRAMCounter)entry.getValue()).int2IntEntrySet().toArray(new Int2IntMap.Entry[0]);
 			Arrays.sort(arr, countCmp);
 			for(Int2IntMap.Entry count : arr) {
 				// Write word2idx
@@ -185,6 +185,10 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 	}
 	
 	public boolean containsValue(int key, int value) {
-		return getCount(key, value) > 0;
+		Counter<Integer,Integer> counter = counters.get(key);
+		if(counter==null) {
+			return false;
+		}
+		return ((IntCounter<Integer>)counter).containsKey(value);
 	}
 }
