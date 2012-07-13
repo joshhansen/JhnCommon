@@ -99,8 +99,9 @@ public class ArticlesProcessor extends CorpusProcessor {
 						}
 						log.print(".");
 //						System.out.println(label);
-						String headingsCleaned = cleanHeadings(wikiText);
-						String sansRefs = removeRefUrls(headingsCleaned);
+//						String headingsCleaned = cleanHeadings(wikiText);
+						String fixedHeadings = fixBadHeadings(wikiText);
+						String sansRefs = removeRefUrls(fixedHeadings);
 						String text = wikiToText3(sansRefs).trim();
 						
 						events.visitDocument(text);
@@ -195,6 +196,30 @@ public class ArticlesProcessor extends CorpusProcessor {
 		return m.replaceAll(" $2. ");
 	}
 	
+	/** A "bad" heading is one followed by a single newline character rather than multiple newline characters. This is
+	 * "bad" because the wiki-to-plaintext converter mistakenly combines the heading text with the first word following.
+	 * 
+	 * For example:
+	 *    === HeaderA ===
+	 *    Some text
+	 *    
+	 *    === HeaderB ===
+	 *    
+	 *    Some text
+	 * 
+	 * becomes
+	 *     HeaderASome text
+	 *     HeaderB Some text
+	 * This produces many tokens that are the concatenation of two other tokens
+	 * */
+	private static final Pattern badHeading = Pattern.compile("(==+)([^=]+?)\\1\\n([^\\n])");
+	private static String fixBadHeadings(String markup) {
+		
+		Matcher m = badHeading.matcher(markup);
+		
+		return m.replaceAll("$1$2$1\n\n$3");
+	}
+	
 	private static String[] dontStartWithThese = {
 		"List of ",
 		"Portal:",
@@ -236,7 +261,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 		final String errLogFilename = cocountsDir + "/main.err";
 		
 		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-		final String articlesFilename = srcDir + "/enwiki-20120104-pages-articles.xml.bz2";
+		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
 		
 		final String wordIdxFilename = Paths.outputDir("JhnCommon") + "/word_sets/chunks/19.set";
 		
