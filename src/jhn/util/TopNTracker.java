@@ -8,7 +8,7 @@ import java.util.Queue;
 
 
 public class TopNTracker {
-	private final Queue<Double> topNItems = new PriorityQueue<Double>();
+	private final Queue<Double> topNItems = new PriorityQueue<>();
 	private final int n;
 	public TopNTracker(final int n) {
 		this.n = n;
@@ -20,7 +20,7 @@ public class TopNTracker {
 	}
 	
 	public List<Double> topN() {
-		List<Double> topN = new ArrayList<Double>(n);
+		List<Double> topN = new ArrayList<>(n);
 		while(!topNItems.isEmpty()) {
 			topN.add(topNItems.remove());
 		}

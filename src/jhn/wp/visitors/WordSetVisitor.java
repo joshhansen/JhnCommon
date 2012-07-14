@@ -6,7 +6,7 @@ import jhn.util.Util;
 
 public class WordSetVisitor extends Visitor {
 	private final String outputFilename;
-	private final ObjectOpenHashSet<String> words = new ObjectOpenHashSet<String>();
+	private final ObjectOpenHashSet<String> words = new ObjectOpenHashSet<>();
 	
 	public WordSetVisitor(String outputFilename) {
 		this.outputFilename = outputFilename;

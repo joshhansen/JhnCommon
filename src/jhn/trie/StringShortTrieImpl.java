@@ -13,19 +13,19 @@ public class StringShortTrieImpl implements StringShortTrie, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	private short value = defaultValue;
-	private Char2ObjectMap<StringShortTrieImpl> children = new Char2ObjectArrayMap<StringShortTrieImpl>();
+	private Char2ObjectMap<StringShortTrieImpl> children = new Char2ObjectArrayMap<>();
 	
 	@Override
-	public void put(String key, short value) {
+	public void put(String key, short newValue) {
 		if(key.length()==0) {
-			this.value = value;
+			this.value = newValue;
 		} else {
 			StringShortTrieImpl child = firstChildFor(key);
 			if(child == null) {
 				child = new StringShortTrieImpl();
 				children.put(firstChar(key), child);
 			}
-			child.put(remainder(key), value);
+			child.put(remainder(key), newValue);
 		}
 	}
 

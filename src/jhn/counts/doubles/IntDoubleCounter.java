@@ -1,4 +1,6 @@
-package jhn.counts;
+package jhn.counts.doubles;
+
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 /** A counter whose keys are integers and whose counts are doubles */
 public interface IntDoubleCounter extends DoubleCounter<Integer> {
@@ -11,4 +13,7 @@ public interface IntDoubleCounter extends DoubleCounter<Integer> {
 	boolean containsKey(int key);
 	
 	double getCount(int key);
+	
+	@Override
+	IntSet keySet();
 }

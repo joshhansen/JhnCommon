@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 public class Config implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
-	private final Map<String,Object> map = new HashMap<String,Object>();
+	private final Map<String,Object> map = new HashMap<>();
 
 	public boolean containsKey(String key) {
 		return map.containsKey(key);

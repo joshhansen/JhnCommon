@@ -1,4 +1,4 @@
-package jhn.counts;
+package jhn.counts.doubles;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,15 +9,19 @@ import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 public class ObjDoubleCounter<T> implements DoubleCounter<T> {
-	private final Object2DoubleMap<T> counts = new Object2DoubleOpenHashMap<T>();
+	private final Object2DoubleMap<T> counts = new Object2DoubleOpenHashMap<>();
 	
 	private double totalCount = 0.0;
+	
+	@Override
 	public Double inc(final T key) {
 		return Double.valueOf(inc(key, 1.0));
 	}
 	
+	@Override
 	public double inc(final T key, final double count) {
 		final double newVal = getCountD(key)+count;
 		counts.put(key, newVal);
@@ -25,19 +29,23 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 		return newVal;
 	}
 	
+	@Override
 	public void set(final T key, final double count) {
 		totalCount -= counts.put(key, count);
 		totalCount += count;
 	}
 	
+	@Override
 	public double getCountD(final T key) {
 		return counts.getDouble(key);
 	}
 	
+	@Override
 	public Set<Entry<T,Double>> entries() {
 		return counts.entrySet();
 	}
 	
+	@Override
 	public double totalCountD() {
 		return totalCount;
 	}
@@ -66,9 +74,9 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	};
 	@Override
 	public List<Entry<T, Double>> topN(int n) {
-		List<Entry<T,Double>> entries = new ArrayList<Entry<T,Double>>(entries());
+		List<Entry<T,Double>> entries = new ArrayList<>(entries());
 		Collections.sort(entries, cmp);
-		return new ArrayList<Entry<T,Double>>(entries.subList(0, Math.min(n, entries.size())));
+		return new ArrayList<>(entries.subList(0, Math.min(n, entries.size())));
 	}
 
 	@Override
@@ -84,5 +92,15 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	@Override
 	public boolean containsKey(T key) {
 		return counts.containsKey(key);
+	}
+
+	@Override
+	public ObjectSet<T> keySet() {
+		return counts.keySet();
+	}
+
+	@Override
+	public void reset() {
+		counts.clear();
 	}
 }

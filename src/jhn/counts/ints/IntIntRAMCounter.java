@@ -1,4 +1,4 @@
-package jhn.counts;
+package jhn.counts.ints;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
@@ -34,22 +34,32 @@ public class IntIntRAMCounter implements IntIntCounter {
 	}
 	
 	@Override
-	public int inc(final int key, final int inc) {
-		final int newVal = getCountI(key)+inc;
+	public int inc(int key, int inc) {
+		final int newVal = getCount(key)+inc;
 		counts.put(key, newVal);
 		totalCount += inc;
 		return newVal;
 	}
 	
 	@Override
-	public void set(final int key, final int count) {
-		totalCount -= getCountI(key);
+	public int incI(Integer key) {
+		return inc(key.intValue());
+	}
+	
+	@Override
+	public void set(int key, int count) {
+		totalCount -= getCount(key);
 		counts.put(key, count);
 		totalCount += count;
 	}
 	
 	@Override
-	public int getCountI(int key) {
+	public void set(Integer key, int count) {
+		set(key.intValue(), count);
+	}
+	
+	@Override
+	public int getCount(int key) {
 		return counts.get(key);
 	}
 
@@ -70,8 +80,9 @@ public class IntIntRAMCounter implements IntIntCounter {
 		}
 	};
 	
+	@Override
 	public List<Entry<Integer,Integer>> topN(int n) {
-		ObjectList<Entry<Integer,Integer>> entries = new ObjectArrayList<Entry<Integer,Integer>>(entries());
+		ObjectList<Entry<Integer,Integer>> entries = new ObjectArrayList<>(entries());
 		Collections.sort(entries, cmp);
 		return entries.subList(0, Math.min(n, entries.size()));
 	}
@@ -84,7 +95,7 @@ public class IntIntRAMCounter implements IntIntCounter {
 	};
 	
 	public List<Int2IntMap.Entry> fastTopN(int n) {
-		ObjectList<Int2IntMap.Entry> entries = new ObjectArrayList<Int2IntMap.Entry>(int2IntEntrySet());
+		ObjectList<Int2IntMap.Entry> entries = new ObjectArrayList<>(int2IntEntrySet());
 		Collections.sort(entries, fastCmp);
 		return entries.subList(0, Math.min(n, entries.size()));
 	}
@@ -131,7 +142,7 @@ public class IntIntRAMCounter implements IntIntCounter {
 
 	@Override
 	public int getCountI(Integer key) {
-		return getCountI(key.intValue());
+		return getCount(key.intValue());
 	}
 
 	@Override
@@ -152,6 +163,11 @@ public class IntIntRAMCounter implements IntIntCounter {
 	@Override
 	public IntSet keySetI() {
 		return counts.keySet();
+	}
+
+	@Override
+	public void reset() {
+		counts.clear();
 	}
 
 }

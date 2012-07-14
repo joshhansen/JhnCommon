@@ -1,4 +1,6 @@
-package jhn.counts;
+package jhn.counts.doubles;
+
+import jhn.counts.CounterMap;
 
 public interface DoubleCounterMap<K,V> extends CounterMap<K,V,Double> {
 	double getCountD(K key, V value);

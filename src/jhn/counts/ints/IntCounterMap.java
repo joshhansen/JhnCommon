@@ -1,4 +1,6 @@
-package jhn.counts;
+package jhn.counts.ints;
+
+import jhn.counts.CounterMap;
 
 public interface IntCounterMap<K,V> extends CounterMap<K,V,Integer> {
 	int getCountI(K key, V value);

@@ -20,12 +20,12 @@ public abstract class CorpusProcessor {
 
 	public abstract void process() throws Exception;
 	
-	protected boolean isStopword(String s) {
+	protected static boolean isStopword(String s) {
 		return Util.stopwords().contains(s);
 	}
 	
 	private static final Pattern tokenSplitRgx = Pattern.compile("[^a-z]");
-	protected String[] tokenize(final String s) {
+	protected static String[] tokenize(final String s) {
 		return tokenSplitRgx.split(s.toLowerCase());
 	}
 	

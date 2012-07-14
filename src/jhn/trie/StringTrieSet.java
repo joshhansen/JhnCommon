@@ -14,7 +14,7 @@ public class StringTrieSet implements StringSet, Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private boolean value = false;
-	private Char2ObjectMap<StringTrieSet> children = new Char2ObjectArrayMap<StringTrieSet>();
+	private Char2ObjectMap<StringTrieSet> children = new Char2ObjectArrayMap<>();
 	
 	@Override
 	public void add(String s) {
@@ -67,32 +67,32 @@ public class StringTrieSet implements StringSet, Serializable {
 		
 	}
 
-	private class STSIterator implements Iterator<String> {
-		private StringTrieSet parent;
-		private StringTrieSet current;
-		
-		public STSIterator() {
-			
-		}
-		@Override
-		public boolean hasNext() {
-			// TODO Auto-generated method stub
-			return false;
-		}
-
-		@Override
-		public String next() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void remove() {
-			// TODO Auto-generated method stub
-			
-		}
-		
-	}
+//	private class STSIterator implements Iterator<String> {
+//		private StringTrieSet parent;
+//		private StringTrieSet current;
+//		
+//		public STSIterator() {
+//			
+//		}
+//		@Override
+//		public boolean hasNext() {
+//			// TODO Auto-generated method stub
+//			return false;
+//		}
+//
+//		@Override
+//		public String next() {
+//			// TODO Auto-generated method stub
+//			return null;
+//		}
+//
+//		@Override
+//		public void remove() {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//		
+//	}
 	
 	@Override
 	public Iterator<String> iterator() {

@@ -27,12 +27,11 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 	
 	@Override
 	public void process() {
-		int count = 0;
-		try {
+		try(BufferedReader r = new BufferedReader(Util.smartReader(categoryCategoriesFilename))) {
 			events.beforeEverything();
 			
 			String prevLabel = null;
-			BufferedReader r = new BufferedReader(Util.smartReader(categoryCategoriesFilename));
+			
 			String line = null;
 			
 			boolean everMatched = false;
@@ -64,12 +63,11 @@ public class CategoryCategoryProcessor extends CorpusProcessor {
 					} else {
 						System.err.println("Can't parse line: " + line);
 					}
-					count++;
 				}
 			}
-			r.close();
 			
 			if(everMatched) events.afterLabel();
+			
 			events.afterEverything();
 		} catch(Exception e) {
 			e.printStackTrace();

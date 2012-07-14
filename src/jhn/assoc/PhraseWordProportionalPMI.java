@@ -65,10 +65,10 @@ public class PhraseWordProportionalPMI implements AssociationMeasure<String,Stri
 		for(int i = 0; i < words.length; i++) {
 			totalPMI += smartLog(jointCounts[i]) - logLabelCount - smartLog(wordCounts[i]);
 		}
-		return totalPMI / (double) words.length;
+		return totalPMI / words.length;
 	}
 	
-	protected int[] jointCounts(ScoreDoc[] labelDocs, String... words) throws ParseException, IOException {
+	protected int[] jointCounts(ScoreDoc[] labelDocs, String... words) throws IOException {
 		int[] counts = new int[words.length];
 		
 		for(int i = 0; i < labelDocs.length; i++) {

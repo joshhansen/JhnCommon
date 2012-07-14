@@ -1,31 +1,26 @@
 package jhn.wp.visitors.counting;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 
-import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
-
-import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-
-import jhn.counts.IntIntCounter;
-import jhn.counts.IntIntIntCounterMap;
-import jhn.counts.IntIntRAMCounter;
+import jhn.counts.ints.IntIntCounter;
+import jhn.counts.ints.IntIntIntCounterMap;
+import jhn.counts.ints.IntIntRAMCounter;
 import jhn.idx.DiskStringIndex;
 import jhn.idx.ReverseIndex;
 import jhn.wp.CountReducer;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
+
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
 public class WindowedCocountVisitor extends Visitor {
 	private enum Compression {
@@ -38,7 +33,7 @@ public class WindowedCocountVisitor extends Visitor {
 	private int[] wordArr = new int[2];
 	private final int windowSize;
 	private final ReverseIndex<String> words;
-	private LinkedList<Integer> ll = new LinkedList<Integer>();
+	private LinkedList<Integer> ll = new LinkedList<>();
 	private final int chunkSize;
 	private int currentChunkSize = 0;
 	private final File outputDir;
@@ -82,7 +77,7 @@ public class WindowedCocountVisitor extends Visitor {
 	
 	private IntIntCounter fileNumByDepth = new IntIntRAMCounter(new Int2IntArrayMap());
 	private File nextFile(int depth) {
-		int next = fileNumByDepth.getCountI(depth);
+		int next = fileNumByDepth.getCount(depth);
 		fileNumByDepth.inc(depth);
 		return new File(depthDir(depth).getPath() + "/" + next + FILE_EXT);
 	}
@@ -140,10 +135,10 @@ public class WindowedCocountVisitor extends Visitor {
 		}
 	}
 	
-	private void writeCounts(IntIntIntCounterMap counts, File destFile) throws Exception {
-		ObjectOutputStream oos = stream(destFile);
-		counts.writeObject(oos);
-		oos.close();
+	private void writeCounts(IntIntIntCounterMap theCounts, File destFile) throws Exception {
+		try(ObjectOutputStream oos = stream(destFile)) {
+			theCounts.writeObject(oos);
+		}
 	}
 
 	@Override

@@ -21,15 +21,12 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
 public final class Util {
 	private Util(){}
 	
+	@SuppressWarnings("resource")
 	public static InputStream smartInputStream(final String filename) throws IOException {
 		if(filename.endsWith(".bz2")) {
-			InputStream is = new FileInputStream(filename);
-			is.read();
-			is.read();
-			return new BZip2CompressorInputStream(is);
-		} else {
-			return new FileInputStream(filename);
+			return new BZip2CompressorInputStream(new FileInputStream(filename));
 		}
+		return new FileInputStream(filename);
 	}
 	
 	public static OutputStream smartOutputStream(final String filename) throws IOException {
@@ -54,28 +51,26 @@ public final class Util {
 	}
 	
 	public static void serialize(final Object obj, final String outputFilename) {
-		try {
-			OutputStream os = smartOutputStream(outputFilename);
-			ObjectOutputStream out = new ObjectOutputStream(os);
+		try(OutputStream os = smartOutputStream(outputFilename);
+			ObjectOutputStream out = new ObjectOutputStream(os)) {
+			
 			out.writeObject(obj);
-			out.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 	
 	public static Object deserialize(final String filename) throws FileNotFoundException, IOException, ClassNotFoundException {
-		ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename));
-		Object obj = ois.readObject();
-		ois.close();
-		return obj;
+		try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {
+			return ois.readObject();
+		}
 	}
 	
 	/** From Mallet 2.0.7 */
 	public static Set<String> stopwords() {
-		final Set<String> stopwords = new HashSet<String>();
-		for(String stopword : Util.stopwords) stopwords.add(stopword);
-		return stopwords;
+		final Set<String> stopwordSet = new HashSet<>();
+		for(String stopword : Util.stopwords) stopwordSet.add(stopword);
+		return stopwordSet;
 	}
 	private static final String[] stopwords = { "a", "able", "about", "above",
 			"according", "accordingly", "across", "actually", "after",
@@ -166,14 +161,12 @@ public final class Util {
 			// "approach"
 	};
 	
-	private static Integer charCount = 0;
+	private static int charCount = 0;
 	private static final int CHAROUT_NEWLINE_INTERVAL = 120;
-	public static void charout(char c) {
+	public static synchronized void charout(char c) {
 		System.out.print(c);
-		synchronized(charCount) {
-			charCount++;
-			if(charCount % CHAROUT_NEWLINE_INTERVAL == 0) System.out.println();
-		}
+		charCount++;
+		if(charCount % CHAROUT_NEWLINE_INTERVAL == 0) System.out.println();
 	}
 	
 	public static int compareInts(int i1, int i2) {

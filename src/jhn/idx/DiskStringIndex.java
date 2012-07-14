@@ -12,20 +12,17 @@ import jhn.Paths;
 public class DiskStringIndex implements ReverseIndex<String> {
 	private String[] arr;
 	public DiskStringIndex(String filename) throws IOException {
-//		arr = new String[]{"cat", "dog", "zebra"};
-		BufferedReader r = new BufferedReader(new FileReader(filename));
-		
-		ObjectArrayList<String> list = new ObjectArrayList<String>();
-		String line = null;
-		while( (line=r.readLine()) != null) {
-			list.add(line);
+		try(BufferedReader r = new BufferedReader(new FileReader(filename))) {
+			ObjectArrayList<String> list = new ObjectArrayList<>();
+			String line = null;
+			while( (line=r.readLine()) != null) {
+				list.add(line);
+			}
+			
+			System.out.println("Loaded");
+			arr = list.toArray(new String[0]);
+			System.out.println("Array'd");
 		}
-		
-		r.close();
-		
-		System.out.println("Loaded");
-		arr = list.toArray(new String[0]);
-		System.out.println("Array'd");
 	}
 
 	@Override

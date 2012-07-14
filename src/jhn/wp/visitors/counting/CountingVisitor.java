@@ -6,6 +6,7 @@ public abstract class CountingVisitor extends Visitor {
 
 	private int count;
 	
+	@Override
 	public void beforeEverything() {
 		count = 0;
 	}

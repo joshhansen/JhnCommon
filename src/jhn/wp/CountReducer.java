@@ -11,7 +11,7 @@ import java.util.Arrays;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
-import jhn.counts.IntIntIntCounterMap;
+import jhn.counts.ints.IntIntIntCounterMap;
 
 public class CountReducer implements Runnable {
 	private static final int EMPTY_STREAM = -10;
@@ -28,7 +28,7 @@ public class CountReducer implements Runnable {
 		this.dest = dest;
 	}
 	
-	private boolean someStreamNotEmpty(int[] keys) throws Exception {
+	private static boolean someStreamNotEmpty(int[] keys) throws Exception {
 		for(int key : keys) {
 			if(key >= 0) {
 				return true;
@@ -120,7 +120,7 @@ public class CountReducer implements Runnable {
 	private void processMinKey(int[] keys, int minKey, IntList indices) throws Exception {
 		out.writeInt(minKey);
 		
-		int[] subkeys = getSubkeys(keys, indices);
+		int[] subkeys = getSubkeys(indices);
 		int sum;
 		do {
 			int minSubkey = minKey(subkeys);
@@ -166,7 +166,7 @@ public class CountReducer implements Runnable {
 		return false;
 	}
 	
-	private int[] getSubkeys(int[] keys, IntList indices) throws Exception {
+	private int[] getSubkeys(IntList indices) throws Exception {
 		int[] subkeys = new int[in.length];
 		for(int i = 0; i < subkeys.length; i++) {
 			if(!indices.contains(i)) {

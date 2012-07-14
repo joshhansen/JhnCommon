@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.List;
 import java.util.Map.Entry;
 
-import jhn.counts.IntIntCounter;
-import jhn.counts.IntIntRAMCounter;
+import jhn.counts.ints.IntIntCounter;
+import jhn.counts.ints.IntIntRAMCounter;
 
 import org.junit.After;
 import org.junit.AfterClass;

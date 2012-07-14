@@ -1,4 +1,6 @@
-package jhn.counts;
+package jhn.counts.doubles;
+
+import jhn.counts.Counter;
 
 /** A counter whose counts are doubles */
 public interface DoubleCounter<T> extends Counter<T,Double> {

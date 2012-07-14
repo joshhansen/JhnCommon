@@ -25,4 +25,6 @@ public interface Counter<K,N extends Number> {
 	boolean containsKey(K key);
 	
 	Set<K> keySet();
+	
+	void reset();
 }

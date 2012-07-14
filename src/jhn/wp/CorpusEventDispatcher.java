@@ -9,7 +9,7 @@ import jhn.wp.visitors.Visitor;
 
 public class CorpusEventDispatcher implements CorpusEventHandler {
 	
-	private List<Visitor> visitors = new ArrayList<Visitor>();
+	private List<Visitor> visitors = new ArrayList<>();
 
 	public void addVisitor(Visitor v) {
 		visitors.add(v);

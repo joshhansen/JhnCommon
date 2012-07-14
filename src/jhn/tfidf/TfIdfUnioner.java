@@ -6,15 +6,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import jhn.util.Util;
+import jhn.wp.Fields;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.index.TermFreqVector;
-import org.apache.lucene.store.NIOFSDirectory;
-
-import jhn.util.Util;
-import jhn.wp.Fields;
+import org.apache.lucene.store.FSDirectory;
 
 public class TfIdfUnioner {
 	private static class TermScore implements Comparable<TermScore> {
@@ -42,10 +42,8 @@ public class TfIdfUnioner {
 		final String srcLuceneIdxDir = outputDir + "/indices/topic_words/wp_lucene4";
 		final String dest = outputDir + "/featsel/tfidfTop" + N + ".ser";
 		
-		try {
-			IndexReader r = IndexReader.open(NIOFSDirectory.open(new File(srcLuceneIdxDir)));
-			
-			Set<String> selected = new HashSet<String>();
+		try(IndexReader r = IndexReader.open(FSDirectory.open(new File(srcLuceneIdxDir)))) {
+			Set<String> selected = new HashSet<>();
 			
 			final int numDocs = r.numDocs();
 			final double logNumDocs = Math.log(numDocs);

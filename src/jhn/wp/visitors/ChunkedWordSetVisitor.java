@@ -28,7 +28,7 @@ public class ChunkedWordSetVisitor extends Visitor {
 	}
 
 	private static ObjectSet<String> newSet() {
-		return new ObjectOpenHashSet<String>();
+		return new ObjectOpenHashSet<>();
 	}
 	
 	@Override
@@ -74,15 +74,13 @@ public class ChunkedWordSetVisitor extends Visitor {
 	}
 	
 	private static void writeSet(ObjectSet<String> set, String filename) {
-		try {
-			BufferedWriter w = new BufferedWriter(new FileWriter(filename));
+		try(BufferedWriter w = new BufferedWriter(new FileWriter(filename))) {
 			String[] arr = set.toArray(new String[0]);
 			Arrays.sort(arr);
 			for(String s : arr) {
 				w.write(s);
 				w.newLine();
 			}
-			w.close();
 		} catch(IOException e) {
 			e.printStackTrace();
 		}

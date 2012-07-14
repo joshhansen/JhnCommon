@@ -10,6 +10,7 @@ public abstract class SerializingVisitor<T> extends Visitor {
 		this.outputFilename = outputFilename;
 	}
 
+	@Override
 	public void afterEverything() {
 		Util.serialize(index, outputFilename);
 	}

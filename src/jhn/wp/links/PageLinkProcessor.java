@@ -26,12 +26,10 @@ public class PageLinkProcessor extends CorpusProcessor {
 	private static final Pattern lineRgx = Pattern.compile(lineS);
 	@Override
 	public void process() {
-		int count = 0;
-		try {
+		try(BufferedReader r = new BufferedReader(Util.smartReader(pageLinksFilename))) {
 			events.beforeEverything();
 			
 			String prevLabel = null;
-			BufferedReader r = new BufferedReader(Util.smartReader(pageLinksFilename));
 			String line = null;
 			
 			boolean everMatched = false;
@@ -62,11 +60,10 @@ public class PageLinkProcessor extends CorpusProcessor {
 				} else {
 					System.err.println("Can't parse line: " + line);
 				}
-				count++;
 			}
-			r.close();
 			
 			if(everMatched) events.afterLabel();
+			
 			events.afterEverything();
 		} catch(Exception e) {
 			e.printStackTrace();

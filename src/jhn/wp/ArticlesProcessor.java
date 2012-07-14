@@ -45,6 +45,8 @@ public class ArticlesProcessor extends CorpusProcessor {
 		int ok = 0;
 		int tooShort = 0;
 		int total = 0;
+		
+		@Override
 		public void process(WikiPage page) {
 			total++;
 			final String label = page.getTitle().trim();
@@ -217,7 +219,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 //		"ISO 639:" /* redirects to languages */
 	};
 	
-	private void assertLabelOK(String label) throws BadLabel {
+	private static void assertLabelOK(String label) throws BadLabel {
 		for(String badStart : dontStartWithThese) {
 			if(label.startsWith(badStart)) throw new BadLabelPrefix(label);
 		}
@@ -227,7 +229,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 		}
 	}
 	
-	private void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {
+	private static void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {
 		if(wikiText.startsWith("#REDIRECT")) throw new RedirectException(label);
 	}
 	

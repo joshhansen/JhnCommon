@@ -1,4 +1,4 @@
-package jhn.counts;
+package jhn.counts.ints;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import jhn.counts.Counter;
 import jhn.util.Util;
 
 public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Serializable {
@@ -21,7 +22,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 	private Int2ObjectMap<Counter<Integer,Integer>> counters = newMap();
 
 	private static Int2ObjectMap<Counter<Integer,Integer>> newMap() {
-		return new Int2ObjectOpenHashMap<Counter<Integer,Integer>>();
+		return new Int2ObjectOpenHashMap<>();
 	}
 	
 	@Override
@@ -63,7 +64,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		if(counter==null) {
 			return 0;
 		}
-		return ((IntCounter<Integer>)counter).getCountI(value);
+		return ((IntIntCounter)counter).getCount(value);
 	}
 	
 	public void inc(int key, int value) {
@@ -135,8 +136,8 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		}
 	}
 	
-	private void readObject (ObjectInputStream ois) throws IOException, ClassNotFoundException {
-		 counters = new Int2ObjectOpenHashMap<Counter<Integer,Integer>>();
+	private void readObject (ObjectInputStream ois) throws IOException {
+		 counters = new Int2ObjectOpenHashMap<>();
 		 
 		 int word1idx;
 		 int word2idx;

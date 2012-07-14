@@ -1,4 +1,4 @@
-package jhn.counts;
+package jhn.counts.doubles;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +11,7 @@ import jhn.ifaces.Trimmable;
 
 import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
 import it.unimi.dsi.fastutil.ints.Int2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -28,10 +29,12 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 		this.counts = map;
 	}
 	
+	@Override
 	public double inc(final int key) {
 		return inc(key, 1);
 	}
 	
+	@Override
 	public double inc(final int key, final double count) {
 		final double newVal = getCountD(key)+count;
 		counts.put(key, newVal);
@@ -39,11 +42,11 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 		return newVal;
 	}
 	
+	@Override
 	public void set(final int key, final double count) {
 		totalCount -= counts.put(key, count);
 		totalCount += count;
 	}
-	
 
 	@Override
 	public void set(Integer key, double count) {
@@ -66,12 +69,12 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 		}
 	};
 	
+	@Override
 	public List<Entry<Integer,Double>> topN(int n) {
-		List<Entry<Integer,Double>> entries = new ArrayList<Entry<Integer,Double>>(entries());
+		List<Entry<Integer,Double>> entries = new ArrayList<>(entries());
 		Collections.sort(entries, cmp);
 		return entries.subList(0, Math.min(n, entries.size()));
 	}
-	
 	
 	public static final Comparator<Int2DoubleMap.Entry> fastCmp = new Comparator<Int2DoubleMap.Entry>(){
 		@Override
@@ -80,7 +83,7 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 		}
 	};
 	public List<Int2DoubleMap.Entry> fastTopN(int n) {
-		ObjectList<Int2DoubleMap.Entry> entries = new ObjectArrayList<Int2DoubleMap.Entry>(int2DoubleEntrySet());
+		ObjectList<Int2DoubleMap.Entry> entries = new ObjectArrayList<>(int2DoubleEntrySet());
 		Collections.sort(entries, fastCmp);
 		return entries.subList(0, Math.min(n, entries.size()));
 	}
@@ -154,6 +157,16 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	@Override
 	public double getCount(int key) {
 		return counts.get(key);
+	}
+
+	@Override
+	public IntSet keySet() {
+		return counts.keySet();
+	}
+
+	@Override
+	public void reset() {
+		counts.clear();
 	}
 
 }

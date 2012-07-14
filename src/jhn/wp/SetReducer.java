@@ -28,7 +28,7 @@ public class SetReducer {
 		this.dir = dir;
 	}
 	
-	private boolean someStreamNotEmpty(String[] keys) throws Exception {
+	private static boolean someStreamNotEmpty(String[] keys) throws Exception {
 		for(String key : keys) {
 			if(!key.equals(EMPTY)) {
 				return true;

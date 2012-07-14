@@ -16,8 +16,8 @@ public class RAMIndex<T> implements Index<T>, Serializable, Trimmable {
 
 	public static final int KEY_NOT_FOUND = -1;
 	
-	private ObjectArrayList<T> list = new ObjectArrayList<T>();
-	private Object2IntOpenHashMap<T> map = new Object2IntOpenHashMap<T>();
+	private ObjectArrayList<T> list = new ObjectArrayList<>();
+	private Object2IntOpenHashMap<T> map = new Object2IntOpenHashMap<>();
 	
 	public RAMIndex() {
 		map.defaultReturnValue(KEY_NOT_FOUND);

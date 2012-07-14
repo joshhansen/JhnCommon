@@ -9,14 +9,14 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
-public class IntRAMIndex implements Index<Integer>, Serializable, IntIndex {
+public class IntRAMIndex implements Serializable, IntIndex {
 	private static final long serialVersionUID = 1L;
 
 	private Int2IntMap map = new Int2IntOpenHashMap();
 	private IntList list = new IntArrayList();
 	
 	public IntRAMIndex() {
-		map.defaultReturnValue(IntIndex.KEY_NOT_FOUND);
+		map.defaultReturnValue(ReverseIndex.KEY_NOT_FOUND);
 	}
 	
 	@Override
@@ -27,7 +27,7 @@ public class IntRAMIndex implements Index<Integer>, Serializable, IntIndex {
 	@Override
 	public int indexOfI(int value, boolean addIfNotPresent) {
 		int idx = map.get(value);
-		if(addIfNotPresent && idx==IntIndex.KEY_NOT_FOUND) {
+		if(addIfNotPresent && idx==ReverseIndex.KEY_NOT_FOUND) {
 			list.add(value);
 			idx = list.size() - 1;
 			map.put(value, idx);
@@ -40,6 +40,7 @@ public class IntRAMIndex implements Index<Integer>, Serializable, IntIndex {
 		return list.getInt(idx);
 	}
 	
+	@Override
 	public int size() {
 		return list.size();
 	}
