@@ -1,5 +1,7 @@
 package jhn.counts.ints;
 
+import java.util.List;
+
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -17,6 +19,8 @@ public interface IntIntCounter extends IntCounter<Integer> {
 	int getCount(int key);
 	
 	ObjectSet<Int2IntMap.Entry> int2IntEntrySet();
+	
+	List<Int2IntMap.Entry> fastTopN(int n);
 	
 	IntSet keySetI();
 }

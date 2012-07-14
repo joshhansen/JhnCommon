@@ -94,6 +94,7 @@ public class IntIntRAMCounter implements IntIntCounter {
 		}
 	};
 	
+	@Override
 	public List<Int2IntMap.Entry> fastTopN(int n) {
 		ObjectList<Int2IntMap.Entry> entries = new ObjectArrayList<>(int2IntEntrySet());
 		Collections.sort(entries, fastCmp);
