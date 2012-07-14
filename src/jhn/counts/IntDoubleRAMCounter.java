@@ -28,13 +28,15 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 		this.counts = map;
 	}
 	
-	public void inc(final int key) {
-		inc(key, 1);
+	public double inc(final int key) {
+		return inc(key, 1);
 	}
 	
-	public void inc(final int key, final double count) {
-		counts.put(key, getCountD(key)+count);
+	public double inc(final int key, final double count) {
+		final double newVal = getCountD(key)+count;
+		counts.put(key, newVal);
 		totalCount += count;
+		return newVal;
 	}
 	
 	public void set(final int key, final double count) {
@@ -84,8 +86,8 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	}
 	
 	@Override
-	public void inc(Integer key) {
-		inc(key.intValue());
+	public Double inc(Integer key) {
+		return Double.valueOf(inc(key.intValue()));
 	}
 	
 	@Override
@@ -99,8 +101,8 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	}
 
 	@Override
-	public void inc(Integer key, Double count) {
-		inc(key.intValue(), count.doubleValue());
+	public Double inc(Integer key, Double count) {
+		return Double.valueOf(inc(key.intValue(), count.doubleValue()));
 	}
 
 	@Override
@@ -118,8 +120,8 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	}
 
 	@Override
-	public void inc(Integer key, double inc) {
-		inc(key.intValue(), inc);
+	public double inc(Integer key, double inc) {
+		return inc(key.intValue(), inc);
 	}
 
 	@Override

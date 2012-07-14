@@ -6,9 +6,9 @@ import java.util.Map.Entry;
 
 public interface Counter<K,N extends Number> {
 
-	void inc(K key);
+	N inc(K key);
 
-	void inc(K key, N count);
+	N inc(K key, N count);
 
 	void set(K key, N count);
 
@@ -23,4 +23,6 @@ public interface Counter<K,N extends Number> {
 	List<Entry<K, N>> topN(int n);
 	
 	boolean containsKey(K key);
+	
+	Set<K> keySet();
 }

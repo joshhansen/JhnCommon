@@ -14,13 +14,15 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	private final Object2DoubleMap<T> counts = new Object2DoubleOpenHashMap<T>();
 	
 	private double totalCount = 0.0;
-	public void inc(final T key) {
-		inc(key, 1.0);
+	public Double inc(final T key) {
+		return Double.valueOf(inc(key, 1.0));
 	}
 	
-	public void inc(final T key, final double count) {
-		counts.put(key, getCountD(key)+count);
+	public double inc(final T key, final double count) {
+		final double newVal = getCountD(key)+count;
+		counts.put(key, newVal);
 		totalCount += count;
+		return newVal;
 	}
 	
 	public void set(final T key, final double count) {
@@ -41,8 +43,8 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	}
 
 	@Override
-	public void inc(T key, Double count) {
-		inc(key, count.doubleValue());
+	public Double inc(T key, Double count) {
+		return Double.valueOf(inc(key, count.doubleValue()));
 	}
 
 	@Override

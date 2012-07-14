@@ -2,6 +2,7 @@ package jhn.counts;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
@@ -28,14 +29,16 @@ public class IntIntRAMCounter implements IntIntCounter {
 	}
 	
 	@Override
-	public void inc(final int key) {
-		inc(key, 1);
+	public int inc(final int key) {
+		return inc(key, 1);
 	}
 	
 	@Override
-	public void inc(final int key, final int inc) {
-		counts.put(key, getCountI(key)+inc);
+	public int inc(final int key, final int inc) {
+		final int newVal = getCountI(key)+inc;
+		counts.put(key, newVal);
 		totalCount += inc;
+		return newVal;
 	}
 	
 	@Override
@@ -87,13 +90,13 @@ public class IntIntRAMCounter implements IntIntCounter {
 	}
 	
 	@Override
-	public void inc(Integer key) {
-		inc(key.intValue());
+	public Integer inc(Integer key) {
+		return Integer.valueOf(inc(key.intValue()));
 	}
 
 	@Override
-	public void inc(Integer key, Integer count) {
-		inc(key.intValue(), count.intValue());
+	public Integer inc(Integer key, Integer count) {
+		return Integer.valueOf(inc(key.intValue(), count.intValue()));
 	}
 
 	@Override
@@ -111,6 +114,7 @@ public class IntIntRAMCounter implements IntIntCounter {
 		return counts.get(key);
 	}
 
+	@Override
 	public ObjectSet<Int2IntMap.Entry> int2IntEntrySet() {
 		return counts.int2IntEntrySet();
 	}
@@ -121,8 +125,8 @@ public class IntIntRAMCounter implements IntIntCounter {
 	}
 
 	@Override
-	public void inc(Integer key, int inc) {
-		inc(key.intValue(), inc);
+	public int inc(Integer key, int inc) {
+		return inc(key.intValue(), inc);
 	}
 
 	@Override
@@ -138,6 +142,16 @@ public class IntIntRAMCounter implements IntIntCounter {
 	@Override
 	public boolean containsKey(int key) {
 		return counts.containsKey(key);
+	}
+
+	@Override
+	public Set<Integer> keySet() {
+		return keySetI();
+	}
+
+	@Override
+	public IntSet keySetI() {
+		return counts.keySet();
 	}
 
 }
