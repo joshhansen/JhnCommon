@@ -1,15 +1,18 @@
 package jhn.wp;
 
-import info.bliki.wiki.filter.ITextConverter;
-import info.bliki.wiki.filter.PlainTextConverter;
-import info.bliki.wiki.model.WikiModel;
-
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jhn.Paths;
+import edu.jhu.nlp.wikipedia.PageCallbackHandler;
+import edu.jhu.nlp.wikipedia.WikiPage;
+import edu.jhu.nlp.wikipedia.WikiXMLParser;
+import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
+import info.bliki.wiki.filter.ITextConverter;
+import info.bliki.wiki.filter.PlainTextConverter;
+import info.bliki.wiki.model.WikiModel;
+
 import jhn.wp.exceptions.ArticleTooShort;
 import jhn.wp.exceptions.BadLabel;
 import jhn.wp.exceptions.BadLabelPrefix;
@@ -17,15 +20,6 @@ import jhn.wp.exceptions.BadWikiTextException;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.exceptions.DisambiguationPage;
 import jhn.wp.exceptions.RedirectException;
-import jhn.wp.visitors.ChunkedWordSetVisitor;
-import jhn.wp.visitors.PrintingVisitor;
-import jhn.wp.visitors.WordIndexingVisitor;
-import jhn.wp.visitors.WordSetVisitor;
-import jhn.wp.visitors.counting.WindowedCocountVisitor;
-import edu.jhu.nlp.wikipedia.PageCallbackHandler;
-import edu.jhu.nlp.wikipedia.WikiPage;
-import edu.jhu.nlp.wikipedia.WikiXMLParser;
-import edu.jhu.nlp.wikipedia.WikiXMLParserFactory;
 
 public class ArticlesProcessor extends CorpusProcessor {
 	private static final boolean PRINT_WIKI_TEXT = false;
@@ -232,133 +226,4 @@ public class ArticlesProcessor extends CorpusProcessor {
 	private static void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {
 		if(wikiText.startsWith("#REDIRECT")) throw new RedirectException(label);
 	}
-	
-	// Generate chunked co-occurrence counts
-	public static void main(String[] args) throws Exception {
-		final String cocountsDir = Paths.outputDir("JhnCommon") + "/cocounts";
-		final String outputDir = cocountsDir;// + "/depth";
-		
-		final String logFilename = cocountsDir + "/main.log";
-		final String errLogFilename = cocountsDir + "/main.err";
-		
-		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-		
-		final String wordIdxFilename = Paths.outputDir("JhnCommon") + "/word_sets/chunks/19.set";
-		
-		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-		ac.addVisitor(new PrintingVisitor());
-		ac.addVisitor(new WindowedCocountVisitor(outputDir, wordIdxFilename, 250000000, 20));
-//		ac.addVisitor(new WindowedCocountVisitor(outputDir, 1000, 20));
-		ac.process();
-	}
-	
-//	// Index words
-//	public static void main(String[] args) throws Exception {
-//		final String indexDir = Paths.outputDir("JhnCommon") + "/indices/words";
-//		
-//		final String logFilename = indexDir + "/main.log";
-//		final String errLogFilename = indexDir + "/main.err";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-//		
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new WordIndexingVisitor(indexDir + "/words.idx"));
-//		ac.process();
-//	}
-	
-//	// Aggregate words
-//	public static void main(String[] args) throws Exception {
-//		final String indexDir = Paths.outputDir("JhnCommon") + "/word_sets";
-//		
-//		final String logFilename = indexDir + "/main.log";
-//		final String errLogFilename = indexDir + "/main.err";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-//		
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new ChunkedWordSetVisitor(500000, 1000000, indexDir+"/chunks"));
-//		ac.process();
-//	}
-	
-//	// Index article text in Lucene
-//	public static void main(String[] args) throws FileNotFoundException {
-//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
-//		final String idxDir = outputDir + "/indices/topic_words";
-//		final String name = "wp_lucene5";
-//		final String luceneDir = idxDir + "/" + name;
-//		final String logFilename = idxDir + "/" + name + ".log";
-//		final String errLogFilename = idxDir + "/" + name + ".error.log";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-//		
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new LuceneVisitor3(luceneDir, Fields.text));
-//		ac.process();
-//	}
-	
-//	// Create a dictionary of article titles in a trie
-//	public static void main(String[] args) {
-//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
-//		
-//		final String dictFilename = outputDir + "/labelDictionary.ser";
-//		final String logFilename = outputDir + "/labelDictionary.log";
-//		final String errLogFilename = outputDir + "/labelDictionary.err.log";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new LabelDictionaryBuildingVisitor(dictFilename));
-//		ac.count();
-//	}
-	
-//	// Count words in a trie
-//	public static void main(String[] args) throws FileNotFoundException {
-//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
-//		
-//		final String name = "wordCountsTrie";
-//		final String outputFilename = outputDir + "/" + name + ".ser";
-//		final String logFilename = outputDir + "/" + name + ".log";
-//		final String errLogFilename = outputDir + "/" + name + ".err.log";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-//		
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-////		ac.addVisitor(new WordCountVisitorPatriciaTrie(outputFilename));
-//		ac.addVisitor(new WordCountVisitorTrie(outputFilename));
-//		ac.process();
-//	}
-	
-//	// Index words in a trie
-//	public static void main(String[] args) {
-//		final String outputDir = System.getenv("HOME") + "/Projects/eda_output";
-//		
-//		final String name = "wordIndexTrie";
-//		final String outputFilename = outputDir + "/" + name + ".ser";
-//		final String logFilename = outputDir + "/" + name + ".log";
-//		final String errLogFilename = outputDir + "/" + name + ".err.log";
-//		
-//		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
-//		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
-//		
-//		
-//		CorpusProcessor ac = new ArticlesProcessor(articlesFilename, logFilename, errLogFilename);
-//		ac.addVisitor(new PrintingVisitor());
-//		ac.addVisitor(new WordIndexVisitorTrie(outputFilename));
-//		ac.count();
-//	}
 }

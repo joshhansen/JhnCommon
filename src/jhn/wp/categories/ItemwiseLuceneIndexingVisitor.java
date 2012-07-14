@@ -1,4 +1,4 @@
-package jhn.wp.visitors.lucene;
+package jhn.wp.categories;
 
 import java.util.Collections;
 
@@ -6,17 +6,18 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
 import jhn.wp.exceptions.CountException;
+import jhn.wp.visitors.AbstractLuceneVisitor;
 
 /**
- * Like LuceneVisitor, but rather than aggregating the words into a whole document adds each word individually.
+ * Indexes each word individually.
  * 
  * <i>Does</i> store text, does not analyze or store norms, does not store term vectors, and does not remove stopwords.
  * @author Josh Hansen
  *
  */
-public class LuceneVisitor2 extends AbstractLuceneVisitor {
+public class ItemwiseLuceneIndexingVisitor extends AbstractLuceneVisitor {
 
-	public LuceneVisitor2(String luceneIndexDir, String field) {
+	public ItemwiseLuceneIndexingVisitor(String luceneIndexDir, String field) {
 		super(luceneIndexDir, field);
 		this.textStorage = Field.Store.YES;
 		this.textAnalysis = Field.Index.NOT_ANALYZED_NO_NORMS;

@@ -1,4 +1,4 @@
-package jhn.wp.visitors.counting;
+package jhn.wp.cocounts;
 
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 
@@ -15,7 +15,6 @@ import jhn.counts.ints.IntIntIntCounterMap;
 import jhn.counts.ints.IntIntRAMCounter;
 import jhn.idx.DiskStringIndex;
 import jhn.idx.ReverseIndex;
-import jhn.wp.CountReducer;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
 

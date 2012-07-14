@@ -1,8 +1,9 @@
-package jhn.wp.visitors;
+package jhn.wp.counts;
 
 import jhn.trie.StringShortTrie;
 import jhn.trie.StringShortTrieImpl;
 import jhn.util.Util;
+import jhn.wp.visitors.Visitor;
 
 public class WordCountVisitorTrie extends Visitor {
 	private StringShortTrie counts;

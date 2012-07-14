@@ -1,4 +1,4 @@
-package jhn.wp.visitors;
+package jhn.wp.wordidx;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -7,6 +7,7 @@ import java.io.ObjectOutputStream;
 
 import jhn.idx.RAMIndex;
 import jhn.util.Util;
+import jhn.wp.visitors.Visitor;
 
 public class WordIndexingVisitor extends Visitor {
 	private final String outputFilename;

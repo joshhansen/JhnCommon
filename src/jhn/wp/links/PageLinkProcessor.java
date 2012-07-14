@@ -8,10 +8,7 @@ import java.util.regex.Pattern;
 
 import jhn.util.Util;
 import jhn.wp.CorpusProcessor;
-import jhn.wp.Fields;
 import jhn.wp.exceptions.CountException;
-import jhn.wp.visitors.PrintingVisitor;
-import jhn.wp.visitors.lucene.LuceneVisitor2;
 
 public class PageLinkProcessor extends CorpusProcessor {
 
@@ -68,25 +65,5 @@ public class PageLinkProcessor extends CorpusProcessor {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		final String outputDir = System.getenv("HOME") + "/Projects/eda_output/indices";
-		final String name = "page_links";
-		
-		final String logFilename = outputDir + "/" + name + ".log";
-		final String errLogFilename = outputDir + "/" + name + ".error.log";
-		
-		final String srcDir = System.getenv("HOME") + "/Data/dbpedia.org/3.7";
-		final String pageLinksFilename = srcDir + "/page_links_en.nt.bz2";
-		
-		CorpusProcessor acc = new PageLinkProcessor(logFilename, errLogFilename, pageLinksFilename);
-		
-		final String luceneDir = outputDir + "/" + name;
-		
-		acc.addVisitor(new LuceneVisitor2(luceneDir, Fields.linkedPage));
-		acc.addVisitor(new PrintingVisitor());
-		
-		acc.process();
 	}
 }

@@ -1,4 +1,4 @@
-package jhn.wp;
+package jhn.wp.wordidx;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

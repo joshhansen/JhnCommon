@@ -1,4 +1,4 @@
-package jhn.wp;
+package jhn.wp.cocounts;
 
 import java.io.EOFException;
 import java.io.File;

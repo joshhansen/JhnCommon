@@ -1,8 +1,9 @@
-package jhn.wp.visitors;
+package jhn.wp.wordidx;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import jhn.util.Util;
+import jhn.wp.visitors.Visitor;
 
 public class WordSetVisitor extends Visitor {
 	private final String outputFilename;

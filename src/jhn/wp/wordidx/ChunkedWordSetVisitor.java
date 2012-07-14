@@ -1,4 +1,4 @@
-package jhn.wp.visitors;
+package jhn.wp.wordidx;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,6 +9,8 @@ import java.util.Arrays;
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
+
+import jhn.wp.visitors.Visitor;
 
 public class ChunkedWordSetVisitor extends Visitor {
 	private static final String FILE_EXT = ".set";

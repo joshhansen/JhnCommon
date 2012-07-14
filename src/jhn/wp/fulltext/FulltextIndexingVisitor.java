@@ -1,11 +1,13 @@
-package jhn.wp.visitors.lucene;
+package jhn.wp.fulltext;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 
-public class LuceneVisitor3 extends AbstractLuceneVisitor {
+import jhn.wp.visitors.AbstractLuceneVisitor;
 
-	public LuceneVisitor3(String luceneIndexDir, String field) {
+public class FulltextIndexingVisitor extends AbstractLuceneVisitor {
+
+	public FulltextIndexingVisitor(String luceneIndexDir, String field) {
 		super(luceneIndexDir, field);
 		this.textStorage = Field.Store.NO;
 		this.textAnalysis = Field.Index.ANALYZED;

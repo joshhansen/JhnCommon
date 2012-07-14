@@ -1,9 +1,10 @@
-package jhn.wp.visitors;
+package jhn.wp.counts;
 
 import jhn.counts.ints.IntCounter;
 import jhn.counts.ints.ObjIntRAMCounter;
 import jhn.util.Util;
 import jhn.wp.exceptions.CountException;
+import jhn.wp.visitors.LabelAwareVisitor;
 
 public class WordCountingVisitor extends LabelAwareVisitor {
 	protected int wordsInLabel = 0;

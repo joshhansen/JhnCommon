@@ -1,4 +1,4 @@
-package jhn.wp.visitors.lucene;
+package jhn.wp.visitors;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,6 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 
 import jhn.wp.Fields;
-import jhn.wp.visitors.LabelAwareVisitor;
 
 public class AbstractLuceneVisitor extends LabelAwareVisitor {
 	private static final Version version = Version.LUCENE_36;
