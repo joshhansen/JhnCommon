@@ -82,6 +82,8 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 			return Double.compare(o2.getDoubleValue(), o1.getDoubleValue());
 		}
 	};
+	
+	@Override
 	public List<Int2DoubleMap.Entry> fastTopN(int n) {
 		ObjectList<Int2DoubleMap.Entry> entries = new ObjectArrayList<>(int2DoubleEntrySet());
 		Collections.sort(entries, fastCmp);
@@ -118,6 +120,7 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 		return counts.entrySet();
 	}
 
+	@Override
 	public ObjectSet<Int2DoubleMap.Entry> int2DoubleEntrySet() {
 		return counts.int2DoubleEntrySet();
 	}

@@ -1,6 +1,10 @@
 package jhn.counts.doubles;
 
+import java.util.List;
+
+import it.unimi.dsi.fastutil.ints.Int2DoubleMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 /** A counter whose keys are integers and whose counts are doubles */
 public interface IntDoubleCounter extends DoubleCounter<Integer> {
@@ -16,4 +20,8 @@ public interface IntDoubleCounter extends DoubleCounter<Integer> {
 	
 	@Override
 	IntSet keySet();
+	
+	ObjectSet<Int2DoubleMap.Entry> int2DoubleEntrySet();
+	
+	List<Int2DoubleMap.Entry> fastTopN(int n);
 }
