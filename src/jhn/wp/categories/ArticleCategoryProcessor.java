@@ -72,7 +72,7 @@ public class ArticleCategoryProcessor extends CorpusProcessor {
 		}
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws Exception {
 		final String outputDir = System.getenv("HOME") + "/Projects/eda_output/indices";
 		final String name = "article_categories";
 		

@@ -1,31 +1,31 @@
 package jhn.wp;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
-import jhn.Paths;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+
 import jhn.counts.IntIntIntCounterMap;
 
-public class CountReducer {
+public class CountReducer implements Runnable {
 	private static final int EMPTY_STREAM = -10;
 	private static final int NULL = -11;
 	private static final int KEY_READ = -12;
-	private static final String FILE_EXT = ".counts";
-	private final File dir;
+
+	private final File[] src;
+	private final File dest;
 	
 	private ObjectOutputStream out;
 	private ObjectInputStream[] in;
-	public CountReducer(File dir) {
-		this.dir = dir;
+	public CountReducer(File[] src, File dest) {
+		this.src = src;
+		this.dest = dest;
 	}
 	
 	private boolean someStreamNotEmpty(int[] keys) throws Exception {
@@ -37,70 +37,41 @@ public class CountReducer {
 		return false;
 	}
 	
-	private String nextFilename() {
-		return dir.getPath() + "/" + nextInt() + FILE_EXT;
-	}
-	
-	private static final FileFilter filter = new FileFilter(){
-		@Override
-		public boolean accept(File f) {
-			return f.getName().endsWith(FILE_EXT);
-		}
-	};
-	private int nextInt() {
-		int max = -1;
-		int value;
-		for(File f : dir.listFiles(filter)) {
-			value = Integer.parseInt(f.getName().split("\\.")[0]);
-			if(value > max) {
-				max = value;
+	@Override
+	public void run() {
+		try {
+			System.out.println(dest.getPath());
+			for(File f : src) {
+				System.out.println("\t" + f.getName());
 			}
-		}
-		return max+1;
-	}
-	
-	private static final int REDUCE_AT_A_TIME = 500;
-	public void reduce() throws Exception {
-		while(true) {
-			File[] files = dir.listFiles(filter);
-			if(files.length <= 1) {
-				break;
-			}
-			File[] subset = Arrays.copyOf(files, Math.min(files.length, REDUCE_AT_A_TIME));
-			reduce(nextFilename(), subset);
 			
-			for(File f : subset) {
+			out = new ObjectOutputStream(new FileOutputStream(dest));
+			in = new ObjectInputStream[src.length];
+			for(int i = 0; i < src.length; i++) {
+				in[i] = new ObjectInputStream(new FileInputStream(src[i]));
+			}
+			
+			int[] keys = null;
+			do {
+				keys = updateKeys(keys);
+				if(!someStreamNotEmpty(keys)) {
+					break;
+				}
+				
+				processMinKeys(keys);
+			} while(true);
+			
+			// Clean up
+			out.close();
+			for(ObjectInputStream ois : in) {
+				ois.close();
+			}
+			
+			for(File f : src) {
 				f.delete();
 			}
-		}
-	}
-	
-	public void reduce(String destFilename, File... srcFiles) throws Exception {
-		System.out.println(destFilename);
-		for(File f : srcFiles) {
-			System.out.println("\t" + f.getName());
-		}
-		
-		out = new ObjectOutputStream(new FileOutputStream(destFilename));
-		in = new ObjectInputStream[srcFiles.length];
-		for(int i = 0; i < srcFiles.length; i++) {
-			in[i] = new ObjectInputStream(new FileInputStream(srcFiles[i]));
-		}
-		
-		int[] keys = null;
-		do {
-			keys = updateKeys(keys);
-			if(!someStreamNotEmpty(keys)) {
-				break;
-			}
-			
-			processMinKeys(keys);
-		} while(true);
-		
-		// Clean up
-		out.close();
-		for(ObjectInputStream ois : in) {
-			ois.close();
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -207,32 +178,8 @@ public class CountReducer {
 		return subkeys;
 	}
 	
-//	private static class Monitor implements Runnable {
-//		private static final int MIN_FILES = 10;
-//		private static final int MAX_FILES = 200;
-//		private final File dir;
-//		private final CountReducer cr;
-//		public Monitor(String dirPath) {
-//			this.dir = new File(dirPath);
-//			this.cr = new CountReducer(this.dir);
-//		}
-//		
-//		@Override
-//		public void run() {
-//			while(true) {
-//				File[] files = dir.listFiles(filter);
-//				
-//				try {
-//					Thread.sleep(60000);
-//				} catch (InterruptedException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		}
-//	};
-	
-	public static void main(String[] args) throws Exception {
-		CountReducer cr = new CountReducer(new File(Paths.outputDir("JhnCommon") + "/cocounts/counts/reduceme"));
-		cr.reduce();
-	}
+//	public static void main(String[] args) throws Exception {
+//		CountReducer cr = new CountReducer(new File(Paths.outputDir("JhnCommon") + "/cocounts/phase1-work"));
+//		cr.reduce();
+//	}
 }

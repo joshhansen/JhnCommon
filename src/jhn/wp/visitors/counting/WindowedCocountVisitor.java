@@ -1,116 +1,151 @@
 package jhn.wp.visitors.counting;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+
+import jhn.counts.IntIntCounter;
 import jhn.counts.IntIntIntCounterMap;
+import jhn.counts.IntIntRAMCounter;
 import jhn.idx.DiskStringIndex;
 import jhn.idx.ReverseIndex;
+import jhn.wp.CountReducer;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
 
 public class WindowedCocountVisitor extends Visitor {
 	private enum Compression {
-		NONE,
-		BZIP2,
-		GZIP
+		NONE, BZIP2, GZIP
 	}
+
+	private static final int REDUCE_INTERVAL = 20;
+	
+	private final Compression compression = Compression.NONE;
 	private int[] wordArr = new int[2];
 	private final int windowSize;
 	private final ReverseIndex<String> words;
 	private LinkedList<Integer> ll = new LinkedList<Integer>();
-	private final int baseChunkSize;
 	private final int chunkSize;
-	private int currentBaseChunkSize = 0;
 	private int currentChunkSize = 0;
 	private final File outputDir;
 	private static final String FILE_EXT = ".counts";
-	
-	private IntIntIntCounterMap baseCounts = new IntIntIntCounterMap();
+
 	private IntIntIntCounterMap counts = new IntIntIntCounterMap();
-	public WindowedCocountVisitor(String outputDir, String indexFilename, int baseChunkSize,
-			int chunkSize, int windowSize) throws Exception {
-		
+
+	public WindowedCocountVisitor(String outputDir, String indexFilename, int chunkSize, int windowSize) throws Exception {
 		this.outputDir = new File(outputDir);
 		this.words = new DiskStringIndex(indexFilename);
-		if(!this.outputDir.exists()) {
+		if (!this.outputDir.exists()) {
 			this.outputDir.mkdirs();
 		}
-		this.baseChunkSize = baseChunkSize;
 		this.chunkSize = chunkSize;
 		this.windowSize = windowSize;
 	}
 	
-	
-	
-	private ObjectOutputStream nextStream() throws Exception {
-		return nextStream(Compression.NONE);
-	}
-	
-	private ObjectOutputStream nextStream(Compression compression) throws Exception {
-		OutputStream os = new FileOutputStream(nextFilename());
-		
-		switch(compression) {
-			case BZIP2:
-				os = new BZip2CompressorOutputStream(os);
-				break;
-			case GZIP:
-				os = new GzipCompressorOutputStream(os);
-				break;
-			case NONE: default:
-				break;
-		}
-		
-		return new ObjectOutputStream(os);
-	}
-	
-	private String nextFilename() {
-		int i = nextInt();
-		int folderNum = i % 40;
-		String path = outputDir.getPath() + "/" + folderNum;
-		File dir = new File(path);
-		dir.mkdirs();
-		
-		return path + "/" + i + FILE_EXT;
-	}
-	
-	private int nextInt = 0;
-	private int nextInt() {
-		return nextInt++;
-	}
-	
-	private void pairFound(int word1idx, int word2idx) throws Exception {
-		if(currentBaseChunkSize < baseChunkSize || baseCounts.containsValue(word1idx, word2idx)) {
-			baseCounts.inc(word1idx, word2idx);
-			currentBaseChunkSize++;
-		} else {
-			counts.inc(word1idx, word2idx);
-			currentChunkSize++;
-			
-			if(currentChunkSize >= chunkSize) {
-				System.err.println("Serializing");
-				currentChunkSize = 0;
-				writeCounts(counts);
-				counts.reset();
-				System.gc();
-			}
+	private ObjectOutputStream stream(File file) throws Exception {
+		OutputStream os = new FileOutputStream(file);
+
+		switch (compression) {
+		case BZIP2:
+			os = new BZip2CompressorOutputStream(os);
+			break;
+		case GZIP:
+			os = new GzipCompressorOutputStream(os);
+			break;
+		case NONE:
+		default:
+			break;
 		}
 
+		return new ObjectOutputStream(os);
+	}
+
+	private File depthDir(int depth) {
+		File depthDir = new File(outputDir.getPath() + "/" + depth);
+		depthDir.mkdirs();
+		return depthDir;
 	}
 	
-	private void writeCounts(IntIntIntCounterMap counts) throws Exception {
-		ObjectOutputStream oos = nextStream();
+	private IntIntCounter fileNumByDepth = new IntIntRAMCounter(new Int2IntArrayMap());
+	private File nextFile(int depth) {
+		int next = fileNumByDepth.getCountI(depth);
+		fileNumByDepth.inc(depth);
+		return new File(depthDir(depth).getPath() + "/" + next + FILE_EXT);
+	}
+
+	private void pairFound(int word1idx, int word2idx) throws Exception {
+		counts.inc(word1idx, word2idx);
+		currentChunkSize++;
+
+		if (currentChunkSize >= chunkSize) {
+			File dest = nextFile(0);
+			System.err.println("Serializing");
+			currentChunkSize = 0;
+			writeCounts(counts, dest);
+			counts.reset();
+			System.gc();
+			
+			reduceIfNeeded();
+		}
+	}
+	
+	private static final FileFilter countsFiles = new FileFilter(){
+		@Override
+		public boolean accept(File pathname) {
+			return !pathname.isDirectory() && pathname.getName().endsWith(FILE_EXT);
+		}
+	};
+	
+	private File[] sourceFiles(int depth) {
+		return depthDir(depth).listFiles(countsFiles);
+	}
+	
+	private File destFile(int depth) {
+		return nextFile(depth+1);
+	}
+	
+	private void reduceIfNeeded() {
+		for(int depth : fileNumByDepth.keySetI()) {
+			File[] src = sourceFiles(depth);
+			if(src.length > 0 && src.length % REDUCE_INTERVAL == 0) {
+				System.out.println("Reducing depth " + depth + " to depth " + (depth+1));
+				CountReducer cr = new CountReducer(src, destFile(depth));
+				cr.run();
+			}
+		}
+		
+		System.out.println();
+		System.out.println();
+	}
+	
+	private void finalReduction() {
+		for(int depth : fileNumByDepth.keySetI()) {
+			System.out.println("Final reduction for depth " + depth);
+			CountReducer cr = new CountReducer(sourceFiles(depth), destFile(depth));
+			cr.run();
+		}
+	}
+	
+	private void writeCounts(IntIntIntCounterMap counts, File destFile) throws Exception {
+		ObjectOutputStream oos = stream(destFile);
 		counts.writeObject(oos);
 		oos.close();
 	}
-	
+
 	@Override
 	public void visitLabel(String label) throws CountException {
 		ll.clear();
@@ -120,16 +155,16 @@ public class WindowedCocountVisitor extends Visitor {
 	public void visitWord(String word) {
 		int word1idx = words.indexOf(word);
 		int word2idxI;
-		if(word1idx != ReverseIndex.KEY_NOT_FOUND) {
-			for(Integer word2idx : ll) {
+		if (word1idx != ReverseIndex.KEY_NOT_FOUND) {
+			for (Integer word2idx : ll) {
 				word2idxI = word2idx.intValue();
-				if(word2idxI != ReverseIndex.KEY_NOT_FOUND) {
+				if (word2idxI != ReverseIndex.KEY_NOT_FOUND) {
 					wordArr[0] = word1idx;
 					wordArr[1] = word2idxI;
 					Arrays.sort(wordArr);
 					try {
 						pairFound(wordArr[0], wordArr[1]);
-					} catch(Exception e) {
+					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
@@ -140,13 +175,14 @@ public class WindowedCocountVisitor extends Visitor {
 			System.err.print(']');
 		}
 		ll.addLast(word1idx);
-		if(ll.size() > windowSize-1) {
+		if (ll.size() > windowSize - 1) {
 			ll.removeFirst();
 		}
 	}
 
 	@Override
 	public void afterEverything() throws Exception {
-		writeCounts(baseCounts);
+		writeCounts(counts, nextFile(0));
+		finalReduction();
 	}
 }

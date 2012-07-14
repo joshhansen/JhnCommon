@@ -73,7 +73,7 @@ public class PageLinkProcessor extends CorpusProcessor {
 		}
 	}
 	
-	public static void main(String[] args) throws FileNotFoundException {
+	public static void main(String[] args) throws Exception {
 		final String outputDir = System.getenv("HOME") + "/Projects/eda_output/indices";
 		final String name = "page_links";
 		

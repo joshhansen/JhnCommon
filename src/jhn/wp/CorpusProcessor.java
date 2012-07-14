@@ -18,7 +18,7 @@ public abstract class CorpusProcessor {
 		this.events = new CorpusEventDispatcher();
 	}
 
-	public abstract void process();
+	public abstract void process() throws Exception;
 	
 	protected boolean isStopword(String s) {
 		return Util.stopwords().contains(s);
