@@ -25,7 +25,7 @@ public abstract class CorpusProcessor {
 	}
 	
 	private static final Pattern tokenSplitRgx = Pattern.compile("[^a-z]");
-	protected static String[] tokenize(final String s) {
+	public static String[] tokenize(final String s) {
 		return tokenSplitRgx.split(s.toLowerCase());
 	}
 	
