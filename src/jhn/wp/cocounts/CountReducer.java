@@ -11,7 +11,7 @@ import java.util.Arrays;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
-import jhn.counts.ints.IntIntIntCounterMap;
+import jhn.counts.ints.IntIntIntRAMCounterMap;
 
 public class CountReducer implements Runnable {
 	private static final int EMPTY_STREAM = -10;
@@ -135,12 +135,12 @@ public class CountReducer implements Runnable {
 		
 		// Mark keys as exhausted so they're dealt with properly in the upper loop
 		for(int i = 0; i < subkeys.length; i++) {
-			if(subkeys[i]==IntIntIntCounterMap.END_OF_KEY) {
+			if(subkeys[i]==IntIntIntRAMCounterMap.END_OF_KEY) {
 				keys[i] = KEY_READ;
 			}
 		}
 		
-		out.writeInt(IntIntIntCounterMap.END_OF_KEY);
+		out.writeInt(IntIntIntRAMCounterMap.END_OF_KEY);
 	}
 	
 	private int subValueSum(IntList subkeyIndices) throws Exception {

@@ -17,7 +17,7 @@ import java.util.Set;
 import jhn.counts.Counter;
 import jhn.util.Util;
 
-public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Serializable {
+public class IntIntIntRAMCounterMap implements IntIntIntCounterMap, Serializable {
 	private static final long serialVersionUID = 1L;
 	private Int2ObjectMap<Counter<Integer,Integer>> counters = newMap();
 
@@ -45,6 +45,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		return counters.entrySet();
 	}
 	
+	@Override
 	public ObjectSet<Int2ObjectMap.Entry<Counter<Integer, Integer>>> int2ObjectEntrySet() {
 		return counters.int2ObjectEntrySet();
 	}
@@ -59,6 +60,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		inc(key.intValue(), value.intValue(), inc);
 	}
 	
+	@Override
 	public int getCount(int key, int value) {
 		Counter<Integer,Integer> counter = counters.get(key);
 		if(counter==null) {
@@ -67,10 +69,12 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		return ((IntIntCounter)counter).getCount(value);
 	}
 	
+	@Override
 	public void inc(int key, int value) {
 		inc(key, value, 1);
 	}
 	
+	@Override
 	public void inc(int key, int value, int inc) {
 		IntIntCounter counter = (IntIntCounter) counters.get(key);
 		if(counter==null) {
@@ -90,6 +94,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		set(key.intValue(), value.intValue(), count);
 	}
 	
+	@Override
 	public void set(int key, int value, int count) {
 		Counter<Integer,Integer> counter = counters.get(key);
 		if(counter==null) {
@@ -158,11 +163,13 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		 }
 	}
 	
+	@Override
 	public void reset() {
 		counters = newMap();
 	}
 	
 	/** The total number of (key,value) pairs in all counters */
+	@Override
 	public int totalSize() {
 		int total = 0;
 		for(Int2ObjectMap.Entry<Counter<Integer,Integer>> entry : int2ObjectEntrySet()) {
@@ -176,6 +183,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		return counters.containsKey(key);
 	}
 	
+	@Override
 	public boolean containsKey(int key) {
 		return counters.containsKey(key);
 	}
@@ -185,6 +193,7 @@ public class IntIntIntCounterMap implements IntCounterMap<Integer,Integer>, Seri
 		return containsValue(key.intValue(), value.intValue());
 	}
 	
+	@Override
 	public boolean containsValue(int key, int value) {
 		IntIntCounter counter = (IntIntCounter) counters.get(key);
 		if(counter==null) {

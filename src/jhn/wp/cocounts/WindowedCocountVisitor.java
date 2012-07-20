@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import jhn.counts.ints.IntIntCounter;
-import jhn.counts.ints.IntIntIntCounterMap;
+import jhn.counts.ints.IntIntIntRAMCounterMap;
 import jhn.counts.ints.IntIntRAMCounter;
 import jhn.idx.DiskStringIndex;
 import jhn.idx.ReverseIndex;
@@ -38,7 +38,7 @@ public class WindowedCocountVisitor extends Visitor {
 	private final File outputDir;
 	private static final String FILE_EXT = ".counts";
 
-	private IntIntIntCounterMap counts = new IntIntIntCounterMap();
+	private IntIntIntRAMCounterMap counts = new IntIntIntRAMCounterMap();
 
 	public WindowedCocountVisitor(String outputDir, String indexFilename, int chunkSize, int windowSize) throws Exception {
 		this.outputDir = new File(outputDir);
@@ -134,7 +134,7 @@ public class WindowedCocountVisitor extends Visitor {
 		}
 	}
 	
-	private void writeCounts(IntIntIntCounterMap theCounts, File destFile) throws Exception {
+	private void writeCounts(IntIntIntRAMCounterMap theCounts, File destFile) throws Exception {
 		try(ObjectOutputStream oos = stream(destFile)) {
 			theCounts.writeObject(oos);
 		}
