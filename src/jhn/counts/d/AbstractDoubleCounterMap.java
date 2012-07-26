@@ -1,6 +1,5 @@
-package jhn.counts.doubles;
+package jhn.counts.d;
 
-import jhn.counts.d.DoubleCounterMap;
 
 
 public abstract class AbstractDoubleCounterMap<K,V> implements DoubleCounterMap<K,V> {

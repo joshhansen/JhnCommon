@@ -1,4 +1,4 @@
-package jhn.counts.doubles;
+package jhn.counts.d.o.o;
 
 import java.util.Map.Entry;
 import java.util.Set;
@@ -7,7 +7,9 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import jhn.counts.Counter;
+import jhn.counts.d.AbstractDoubleCounterMap;
 import jhn.counts.d.DoubleCounter;
+import jhn.counts.d.o.ObjDoubleCounter;
 
 public class ObjObjDoubleCounterMap<K,V> extends AbstractDoubleCounterMap<K, V> {
 	private final Object2ObjectMap<K,Counter<V,Double>> counters = new Object2ObjectOpenHashMap<>();

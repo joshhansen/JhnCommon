@@ -1,4 +1,4 @@
-package jhn.counts.doubles;
+package jhn.counts.d.o;
 
 import java.util.ArrayList;
 import java.util.Collections;
