@@ -1,4 +1,4 @@
-package jhn.counts.ints;
+package jhn.counts.i.i.i;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -15,29 +15,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import jhn.counts.Counter;
+import jhn.counts.i.i.IntIntCounter;
+import jhn.counts.i.i.IntIntRAMCounter;
 import jhn.util.Util;
 
-public class IntIntIntRAMCounterMap implements IntIntIntCounterMap, Serializable {
+public class IntIntIntRAMCounterMap extends AbstractIntIntIntCounterMap implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Int2ObjectMap<Counter<Integer,Integer>> counters = newMap();
 
 	private static Int2ObjectMap<Counter<Integer,Integer>> newMap() {
 		return new Int2ObjectOpenHashMap<>();
-	}
-	
-	@Override
-	public Integer getCount(Integer key, Integer value) {
-		return Integer.valueOf(getCount(key.intValue(), value.intValue()));
-	}
-
-	@Override
-	public void inc(Integer key, Integer value) {
-		inc(key.intValue(), value.intValue());
-	}
-
-	@Override
-	public void inc(Integer key, Integer value, Integer inc) {
-		inc(key.intValue(), value.intValue(), inc.intValue());
 	}
 
 	@Override
@@ -48,16 +35,6 @@ public class IntIntIntRAMCounterMap implements IntIntIntCounterMap, Serializable
 	@Override
 	public ObjectSet<Int2ObjectMap.Entry<Counter<Integer, Integer>>> int2ObjectEntrySet() {
 		return counters.int2ObjectEntrySet();
-	}
-
-	@Override
-	public int getCountI(Integer key, Integer value) {
-		return getCount(key.intValue(), value.intValue());
-	}
-
-	@Override
-	public void inc(Integer key, Integer value, int inc) {
-		inc(key.intValue(), value.intValue(), inc);
 	}
 	
 	@Override
@@ -82,16 +59,6 @@ public class IntIntIntRAMCounterMap implements IntIntIntCounterMap, Serializable
 			counters.put(key, counter);
 		}
 		counter.inc(value, inc);
-	}
-
-	@Override
-	public void set(Integer key, Integer value, Integer count) {
-		set(key.intValue(), value.intValue(), count.intValue());
-	}
-
-	@Override
-	public void set(Integer key, Integer value, int count) {
-		set(key.intValue(), value.intValue(), count);
 	}
 	
 	@Override
@@ -177,20 +144,10 @@ public class IntIntIntRAMCounterMap implements IntIntIntCounterMap, Serializable
 		}
 		return total;
 	}
-
-	@Override
-	public boolean containsKey(Integer key) {
-		return counters.containsKey(key);
-	}
 	
 	@Override
 	public boolean containsKey(int key) {
 		return counters.containsKey(key);
-	}
-
-	@Override
-	public boolean containsValue(Integer key, Integer value) {
-		return containsValue(key.intValue(), value.intValue());
 	}
 	
 	@Override
@@ -200,5 +157,14 @@ public class IntIntIntRAMCounterMap implements IntIntIntCounterMap, Serializable
 			return false;
 		}
 		return counter.containsKey(value);
+	}
+
+	@Override
+	public int totalCountI() {
+		int total = 0;
+		for(Counter<Integer,Integer> counter : counters.values()) {
+			total += ((IntIntCounter)counter).totalCountI();
+		}
+		return total;
 	}
 }

@@ -1,10 +1,4 @@
-package jhn.counts.ints;
-
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
+package jhn.counts.i.o;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,9 +6,16 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
+
+import jhn.counts.i.AbstractIntCounter;
 import jhn.util.Util;
 
-public class ObjIntRAMCounter<K> implements IntCounter<K> {
+public class ObjIntRAMCounter<K> extends AbstractIntCounter<K> {
 	private final Object2IntMap<K> counts;
 	
 	private int totalCount = 0;
@@ -27,10 +28,6 @@ public class ObjIntRAMCounter<K> implements IntCounter<K> {
 		this.counts = map;
 	}
 	
-	@Override
-	public int incI(K key) {
-		return inc(key, 1);
-	}
 	
 	@Override
 	public int inc(K key, int inc) {
@@ -55,11 +52,6 @@ public class ObjIntRAMCounter<K> implements IntCounter<K> {
 		totalCount -= getCountI(key);
 		counts.put(key, count);
 		totalCount += count;
-	}
-	
-	@Override
-	public void set(K key, Integer count) {
-		set(key, count.intValue());
 	}
 	
 	@Override
@@ -107,11 +99,6 @@ public class ObjIntRAMCounter<K> implements IntCounter<K> {
 		ObjectList<Object2IntMap.Entry<K>> entries = new ObjectArrayList<>(object2IntEntrySet());
 		Collections.sort(entries, fastCmp);
 		return entries.subList(0, Math.min(n, entries.size()));
-	}
-	
-	@Override
-	public Integer totalCount() {
-		return Integer.valueOf(totalCount);
 	}
 
 	public ObjectSet<Object2IntMap.Entry<K>> object2IntEntrySet() {

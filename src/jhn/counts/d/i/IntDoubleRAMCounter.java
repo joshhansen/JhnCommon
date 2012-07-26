@@ -1,4 +1,4 @@
-package jhn.counts.doubles;
+package jhn.counts.d.i;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
-public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
+public class IntDoubleRAMCounter extends AbstractIntDoubleCounter implements Trimmable {
 	private final Int2DoubleMap counts;
 	
 	private double totalCount = 0;
@@ -30,13 +30,8 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	}
 	
 	@Override
-	public double inc(final int key) {
-		return inc(key, 1);
-	}
-	
-	@Override
 	public double inc(final int key, final double count) {
-		final double newVal = getCountD(key)+count;
+		final double newVal = getCount(key)+count;
 		counts.put(key, newVal);
 		totalCount += count;
 		return newVal;
@@ -49,14 +44,10 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	}
 
 	@Override
-	public void set(Integer key, double count) {
-		set(key.intValue(), count);
-	}
-	
-	public double getCountD(int key) {
+	public Double getCount(Integer key) {
 		return counts.get(key);
 	}
-
+	
 	@Override
 	public double totalCountD() {
 		return totalCount;
@@ -89,31 +80,6 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 		Collections.sort(entries, fastCmp);
 		return entries.subList(0, Math.min(n, entries.size()));
 	}
-	
-	@Override
-	public Double inc(Integer key) {
-		return Double.valueOf(inc(key.intValue()));
-	}
-	
-	@Override
-	public Double totalCount() {
-		return Double.valueOf(totalCount);
-	}
-
-	@Override
-	public Double getCount(Integer key) {
-		return counts.get(key);
-	}
-
-	@Override
-	public Double inc(Integer key, Double count) {
-		return Double.valueOf(inc(key.intValue(), count.doubleValue()));
-	}
-
-	@Override
-	public void set(Integer key, Double count) {
-		set(key.intValue(), count.doubleValue());
-	}
 
 	@Override
 	public Set<Entry<Integer, Double>> entries() {
@@ -126,16 +92,6 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	}
 
 	@Override
-	public double inc(Integer key, double inc) {
-		return inc(key.intValue(), inc);
-	}
-
-	@Override
-	public double getCountD(Integer key) {
-		return getCountD(key.intValue());
-	}
-
-	@Override
 	public void trim() {
 		if(counts instanceof Int2DoubleOpenHashMap) {
 			((Int2DoubleOpenHashMap)counts).trim();
@@ -145,11 +101,6 @@ public class IntDoubleRAMCounter implements IntDoubleCounter, Trimmable {
 	@Override
 	public int size() {
 		return counts.size();
-	}
-
-	@Override
-	public boolean containsKey(Integer key) {
-		return containsKey(key.intValue());
 	}
 
 	@Override

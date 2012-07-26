@@ -1,10 +1,12 @@
-package jhn.counts.ints;
+package jhn.counts.i.i;
 
 import java.util.List;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
+
+import jhn.counts.i.IntCounter;
 
 /** A counter whose counts and keys are integers */
 public interface IntIntCounter extends IntCounter<Integer> {
@@ -22,5 +24,6 @@ public interface IntIntCounter extends IntCounter<Integer> {
 	
 	List<Int2IntMap.Entry> fastTopN(int n);
 	
-	IntSet keySetI();
+	@Override
+	IntSet keySet();
 }

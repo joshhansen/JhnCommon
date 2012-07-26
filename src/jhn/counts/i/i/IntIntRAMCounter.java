@@ -1,4 +1,4 @@
-package jhn.counts.ints;
+package jhn.counts.i.i;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
@@ -15,7 +15,7 @@ import java.util.Set;
 
 import jhn.util.Util;
 
-public class IntIntRAMCounter implements IntIntCounter {
+public class IntIntRAMCounter extends AbstractIntIntCounter {
 	private final Int2IntMap counts;
 	
 	private int totalCount = 0;
@@ -42,20 +42,10 @@ public class IntIntRAMCounter implements IntIntCounter {
 	}
 	
 	@Override
-	public int incI(Integer key) {
-		return inc(key.intValue());
-	}
-	
-	@Override
 	public void set(int key, int count) {
 		totalCount -= getCount(key);
 		counts.put(key, count);
 		totalCount += count;
-	}
-	
-	@Override
-	public void set(Integer key, int count) {
-		set(key.intValue(), count);
 	}
 	
 	@Override
@@ -100,31 +90,6 @@ public class IntIntRAMCounter implements IntIntCounter {
 		Collections.sort(entries, fastCmp);
 		return entries.subList(0, Math.min(n, entries.size()));
 	}
-	
-	@Override
-	public Integer inc(Integer key) {
-		return Integer.valueOf(inc(key.intValue()));
-	}
-
-	@Override
-	public Integer inc(Integer key, Integer count) {
-		return Integer.valueOf(inc(key.intValue(), count.intValue()));
-	}
-
-	@Override
-	public void set(Integer key, Integer count) {
-		set(key.intValue(), count.intValue());
-	}
-	
-	@Override
-	public Integer totalCount() {
-		return Integer.valueOf(totalCount);
-	}
-
-	@Override
-	public Integer getCount(Integer key) {
-		return counts.get(key);
-	}
 
 	@Override
 	public ObjectSet<Int2IntMap.Entry> int2IntEntrySet() {
@@ -137,32 +102,12 @@ public class IntIntRAMCounter implements IntIntCounter {
 	}
 
 	@Override
-	public int inc(Integer key, int inc) {
-		return inc(key.intValue(), inc);
-	}
-
-	@Override
-	public int getCountI(Integer key) {
-		return getCount(key.intValue());
-	}
-
-	@Override
-	public boolean containsKey(Integer key) {
-		return containsKey(key.intValue());
-	}
-
-	@Override
 	public boolean containsKey(int key) {
 		return counts.containsKey(key);
 	}
 
 	@Override
-	public Set<Integer> keySet() {
-		return keySetI();
-	}
-
-	@Override
-	public IntSet keySetI() {
+	public IntSet keySet() {
 		return counts.keySet();
 	}
 

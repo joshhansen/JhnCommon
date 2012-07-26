@@ -3,27 +3,18 @@ package jhn.counts.doubles;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import jhn.counts.Counter;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
-public class ObjObjDoubleCounterMap<K,V> implements DoubleCounterMap<K, V> {
-	private final Object2ObjectMap<K,Counter<V,Double>> counters = new Object2ObjectOpenHashMap<>();
+import jhn.counts.Counter;
+import jhn.counts.d.DoubleCounter;
 
-	@Override
-	public Double getCount(K key, V value) {
-		return Double.valueOf(getCountD(key, value));
-	}
+public class ObjObjDoubleCounterMap<K,V> extends AbstractDoubleCounterMap<K, V> {
+	private final Object2ObjectMap<K,Counter<V,Double>> counters = new Object2ObjectOpenHashMap<>();
 
 	@Override
 	public void inc(K key, V value) {
 		inc(key, value, 1.0);
-	}
-
-	@Override
-	public void inc(K key, V value, Double inc) {
-		inc(key, value, inc.doubleValue());
 	}
 
 	@Override
@@ -51,11 +42,6 @@ public class ObjObjDoubleCounterMap<K,V> implements DoubleCounterMap<K, V> {
 	}
 
 	@Override
-	public void set(K key, V value, Double count) {
-		set(key, value, count.doubleValue());
-	}
-
-	@Override
 	public void set(K key, V value, double count) {
 		Counter<V,Double> counter = counters.get(key);
 		if(counter==null) {
@@ -77,5 +63,14 @@ public class ObjObjDoubleCounterMap<K,V> implements DoubleCounterMap<K, V> {
 			return false;
 		}
 		return ((DoubleCounter<V>)counter).containsKey(value);
+	}
+
+	@Override
+	public double totalCountD() {
+		double total = 0.0;
+		for(Counter<V,Double> counter : counters.values()) {
+			total += ((DoubleCounter<V>)counter).totalCountD();
+		}
+		return total;
 	}
 }

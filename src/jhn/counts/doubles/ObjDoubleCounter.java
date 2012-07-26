@@ -11,15 +11,12 @@ import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
-public class ObjDoubleCounter<T> implements DoubleCounter<T> {
+import jhn.counts.d.AbstractDoubleCounter;
+
+public class ObjDoubleCounter<T> extends AbstractDoubleCounter<T> {
 	private final Object2DoubleMap<T> counts = new Object2DoubleOpenHashMap<>();
 	
 	private double totalCount = 0.0;
-	
-	@Override
-	public Double inc(final T key) {
-		return Double.valueOf(inc(key, 1.0));
-	}
 	
 	@Override
 	public double inc(final T key, final double count) {
@@ -41,6 +38,11 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	}
 	
 	@Override
+	public Double getCount(T key) {
+		return counts.get(key);
+	}
+	
+	@Override
 	public Set<Entry<T,Double>> entries() {
 		return counts.entrySet();
 	}
@@ -48,22 +50,6 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	@Override
 	public double totalCountD() {
 		return totalCount;
-	}
-
-	@Override
-	public Double inc(T key, Double count) {
-		return Double.valueOf(inc(key, count.doubleValue()));
-	}
-
-	@Override
-	public void set(T key, Double count) {
-		set(key, count.doubleValue());
-	}
-
-
-	@Override
-	public Double totalCount() {
-		return Double.valueOf(totalCount);
 	}
 
 	private final Comparator<Entry<T,Double>> cmp = new Comparator<Entry<T,Double>>(){
@@ -77,11 +63,6 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 		List<Entry<T,Double>> entries = new ArrayList<>(entries());
 		Collections.sort(entries, cmp);
 		return new ArrayList<>(entries.subList(0, Math.min(n, entries.size())));
-	}
-
-	@Override
-	public Double getCount(T key) {
-		return counts.get(key);
 	}
 
 	@Override
@@ -103,4 +84,5 @@ public class ObjDoubleCounter<T> implements DoubleCounter<T> {
 	public void reset() {
 		counts.clear();
 	}
+
 }
