@@ -1,4 +1,4 @@
-package jhn.wp.cocounts;
+package jhn.wp.counts;
 
 import java.io.EOFException;
 import java.io.File;
@@ -11,11 +11,11 @@ import java.util.Arrays;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
+import jhn.Paths;
 import jhn.counts.i.i.IntIntRAMCounter;
 
 public class CountReducer implements Runnable {
 	private static final int EMPTY_STREAM = -10;
-	private static final int NULL = -11;
 	private static final int KEY_READ = -12;
 
 	private final File[] src;
@@ -58,8 +58,10 @@ public class CountReducer implements Runnable {
 					break;
 				}
 				
-				processMinKeys(keys);
+				processMinKey(keys);
 			} while(true);
+			out.writeInt(IntIntRAMCounter.NO_MORE_ENTRIES);
+			
 			
 			// Clean up
 			out.close();
@@ -67,9 +69,9 @@ public class CountReducer implements Runnable {
 				ois.close();
 			}
 			
-			for(File f : src) {
-				f.delete();
-			}
+//			for(File f : src) {
+//				f.delete();
+//			}
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -92,9 +94,19 @@ public class CountReducer implements Runnable {
 		return keys;
 	}
 	
-	private void processMinKeys(int[] keys) throws Exception {
+	private void processMinKey(int[] keys) throws Exception {
 		int minKey = minKey(keys);
-		processMinKey(keys, minKey, indicesMatching(keys, minKey));
+		IntList indices = indicesMatching(keys, minKey);
+		
+		int minKeyValueSum = 0;
+		for(int idx : indices) {
+			minKeyValueSum += in[idx].readInt();
+			keys[idx] = KEY_READ;
+		}
+		
+		out.writeInt(minKey);
+		out.writeInt(minKeyValueSum);
+		
 	}
 	
 	private static int minKey(int... ints) {
@@ -117,69 +129,10 @@ public class CountReducer implements Runnable {
 		return inputsWithMinKey;
 	}
 	
-	private void processMinKey(int[] keys, int minKey, IntList indices) throws Exception {
-		out.writeInt(minKey);
-		
-		int[] subkeys = getSubkeys(indices);
-		int sum;
-		do {
-			int minSubkey = minKey(subkeys);
-			IntList minSubkeyIndices = indicesMatching(subkeys, minSubkey);
-			sum = subValueSum(minSubkeyIndices);
-			
-			out.writeInt(minSubkey);
-			out.writeInt(sum);
-			
-			updateActiveSubkeys(subkeys, minSubkeyIndices);
-		} while(subkeysRemain(subkeys));
-		
-		// Mark keys as exhausted so they're dealt with properly in the upper loop
-		for(int i = 0; i < subkeys.length; i++) {
-			if(subkeys[i]==IntIntRAMCounter.NO_MORE_ENTRIES) {
-				keys[i] = KEY_READ;
-			}
-		}
-		
-		out.writeInt(IntIntRAMCounter.NO_MORE_ENTRIES);
+	public static void main(String[] args) throws Exception {
+		File[] src = new File(Paths.outputDir("JhnCommon") + "/counts/chunks").listFiles();
+		File dest = new File(Paths.outputDir("JhnCommon") + "/counts/all.counts");
+		CountReducer cr = new CountReducer(src, dest);
+		cr.run();
 	}
-	
-	private int subValueSum(IntList subkeyIndices) throws Exception {
-		int sum = 0;
-		for(int idx : subkeyIndices) {
-			sum += in[idx].readInt();
-		}
-		return sum;
-	}
-	
-	private void updateActiveSubkeys(int[] subkeys, IntList minSubkeyIndices) throws Exception {
-		for(int i : minSubkeyIndices) {
-			subkeys[i] = in[i].readInt();
-		}
-	}
-
-	private static boolean subkeysRemain(int[] subkeys) {
-		for(int i = 0; i < subkeys.length; i++) {
-			if(subkeys[i] >= 0) {// gte 0 makes sure error code values are ignored
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private int[] getSubkeys(IntList indices) throws Exception {
-		int[] subkeys = new int[in.length];
-		for(int i = 0; i < subkeys.length; i++) {
-			if(!indices.contains(i)) {
-				subkeys[i] = NULL;
-			} else {
-				subkeys[i] = in[i].readInt();
-			}
-		}
-		return subkeys;
-	}
-	
-//	public static void main(String[] args) throws Exception {
-//		CountReducer cr = new CountReducer(new File(Paths.outputDir("JhnCommon") + "/cocounts/phase1-work"));
-//		cr.reduce();
-//	}
 }

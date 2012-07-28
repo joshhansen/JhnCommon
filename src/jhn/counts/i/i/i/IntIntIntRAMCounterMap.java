@@ -1,10 +1,5 @@
 package jhn.counts.i.i.i;
 
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectSet;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,6 +8,10 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 import jhn.counts.Counter;
 import jhn.counts.i.i.IntIntCounter;
@@ -25,6 +24,10 @@ public class IntIntIntRAMCounterMap extends AbstractIntIntIntCounterMap implemen
 
 	private static Int2ObjectMap<Counter<Integer,Integer>> newMap() {
 		return new Int2ObjectOpenHashMap<>();
+	}
+	
+	private static IntIntCounter newCounter() {
+		return new IntIntRAMCounter();
 	}
 
 	@Override
@@ -46,6 +49,15 @@ public class IntIntIntRAMCounterMap extends AbstractIntIntIntCounterMap implemen
 		return ((IntIntCounter)counter).getCount(value);
 	}
 	
+	private IntIntCounter getCounter(int key) {
+		IntIntCounter counter = (IntIntCounter) counters.get(key);
+		if(counter==null) {
+			counter = newCounter();
+			counters.put(key, counter);
+		}
+		return counter;
+	}
+	
 	@Override
 	public void inc(int key, int value) {
 		inc(key, value, 1);
@@ -53,22 +65,14 @@ public class IntIntIntRAMCounterMap extends AbstractIntIntIntCounterMap implemen
 	
 	@Override
 	public void inc(int key, int value, int inc) {
-		IntIntCounter counter = (IntIntCounter) counters.get(key);
-		if(counter==null) {
-			counter = new IntIntRAMCounter();
-			counters.put(key, counter);
-		}
+		IntIntCounter counter = getCounter(key);
 		counter.inc(value, inc);
 	}
 	
 	@Override
 	public void set(int key, int value, int count) {
-		Counter<Integer,Integer> counter = counters.get(key);
-		if(counter==null) {
-			counter = new IntIntRAMCounter();
-			counters.put(key, counter);
-		}
-		((IntIntRAMCounter)counter).set(value, count);
+		IntIntCounter counter = getCounter(key);
+		counter.set(value, count);
 	}
 	
 	private static final Comparator<Int2ObjectMap.Entry<?>> entryCmp = new Comparator<Int2ObjectMap.Entry<?>>(){
@@ -77,16 +81,8 @@ public class IntIntIntRAMCounterMap extends AbstractIntIntIntCounterMap implemen
 			return Util.compareInts(o1.getIntKey(), o2.getIntKey());
 		}
 	};
-	
-	private static final Comparator<Int2IntMap.Entry> countCmp = new Comparator<Int2IntMap.Entry>(){
-		@Override
-		public int compare(Int2IntMap.Entry o1, Int2IntMap.Entry o2) {
-			return Util.compareInts(o1.getIntKey(), o2.getIntKey());
-		}
-	};
 
-	public static final int END_OF_KEY = -1;
-	private static final int NULL_IDX = -3;
+	
 	public void writeObject (ObjectOutputStream oos) throws IOException {
 		@SuppressWarnings("unchecked")
 		Int2ObjectMap.Entry<Counter<Integer,Integer>>[] entries = int2ObjectEntrySet().toArray(new Int2ObjectMap.Entry[0]);
@@ -95,38 +91,19 @@ public class IntIntIntRAMCounterMap extends AbstractIntIntIntCounterMap implemen
 			// Write word1idx
 			oos.writeInt(entry.getIntKey());
 			
-			Int2IntMap.Entry[] arr = ((IntIntRAMCounter)entry.getValue()).int2IntEntrySet().toArray(new Int2IntMap.Entry[0]);
-			Arrays.sort(arr, countCmp);
-			for(Int2IntMap.Entry count : arr) {
-				// Write word2idx
-				oos.writeInt(count.getIntKey());
-				// Write count
-				oos.writeInt(count.getIntValue());
-			}
-			
-			oos.writeInt(END_OF_KEY);
+			IntIntRAMCounter.writeObj((IntIntCounter) entry.getValue(), oos);
 		}
 	}
 	
 	private void readObject (ObjectInputStream ois) throws IOException {
-		 counters = new Int2ObjectOpenHashMap<>();
+		 counters = newMap();
 		 
 		 int word1idx;
-		 int word2idx;
-		 int count;
+		 IntIntCounter counter;
 		 while(ois.available() > 0) {
 			 word1idx = ois.readInt();
-			 
-			 word2idx = NULL_IDX;
-			 while(true) {
-				 word2idx = ois.readInt();
-				 if(word2idx==END_OF_KEY) {
-					 break;
-				 }
-				 count = ois.readInt();
-				 
-				 this.set(word1idx, word2idx, count);
-			 }
+			 counter = getCounter(word1idx);
+			 IntIntRAMCounter.readObj(counter, ois);
 		 }
 	}
 	

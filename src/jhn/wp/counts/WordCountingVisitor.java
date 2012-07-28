@@ -1,7 +1,7 @@
 package jhn.wp.counts;
 
-import jhn.counts.ints.IntCounter;
-import jhn.counts.ints.ObjIntRAMCounter;
+import jhn.counts.i.IntCounter;
+import jhn.counts.i.o.ObjIntRAMCounter;
 import jhn.util.Util;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.LabelAwareVisitor;

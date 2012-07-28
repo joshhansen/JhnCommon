@@ -7,7 +7,7 @@ import jhn.wp.exceptions.ArticleTooShort;
 import jhn.wp.exceptions.CountException;
 import jhn.wp.visitors.Visitor;
 
-public class CorpusEventDispatcher implements CorpusEventHandler {
+public class CorpusEventDispatcher implements CorpusEventHandler, AutoCloseable {
 	
 	private List<Visitor> visitors = new ArrayList<>();
 
@@ -71,6 +71,15 @@ public class CorpusEventDispatcher implements CorpusEventHandler {
 	public void afterEverything() throws Exception {
 		for (Visitor v : visitors) {
 			v.afterEverything();
+		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		for(Visitor v : visitors) {
+			if(v instanceof AutoCloseable) {
+				((AutoCloseable) v).close();
+			}
 		}
 	}
 

@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import jhn.Paths;
-import jhn.counts.ints.IntIntIntRAMCounterMap;
+import jhn.counts.i.i.IntIntRAMCounter;
 
 /** Given a counts file (serialization of IntIntIntCounterMap) outputs an array mapping word index to position in the
  * file for any index that occurs as the first element in a key-value pair.
@@ -51,7 +51,7 @@ public class CountsFileIndexer {
 				System.out.println(key1);
 				while(true) {
 					key2 = ois.readInt();
-					if(key2==IntIntIntRAMCounterMap.END_OF_KEY) {
+					if(key2==IntIntRAMCounter.NO_MORE_ENTRIES) {
 						break;
 					}
 					value = ois.readInt();

@@ -1,5 +1,16 @@
 package jhn.counts.i.i;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -7,15 +18,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import jhn.util.Util;
 
-public class IntIntRAMCounter extends AbstractIntIntCounter {
+public class IntIntRAMCounter extends AbstractIntIntCounter implements Serializable {
+	public static final int NO_MORE_ENTRIES = -10395782;
+	
 	private final Int2IntMap counts;
 	
 	private int totalCount = 0;
@@ -114,6 +121,46 @@ public class IntIntRAMCounter extends AbstractIntIntCounter {
 	@Override
 	public void reset() {
 		counts.clear();
+	}
+	
+	public static final Comparator<Int2IntMap.Entry> countCmp = new Comparator<Int2IntMap.Entry>(){
+		@Override
+		public int compare(Int2IntMap.Entry o1, Int2IntMap.Entry o2) {
+			return Util.compareInts(o1.getIntKey(), o2.getIntKey());
+		}
+	};
+	
+	public static void writeObj(IntIntCounter counter, ObjectOutputStream oos) throws IOException {
+		Int2IntMap.Entry[] arr = counter.int2IntEntrySet().toArray(new Int2IntMap.Entry[0]);
+		Arrays.sort(arr, countCmp);
+		for(Int2IntMap.Entry count : arr) {
+			// Write word2idx
+			oos.writeInt(count.getIntKey());
+			// Write count
+			oos.writeInt(count.getIntValue());
+		}
+		oos.writeInt(NO_MORE_ENTRIES);
+	}
+	
+	private void writeObject (ObjectOutputStream oos) throws IOException {
+		writeObj(this, oos);
+	}
+	
+	public static void readObj(IntIntCounter counter, ObjectInputStream ois) throws IOException {
+		 int item;
+		 int count;
+		 while(true) {
+			 item = ois.readInt();
+			 if(item==NO_MORE_ENTRIES) {
+				 break;
+			 }
+			 count = ois.readInt();
+			 counter.set(item, count);
+		 }
+	}
+	
+	private void readObject (ObjectInputStream ois) throws IOException {
+		readObj(this, ois);
 	}
 
 }

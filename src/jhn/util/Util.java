@@ -180,4 +180,10 @@ public final class Util {
         
         return 0;
 	}
+	
+	public static void closeIfPossible(Object obj) throws Exception {
+		if(obj instanceof AutoCloseable) {
+			((AutoCloseable) obj).close();
+		}
+	}
 }

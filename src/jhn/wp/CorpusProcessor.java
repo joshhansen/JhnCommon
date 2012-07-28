@@ -7,7 +7,7 @@ import jhn.util.Log;
 import jhn.util.Util;
 import jhn.wp.visitors.Visitor;
 
-public abstract class CorpusProcessor {
+public abstract class CorpusProcessor implements AutoCloseable {
 	protected final Log log;
 	protected final Log errLog;
 	protected final CorpusEventDispatcher events;
@@ -31,5 +31,12 @@ public abstract class CorpusProcessor {
 	
 	public void addVisitor(Visitor v) {
 		events.addVisitor(v);
+	}
+	
+	@Override
+	public void close() throws Exception {
+		events.close();
+		log.close();
+		errLog.close();
 	}
 }

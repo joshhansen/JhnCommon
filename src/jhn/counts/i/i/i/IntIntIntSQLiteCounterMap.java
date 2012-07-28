@@ -32,7 +32,8 @@ public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap imple
 	
 	public IntIntIntSQLiteCounterMap(Connection db) throws Exception {
 		this.db = db;
-		stmt = db.prepareStatement("select count from cocounts where word1idx=? and word2idx=?");
+//		stmt = db.prepareStatement("select count from cocounts where word1idx=? and word2idx=?");
+		stmt = db.prepareStatement("select count from (select * from cocounts where word2idx=?) where word1idx=?");
 		totalCount = db.createStatement().executeQuery("select total_cocount from total_counts").getLong(1);
 	}
 	
@@ -43,8 +44,8 @@ public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap imple
 		arr[1] = value;
 		Arrays.sort(arr);
 		try {
-			stmt.setInt(1, arr[0]);
-			stmt.setInt(2, arr[1]);
+			stmt.setInt(1, arr[1]);
+			stmt.setInt(2, arr[0]);
 			try(ResultSet rs = stmt.executeQuery()) {
 				return rs.getInt(1);
 			}

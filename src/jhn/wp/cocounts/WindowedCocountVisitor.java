@@ -10,9 +10,9 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.LinkedList;
 
-import jhn.counts.ints.IntIntCounter;
-import jhn.counts.ints.IntIntIntRAMCounterMap;
-import jhn.counts.ints.IntIntRAMCounter;
+import jhn.counts.i.i.IntIntCounter;
+import jhn.counts.i.i.IntIntRAMCounter;
+import jhn.counts.i.i.i.IntIntIntRAMCounterMap;
 import jhn.idx.DiskStringIndex;
 import jhn.idx.ReverseIndex;
 import jhn.wp.exceptions.CountException;
@@ -113,7 +113,7 @@ public class WindowedCocountVisitor extends Visitor {
 	}
 	
 	private void reduceIfNeeded() {
-		for(int depth : fileNumByDepth.keySetI()) {
+		for(int depth : fileNumByDepth.keySet()) {
 			File[] src = sourceFiles(depth);
 			if(src.length > 0 && src.length % REDUCE_INTERVAL == 0) {
 				System.out.println("Reducing depth " + depth + " to depth " + (depth+1));
@@ -127,7 +127,7 @@ public class WindowedCocountVisitor extends Visitor {
 	}
 	
 	private void finalReduction() {
-		for(int depth : fileNumByDepth.keySetI()) {
+		for(int depth : fileNumByDepth.keySet()) {
 			System.out.println("Final reduction for depth " + depth);
 			CountReducer cr = new CountReducer(sourceFiles(depth), destFile(depth));
 			cr.run();
