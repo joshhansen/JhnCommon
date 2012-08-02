@@ -21,7 +21,6 @@ import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream
 public final class Util {
 	private Util(){}
 	
-	@SuppressWarnings("resource")
 	public static InputStream smartInputStream(final String filename) throws IOException {
 		if(filename.endsWith(".bz2")) {
 			return new BZip2CompressorInputStream(new FileInputStream(filename));
