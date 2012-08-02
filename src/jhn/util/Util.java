@@ -66,12 +66,22 @@ public final class Util {
 		}
 	}
 	
-	/** From Mallet 2.0.7 */
+	private static Set<String> stopwordsSet = null;
 	public static Set<String> stopwords() {
-		final Set<String> stopwordSet = new HashSet<>();
-		for(String stopword : Util.stopwords) stopwordSet.add(stopword);
-		return stopwordSet;
+		if(stopwordsSet == null) {
+			stopwordsSet = new HashSet<>();
+			for(String stopword : Util.stopwords) {
+				stopwordsSet.add(stopword);
+			}
+		}
+		return stopwordsSet;
 	}
+	
+	public static boolean isStopword(String word) {
+		return stopwords().contains(word);
+	}
+	
+	/** From Mallet 2.0.7 */
 	private static final String[] stopwords = { "a", "able", "about", "above",
 			"according", "accordingly", "across", "actually", "after",
 			"afterwards", "again", "against", "all", "allow", "allows",
