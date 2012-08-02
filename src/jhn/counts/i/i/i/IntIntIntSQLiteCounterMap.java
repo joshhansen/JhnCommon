@@ -12,6 +12,7 @@ import java.util.Set;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 import jhn.counts.Counter;
+import jhn.counts.i.i.IntIntCounter;
 
 public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap implements AutoCloseable {
 
@@ -110,6 +111,11 @@ public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap imple
 
 	@Override
 	public Set<Entry<Integer, Counter<Integer, Integer>>> entrySet() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public IntIntCounter getCounter(int key) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -1,5 +1,7 @@
 package jhn.counts.i.i.i;
 
+import jhn.counts.Counter;
+
 
 public abstract class AbstractIntIntIntCounterMap implements IntIntIntCounterMap {
 
@@ -51,6 +53,11 @@ public abstract class AbstractIntIntIntCounterMap implements IntIntIntCounterMap
 	@Override
 	public boolean containsValue(Integer key, Integer value) {
 		return containsValue(key.intValue(), value.intValue());
+	}
+	
+	@Override
+	public Counter<Integer, Integer> getCounter(Integer key) {
+		return getCounter(key.intValue());
 	}
 
 }

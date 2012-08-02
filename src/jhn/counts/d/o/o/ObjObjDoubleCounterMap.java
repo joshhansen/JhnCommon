@@ -35,22 +35,12 @@ public class ObjObjDoubleCounterMap<K,V> extends AbstractDoubleCounterMap<K, V> 
 
 	@Override
 	public void inc(K key, V value, double inc) {
-		Counter<V,Double> counter = counters.get(key);
-		if(counter==null) {
-			counter = new ObjDoubleCounter<>();
-			counters.put(key, counter);
-		}
-		((DoubleCounter<V>)counter).inc(value, inc);
+		getCounter(key).inc(value, inc);
 	}
 
 	@Override
 	public void set(K key, V value, double count) {
-		Counter<V,Double> counter = counters.get(key);
-		if(counter==null) {
-			counter = new ObjDoubleCounter<>();
-			counters.put(key, counter);
-		}
-		((DoubleCounter<V>)counter).set(value, count);
+		getCounter(key).set(value, count);
 	}
 
 	@Override
@@ -75,4 +65,16 @@ public class ObjObjDoubleCounterMap<K,V> extends AbstractDoubleCounterMap<K, V> 
 		}
 		return total;
 	}
+
+	@Override
+	public DoubleCounter<V> getCounter(K key) {
+		Counter<V,Double> counter = counters.get(key);
+		if(counter==null) {
+			counter = new ObjDoubleCounter<>();
+			counters.put(key, counter);
+		}
+		return (DoubleCounter<V>) counter;
+	}
+	
+	
 }

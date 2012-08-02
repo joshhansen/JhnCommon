@@ -48,8 +48,9 @@ public class IntIntIntRAMCounterMap extends AbstractIntIntIntCounterMap implemen
 		}
 		return ((IntIntCounter)counter).getCount(value);
 	}
-	
-	private IntIntCounter getCounter(int key) {
+
+	@Override
+	public IntIntCounter getCounter(int key) {
 		IntIntCounter counter = (IntIntCounter) counters.get(key);
 		if(counter==null) {
 			counter = newCounter();

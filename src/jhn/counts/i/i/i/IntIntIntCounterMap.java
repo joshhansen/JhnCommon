@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 import jhn.counts.Counter;
 import jhn.counts.i.IntCounterMap;
+import jhn.counts.i.i.IntIntCounter;
 
 public interface IntIntIntCounterMap extends IntCounterMap<Integer,Integer> {
 
@@ -27,4 +28,5 @@ public interface IntIntIntCounterMap extends IntCounterMap<Integer,Integer> {
 
 	boolean containsValue(int key, int value);
 
+	IntIntCounter getCounter(int key);
 }
