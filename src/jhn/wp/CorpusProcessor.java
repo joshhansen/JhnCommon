@@ -24,7 +24,7 @@ public abstract class CorpusProcessor implements AutoCloseable {
 		return Util.stopwords().contains(s);
 	}
 	
-	private static final Pattern tokenSplitRgx = Pattern.compile("[^a-z]");
+	private static final Pattern tokenSplitRgx = Pattern.compile("[^a-z]+");
 	public static String[] tokenize(final String s) {
 		return tokenSplitRgx.split(s.toLowerCase());
 	}
