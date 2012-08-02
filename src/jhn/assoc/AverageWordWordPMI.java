@@ -39,7 +39,6 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 		
 		for(String labelWord : labelWords) {
 			for(String word : words) {
-				System.out.println(labelWord+","+word);
 				totalPMI += wordWordPMI(labelWord, word);
 			}
 		}
