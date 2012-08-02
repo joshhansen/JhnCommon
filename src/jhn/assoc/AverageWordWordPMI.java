@@ -14,6 +14,7 @@ import jhn.wp.CorpusProcessor;
 
 
 public class AverageWordWordPMI implements AssociationMeasure<String,String>, AutoCloseable {
+	private static final boolean IGNORE_SELF_ASSOCIATION = false;
 	private final ReverseIndex<String> wordIdx;
 	private final IntIntCounter counts;
 	private final IntIntIntSQLiteCounterMap cocounts;
@@ -40,6 +41,10 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 		for(String labelWord : labelWords) {
 			for(String word : words) {
 				totalPMI += wordWordPMI(labelWord, word);
+					if(!IGNORE_SELF_ASSOCIATION || !labelWord.equals(word)) {
+						countsUsed.set(labelWord, word, wordWordPMI(labelWord, word));
+	//					totalPMI += wordWordPMI(labelWord, word);
+					}
 			}
 		}
 		
