@@ -9,6 +9,7 @@ import jhn.counts.i.i.IntIntSQLiteCounter;
 import jhn.counts.i.i.i.IntIntIntSQLiteCounterMap;
 import jhn.idx.DiskStringIndex;
 import jhn.idx.ReverseIndex;
+import jhn.util.Util;
 import jhn.wp.CorpusProcessor;
 
 
@@ -67,15 +68,9 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 	
 	@Override
 	public void close() throws Exception {
-		if(wordIdx instanceof AutoCloseable) {
-			((AutoCloseable) wordIdx).close();
-		}
-		if(counts instanceof AutoCloseable) {
-			((AutoCloseable) counts).close();
-		}
-		if(cocounts instanceof AutoCloseable) {
-			((AutoCloseable) cocounts).close();
-		}
+		Util.closeIfPossible(wordIdx);
+		Util.closeIfPossible(counts);
+		Util.closeIfPossible(cocounts);
 	}
 	
 	public static void main(String[] args) throws Exception {
