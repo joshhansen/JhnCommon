@@ -3,12 +3,20 @@ package jhn;
 import java.io.File;
 
 public class Paths {
+	public static String homeDir() {
+		return System.getenv("HOME");
+	}
+	
 	public static String outputDir() {
-		return System.getenv("HOME") + "/Projects/Output";
+		return homeDir() + "/Projects/Output";
 	}
 	
 	public static String outputDir(String projectName) {
 		return outputDir() + "/" + projectName;
+	}
+	
+	public static String jhncOutputDir() {
+		return outputDir("JhnCommon");
 	}
 	
 	private static String ldaResultsDir(String datasetName) {
@@ -38,5 +46,21 @@ public class Paths {
 			}
 		}
 		return max + 1;
+	}
+	
+	public static String dataDir() {
+		return homeDir() + "/Data";
+	}
+	
+	public static String dataDir(String datasetName) {
+		return dataDir() + "/" + datasetName;
+	}
+	
+	public static String wikipediaDumpName() {
+		return "enwiki-20120403";
+	}
+	
+	public static String wikipediaArticlesFilename() {
+		return dataDir("wikipedia.org") + "/" + wikipediaDumpName() + "-pages-articles.xml.bz2";
 	}
 }
