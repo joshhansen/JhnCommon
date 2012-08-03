@@ -15,7 +15,7 @@ import org.apache.lucene.util.Version;
 
 import jhn.wp.Fields;
 
-public class AbstractLuceneVisitor extends LabelAwareVisitor {
+public class AbstractLuceneVisitor extends LabelAwareVisitor implements AutoCloseable {
 	private static final Version version = Version.LUCENE_36;
 	private final String luceneIndexDir;
 	private final String field;
@@ -75,5 +75,10 @@ public class AbstractLuceneVisitor extends LabelAwareVisitor {
 		Document doc = new Document();
 		doc.add(labelField());
 		return doc;
+	}
+
+	@Override
+	public void close() throws Exception {
+		writer.close();
 	}
 }
