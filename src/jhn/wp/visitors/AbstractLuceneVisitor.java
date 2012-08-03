@@ -64,7 +64,11 @@ public class AbstractLuceneVisitor extends LabelAwareVisitor implements AutoClos
 	}
 	
 	protected Field labelField() {
-		return new Field(Fields.label, currentLabel, labelStorage, labelAnalysis);
+		return labelField(currentLabel);
+	}
+	
+	protected Field labelField(String label) {
+		return new Field(Fields.label, label, labelStorage, labelAnalysis);
 	}
 	
 	protected Field textField(String text) {
