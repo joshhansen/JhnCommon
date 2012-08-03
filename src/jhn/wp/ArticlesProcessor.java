@@ -13,6 +13,7 @@ import info.bliki.wiki.filter.ITextConverter;
 import info.bliki.wiki.filter.PlainTextConverter;
 import info.bliki.wiki.model.WikiModel;
 
+import jhn.util.Config;
 import jhn.wp.exceptions.ArticleTooShort;
 import jhn.wp.exceptions.BadLabel;
 import jhn.wp.exceptions.BadLabelPrefix;
@@ -22,8 +23,17 @@ import jhn.wp.exceptions.DisambiguationPage;
 import jhn.wp.exceptions.RedirectException;
 
 public class ArticlesProcessor extends CorpusProcessor {
+	public static enum Options {
+		SKIP_DISAMBIGUATION,
+		SKIP_REDIRECTS,
+		SKIP_BAD_LABELS
+	}
+	
+	
 	private static final boolean PRINT_WIKI_TEXT = false;
 	private static final boolean PRINT_PLAIN_TEXT = PRINT_WIKI_TEXT;
+	
+	public final Config conf = new Config();
 	
 	private final String wpdumpFilename;
 	
@@ -150,6 +160,8 @@ public class ArticlesProcessor extends CorpusProcessor {
 
 	@Override
 	public void process() throws Exception {
+		log.println(conf);
+		
 		events.beforeEverything();
 		
 		WikiXMLParser wxsp = WikiXMLParserFactory.getSAXParser(wpdumpFilename);
