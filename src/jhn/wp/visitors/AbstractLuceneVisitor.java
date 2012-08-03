@@ -18,7 +18,7 @@ import jhn.wp.Fields;
 public class AbstractLuceneVisitor extends LabelAwareVisitor implements AutoCloseable {
 	private static final Version version = Version.LUCENE_36;
 	private final String luceneIndexDir;
-	private final String field;
+	private final String textField;
 
 	protected Field.Store labelStorage = Field.Store.YES;
 	protected Field.Index labelAnalysis = Field.Index.NOT_ANALYZED_NO_NORMS;
@@ -30,9 +30,9 @@ public class AbstractLuceneVisitor extends LabelAwareVisitor implements AutoClos
 	protected IndexWriter writer;
 	protected Set<String> stopwords = null;
 	
-	public AbstractLuceneVisitor(String luceneIndexDir, String field) {
+	public AbstractLuceneVisitor(String luceneIndexDir, String textField) {
 		this.luceneIndexDir = luceneIndexDir;
-		this.field = field;
+		this.textField = textField;
 	}
 	
 	@Override
@@ -68,7 +68,7 @@ public class AbstractLuceneVisitor extends LabelAwareVisitor implements AutoClos
 	}
 	
 	protected Field textField(String text) {
-		return new Field(field, text, textStorage, textAnalysis, textTermVector);
+		return new Field(textField, text, textStorage, textAnalysis, textTermVector);
 	}
 	
 	protected Document newDoc() {
