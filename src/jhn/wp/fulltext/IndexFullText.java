@@ -1,7 +1,5 @@
 package jhn.wp.fulltext;
 
-import java.io.FileNotFoundException;
-
 import jhn.wp.ArticlesProcessor;
 import jhn.wp.CorpusProcessor;
 import jhn.wp.Fields;
