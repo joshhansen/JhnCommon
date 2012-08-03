@@ -207,35 +207,21 @@ public class ArticlesProcessor extends CorpusProcessor {
 		return m.replaceAll("$1$2$1\n\n$3");
 	}
 	
-	private static String[] dontStartWithThese = {
-		"List of ",
-		"Portal:",
-		"Glossary of ",
-		"Index of ",
-		"Wikipedia:",
-		"Category:",
-		"File:",
-		"Template:",
-		"Book:", /* collections of pages */
-		"MediaWiki:", /* wiki software info */
-		"Help:", /* wikipedia help */
-		"P:", /* redirects to portals */
-//		"UN/LOCODE:", /* redirects to locations */
-//		"ISO:", /* redirects to ISO standards */
-//		"ISO 639:" /* redirects to languages */
-	};
+	private static final Pattern badLabels = Pattern.compile("^(?:(?:Portal|Wikipedia|Category|File|Template|Book|MediaWiki|Help|P):)|(?:(?:List|Glossary|Index) of )");
 	
-	private static void assertLabelOK(String label) throws BadLabel {
-		for(String badStart : dontStartWithThese) {
-			if(label.startsWith(badStart)) throw new BadLabelPrefix(label);
+	private void assertLabelOK(String label) throws BadLabel {
+		if(badLabels.matcher(label).find() && !conf.isFalse(Options.SKIP_BAD_LABELS)) {
+			throw new BadLabelPrefix(label);
 		}
 		
-		if(label.contains("(disambiguation)")) {
+		if(label.contains("(disambiguation)") && !conf.isFalse(Options.SKIP_DISAMBIGUATION)) {
 			throw new DisambiguationPage(label);
 		}
 	}
 	
-	private static void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {
-		if(wikiText.startsWith("#REDIRECT")) throw new RedirectException(label);
+	private void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {
+		if(wikiText.startsWith("#REDIRECT") && !conf.isFalse(Options.SKIP_REDIRECTS)) {
+			throw new RedirectException(label);
+		}
 	}
 }
