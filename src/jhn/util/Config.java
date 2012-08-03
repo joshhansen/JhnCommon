@@ -111,6 +111,17 @@ public class Config implements Serializable {
 		return isTrue(key.toString());
 	}
 	
+	public boolean isFalse(Enum<?> key) {
+		return isFalse(key.toString());
+	}
+	
+	public boolean isFalse(String key) {
+		if(containsKey(key)) {
+			return !getBool(key);
+		}
+		return false;
+	}
+	
 	public String getString(String key) {
 		return (String) map.get(key);
 	}
