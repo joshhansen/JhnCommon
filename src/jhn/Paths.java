@@ -19,6 +19,14 @@ public class Paths {
 		return outputDir("JhnCommon");
 	}
 	
+	public static String indicesDir() {
+		return jhncOutputDir() + "/indices";
+	}
+	
+	public static String titleIndexDir() {
+		return indicesDir() + "/titles/" + wikipediaDumpName();
+	}
+	
 	private static String ldaResultsDir(String datasetName) {
 		return outputDir("LDA") + "/results/" + datasetName;
 	}
