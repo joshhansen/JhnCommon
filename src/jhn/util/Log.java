@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 
-public class Log {
+public class Log implements AutoCloseable {
 	
 	private PrintStream[] logs;
 	
@@ -73,6 +73,7 @@ public class Log {
 		}
 	}
 	
+	@Override
 	public void close() {
 		for(PrintStream log : logs) {
 			log.close();
