@@ -2,8 +2,17 @@ package jhn.assoc;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import jhn.Paths;
+import jhn.counts.Counter;
+import jhn.counts.CounterMap;
+import jhn.counts.d.DoubleCounterMap;
+import jhn.counts.d.o.o.ObjObjDoubleCounterMap;
 import jhn.counts.i.i.IntIntCounter;
 import jhn.counts.i.i.IntIntSQLiteCounter;
 import jhn.counts.i.i.i.IntIntIntSQLiteCounterMap;
@@ -36,19 +45,62 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 	public double association(String label, String... words) throws Exception {
 		String[] labelWords = CorpusProcessor.tokenize(label);
 		
-		double totalPMI = 0.0;
+		DoubleCounterMap<String,String> countsUsed = new ObjObjDoubleCounterMap<>();
+		
+//		double totalPMI = 0.0;
 		
 		for(String labelWord : labelWords) {
-			for(String word : words) {
-				totalPMI += wordWordPMI(labelWord, word);
-					if(!IGNORE_SELF_ASSOCIATION || !labelWord.equals(word)) {
-//						countsUsed.set(labelWord, word, wordWordPMI(labelWord, word));
-						totalPMI += wordWordPMI(labelWord, word);
+			if(!labelWord.isEmpty() && !Util.isStopword(labelWord)) {
+				for(String word : words) {
+					if(!word.isEmpty() && (
+							!IGNORE_SELF_ASSOCIATION || !labelWord.equals(word)
+						)) {
+						countsUsed.set(labelWord, word, wordWordPMI(labelWord, word));
+//						totalPMI += wordWordPMI(labelWord, word);
 					}
+				}
 			}
 		}
 		
+		
+		List<AssocEntry> entries = new ArrayList<>();
+		
+		for(Map.Entry<String,Counter<String,Double>> entry1 : countsUsed.entrySet()) {
+			for(Map.Entry<String, Double> entry2 : entry1.getValue().entries()) {
+				entries.add(new AssocEntry(entry1.getKey(), entry2.getKey(), entry2.getValue().doubleValue()));
+			}
+		}
+		
+		Collections.sort(entries, new Comparator<AssocEntry>(){
+			@Override
+			public int compare(AssocEntry o1, AssocEntry o2) {
+				return Double.compare(o2.count, o1.count);
+			}
+		});
+		
+		double totalPMI = countsUsed.totalCountD();
+		for(AssocEntry entry : entries.subList(0, Math.min(5, entries.size()))) {
+			System.out.println("\t" + entry);
+		}
+		System.out.println();
+		
 		return totalPMI / (labelWords.length * words.length);
+	}
+	
+	private static class AssocEntry {
+		private final String word1;
+		private final String word2;
+		private final double count;
+		public AssocEntry(String word1, String word2, double count) {
+			this.word1 = word1;
+			this.word2 = word2;
+			this.count = count;
+		}
+		
+		@Override
+		public String toString() {
+			return word1 + "," + word2 + ":" + count;
+		}
 	}
 
 	private double wordWordPMI(String word1, String word2) {
