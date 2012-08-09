@@ -42,8 +42,8 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 			for(String word : words) {
 				totalPMI += wordWordPMI(labelWord, word);
 					if(!IGNORE_SELF_ASSOCIATION || !labelWord.equals(word)) {
-						countsUsed.set(labelWord, word, wordWordPMI(labelWord, word));
-	//					totalPMI += wordWordPMI(labelWord, word);
+//						countsUsed.set(labelWord, word, wordWordPMI(labelWord, word));
+						totalPMI += wordWordPMI(labelWord, word);
 					}
 			}
 		}
