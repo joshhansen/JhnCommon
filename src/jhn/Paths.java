@@ -71,4 +71,8 @@ public class Paths {
 	public static String wikipediaArticlesFilename() {
 		return dataDir("wikipedia.org") + "/" + wikipediaDumpName() + "-pages-articles.xml.bz2";
 	}
+	
+	public static String malletDatasetFilename(String datasetName) {
+		return outputDir("Mallet") + "/datasets/" + datasetName;
+	}
 }

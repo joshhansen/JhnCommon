@@ -5,7 +5,7 @@ package jhn.wp.exceptions;
  * @author Josh Hansen
  *
  */
-public abstract class CountException extends Exception {
+public class CountException extends Exception {
 	private static final long serialVersionUID = 1L;
 	
 	private final String label;

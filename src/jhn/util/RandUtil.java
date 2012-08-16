@@ -1,9 +1,19 @@
 package jhn.util;
 
+import java.util.List;
+
 public class RandUtil {
 	public static final java.util.Random rand = new java.util.Random();
 	public static <T> T randItem(T[] arr) {
 		return arr[rand.nextInt(arr.length)];
+	}
+	
+	public static int randItem(int[] arr) {
+		return arr[rand.nextInt(arr.length)];
+	}
+	
+	public static <T> T randItem(List<T> list) {
+		return list.get(rand.nextInt(list.size()));
 	}
 	
 	public static <T> T randItem(T[] arr, int n) {

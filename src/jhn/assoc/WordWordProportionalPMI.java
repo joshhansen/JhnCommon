@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.QueryParser;
@@ -27,24 +28,18 @@ public class WordWordProportionalPMI extends AbstractProportionalPMI<String,Stri
 	private final int maxHits;
 	private final IndexSearcher s;
 	private final int cooccurrenceWindow;
-	public WordWordProportionalPMI(String topicWordIdxLuceneDir, int cooccurrenceWindow) {
+	public WordWordProportionalPMI(String topicWordIdxLuceneDir, int cooccurrenceWindow) throws CorruptIndexException, IOException {
 		this(topicWordIdxLuceneDir, cooccurrenceWindow, Fields.text, defaultMaxHits, defaultLuceneVersion);
 	}
 	
-	public WordWordProportionalPMI(String topicWordIdxLuceneDir, int cooccurrenceWindow, String field, int maxHits, Version luceneVersion) {
+	public WordWordProportionalPMI(String topicWordIdxLuceneDir, int cooccurrenceWindow, String field, int maxHits, Version luceneVersion) throws CorruptIndexException, IOException {
 		this.cooccurrenceWindow = cooccurrenceWindow;
 		
 		Analyzer a = new StandardAnalyzer(luceneVersion);
 		qp = new QueryParser(luceneVersion, field, a);
 		this.maxHits = maxHits;
 		
-		IndexSearcher s = null;
-		try {
-			s = new IndexSearcher(IndexReader.open(FSDirectory.open(new File(topicWordIdxLuceneDir))));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		this.s = s;
+		s = new IndexSearcher(IndexReader.open(FSDirectory.open(new File(topicWordIdxLuceneDir))));
 	}
 	
 	@Override

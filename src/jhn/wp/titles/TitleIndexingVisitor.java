@@ -23,7 +23,7 @@ public class TitleIndexingVisitor extends AbstractLuceneVisitor {
 			d.add(labelField(label.toLowerCase()));
 			writer.addDocument(d);
 		} catch (IOException e) {
-			throw new CountException(null, null, null){};
+			throw new CountException(null, null, null);
 		}
 	}
 }
