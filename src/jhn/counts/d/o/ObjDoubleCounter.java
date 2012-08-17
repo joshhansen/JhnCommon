@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 import jhn.counts.d.AbstractDoubleCounter;
+import jhn.util.RandUtil;
 
 public class ObjDoubleCounter<T> extends AbstractDoubleCounter<T> {
 	private final Object2DoubleMap<T> counts = new Object2DoubleOpenHashMap<>();
@@ -83,6 +84,20 @@ public class ObjDoubleCounter<T> extends AbstractDoubleCounter<T> {
 	@Override
 	public void reset() {
 		counts.clear();
+	}
+
+	@Override
+	public T sample() {
+		double pos = RandUtil.rand.nextDouble() * totalCount;
+		double sum = 0.0;
+		
+		for(Object2DoubleMap.Entry<T> entry : counts.object2DoubleEntrySet()) {
+			sum += entry.getDoubleValue();
+			if(sum >= pos) {
+				return entry.getKey();
+			}
+		}
+		throw new IllegalStateException("This code should never be reached");
 	}
 
 }

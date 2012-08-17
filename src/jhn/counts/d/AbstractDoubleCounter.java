@@ -1,5 +1,9 @@
 package jhn.counts.d;
 
+import java.util.Map.Entry;
+
+import jhn.util.RandUtil;
+
 
 public abstract class AbstractDoubleCounter<K> implements DoubleCounter<K> {
 
@@ -33,4 +37,17 @@ public abstract class AbstractDoubleCounter<K> implements DoubleCounter<K> {
 		set(key, count.doubleValue());
 	}
 
+	@Override
+	public K sample() {
+		double pos = RandUtil.rand.nextDouble() * totalCountD();
+		double sum = 0.0;
+		
+		for(Entry<K, Double> entry : this.entries()) {
+			sum += entry.getValue().doubleValue();
+			if(sum >= pos) {
+				return entry.getKey();
+			}
+		}
+		throw new IllegalStateException("This code should never be reached");
+	}
 }

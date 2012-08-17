@@ -26,4 +26,7 @@ public interface Counter<K,N extends Number> {
 	void set(K key, N count);
 	
 	void reset();
+
+	/** Treat this counter as a categorical distribution over its keys and return a random sample therefrom. */
+	K sample();
 }

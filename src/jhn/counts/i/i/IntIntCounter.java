@@ -26,4 +26,6 @@ public interface IntIntCounter extends IntCounter<Integer> {
 	
 	@Override
 	IntSet keySet();
+
+	int sampleI();
 }

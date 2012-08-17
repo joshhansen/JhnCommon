@@ -1,5 +1,9 @@
 package jhn.counts.i;
 
+import java.util.Map.Entry;
+
+import jhn.util.RandUtil;
+
 
 public abstract class AbstractIntCounter<K> implements IntCounter<K> {
 
@@ -31,6 +35,19 @@ public abstract class AbstractIntCounter<K> implements IntCounter<K> {
 	@Override
 	public void set(K key, Integer count) {
 		set(key, count.intValue());
+	}
+	
+	@Override
+	public K sample() {
+		int position = RandUtil.rand.nextInt(totalCountI());
+		int sum = 0;
+		for(Entry<K,Integer> entry : entries()) {
+			sum += entry.getValue().intValue();
+			if(sum >= position) {
+				return entry.getKey();
+			}
+		}
+		throw new IllegalStateException("This code should never be reached");
 	}
 
 }

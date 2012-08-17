@@ -1,7 +1,10 @@
 package jhn.counts.i.i;
 
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+
 import jhn.counts.i.AbstractIntCounter;
 import jhn.counts.i.IntCounter;
+import jhn.util.RandUtil;
 
 public abstract class AbstractIntIntCounter extends AbstractIntCounter<Integer> implements IntIntCounter {
 
@@ -34,5 +37,24 @@ public abstract class AbstractIntIntCounter extends AbstractIntCounter<Integer> 
 	public int inc(Integer key, int inc) {
 		return inc(key.intValue(), inc);
 	}
+
+	@Override
+	public Integer sample() {
+		return Integer.valueOf(sampleI());
+	}
+	
+	@Override
+	public int sampleI() {
+		int position = RandUtil.rand.nextInt(totalCountI());
+		int sum = 0;
+		for(Int2IntMap.Entry entry : int2IntEntrySet()) {
+			sum += entry.getIntValue();
+			if(sum >= position) {
+				return entry.getIntKey();
+			}
+		}
+		throw new IllegalStateException("This code should never be reached");
+	}
+	
 	
 }
