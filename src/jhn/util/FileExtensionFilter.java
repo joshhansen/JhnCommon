@@ -7,7 +7,7 @@ public class FileExtensionFilter implements FileFilter {
 	private final String extension;
 	
 	public FileExtensionFilter(String extension) {
-		this.extension = extension;
+		this.extension = extension.charAt(0)=='.' ? extension.substring(1) : extension;
 	}
 
 	@Override
