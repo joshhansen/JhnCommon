@@ -27,8 +27,12 @@ public class Paths {
 		return indicesDir() + "/titles/" + wikipediaDumpName();
 	}
 	
+	public static String malletOutputDir() {
+		return outputDir("Mallet");
+	}
+	
 	private static String ldaResultsDir(String datasetName) {
-		return outputDir("LDA") + "/results/" + datasetName;
+		return malletOutputDir() + "/results/" + datasetName;
 	}
 	
 	public static String ldaStateFilename(String datasetName, int run) {
@@ -72,8 +76,20 @@ public class Paths {
 		return dataDir("wikipedia.org") + "/" + wikipediaDumpName() + "-pages-articles.xml.bz2";
 	}
 	
+	public static String wikipediaWordCountsDbFilename() {
+		return jhncOutputDir() + "/counts/counts.sqlite3";
+	}
+	
+	public static String wikipediaWordCocountsDbFilename() {
+		return jhncOutputDir() + "/cocounts/cocounts.sqlite3";
+	}
+	
+	public static String wikipediaWordIndexFilename() {
+		return jhncOutputDir() + "/word_sets/chunks/19.set";
+	}
+	
 	public static String malletDatasetsDir() {
-		return outputDir("Mallet") + "/datasets";
+		return malletOutputDir() + "/datasets";
 	}
 	
 	public static String malletDatasetFilename(String datasetName) {
