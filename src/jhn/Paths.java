@@ -7,6 +7,16 @@ public final class Paths {
 		// Do not allow instantiation
 	}
 	
+	// File extensions
+	public static final String STATE_EXT = ".state.gz";
+	public static final String KEYS_EXT = ".keys";
+	public static final String TOPIC_LABELS_EXT = ".topic_labels";
+	public static final String DOC_LABELS_EXT = ".doc_labels";
+	public static final String DOCTOPICS_EXT = ".doctopics";
+	public static final String MALLET_DATA_EXT = ".mallet";
+	public static final String FILENAME_IDX_EXT = ".filename_idx";
+	
+	// Path hierarchy
 	public static String homeDir() {
 		return System.getenv("HOME");
 	}
@@ -52,15 +62,15 @@ public final class Paths {
 	}
 	
 	public static String ldaStateFilename(String datasetName, int run) {
-		return ldaResultsDir(datasetName) + "/" + run + ".state.gz";
+		return ldaResultsDir(datasetName) + "/" + run + STATE_EXT;
 	}
 	
 	public static String ldaKeysFilename(String datasetName, int run) {
-		return ldaResultsDir(datasetName) + "/" + run + ".keys";
+		return ldaResultsDir(datasetName) + "/" + run + KEYS_EXT;
 	}
 	
 	public static String ldaDocTopicsFilename(String datasetName, int run) {
-		return ldaResultsDir(datasetName) + "/" + run + ".doctopics";
+		return ldaResultsDir(datasetName) + "/" + run + DOCTOPICS_EXT;
 	}
 	
 	public static int nextRun(String runsDir) {
@@ -109,10 +119,10 @@ public final class Paths {
 	}
 	
 	public static String malletDatasetFilename(String datasetName) {
-		return malletDatasetsDir() + "/" + datasetName + ".mallet";
+		return malletDatasetsDir() + "/" + datasetName + MALLET_DATA_EXT;
 	}
 	
 	public static String malletDatasetFilenameIndexFilename(String datasetName) {
-		return malletDatasetsDir() + "/" + datasetName + ".filename_idx";
+		return malletDatasetsDir() + "/" + datasetName + FILENAME_IDX_EXT;
 	}
 }
