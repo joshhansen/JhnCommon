@@ -2,7 +2,11 @@ package jhn;
 
 import java.io.File;
 
-public class Paths {
+public final class Paths {
+	private Paths() {
+		// Do not allow instantiation
+	}
+	
 	public static String homeDir() {
 		return System.getenv("HOME");
 	}
