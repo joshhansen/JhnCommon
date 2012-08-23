@@ -27,6 +27,18 @@ public class Paths {
 		return indicesDir() + "/titles/" + wikipediaDumpName();
 	}
 	
+		public static String indexDir(String indexName) {
+			return indicesDir() + "/" + indexName;
+		}
+		
+			public static String topicWordIndicesDir() {
+				return indexDir("topic_words");
+			}
+		
+			public static String topicWordIndexDir(String name) {
+				return topicWordIndicesDir() + "/" + name;
+			}
+	
 	public static String malletOutputDir() {
 		return outputDir("Mallet");
 	}
