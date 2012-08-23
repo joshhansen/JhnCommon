@@ -1,6 +1,7 @@
 package jhn.util;
 
 import java.util.List;
+import java.util.Set;
 
 public class RandUtil {
 	public static final java.util.Random rand = new java.util.Random();
@@ -29,5 +30,10 @@ public class RandUtil {
 			// n > 1 so return a random item
 			return arr[rand.nextInt(Math.min(arr.length, n))];
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T randItem(Set<T> set) {
+		return (T) randItem(set.toArray());
 	}
 }
