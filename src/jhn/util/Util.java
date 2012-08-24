@@ -11,6 +11,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
@@ -195,4 +198,15 @@ public final class Util {
 			((AutoCloseable) obj).close();
 		}
 	}
+	
+	// Derived from http://stackoverflow.com/questions/326390/how-to-create-a-java-string-from-the-contents-of-a-file
+	public static String readFile(String filename) throws IOException {
+		  try(FileInputStream stream = new FileInputStream(filename);
+			  FileChannel fc = stream.getChannel()) {
+			  
+		    MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+		    /* Instead of using default, pass in a decoder. */
+		    return Charset.defaultCharset().decode(bb).toString();
+		  }
+		}
 }
