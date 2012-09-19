@@ -8,7 +8,8 @@ public final class Paths {
 	}
 	
 	// File extensions
-	public static final String STATE_EXT = ".state.gz";
+	public static final String STATE_EXT = ".state";
+	public static final String STATE_GZ_EXT = STATE_EXT+".gz";
 	public static final String KEYS_EXT = ".keys";
 	public static final String TOPIC_LABELS_EXT = ".topic_labels";
 	public static final String DOC_LABELS_EXT = ".doc_labels";
@@ -62,7 +63,7 @@ public final class Paths {
 	}
 	
 	public static String ldaStateFilename(String datasetName, int run) {
-		return ldaResultsDir(datasetName) + "/" + run + STATE_EXT;
+		return ldaResultsDir(datasetName) + "/" + run + STATE_GZ_EXT;
 	}
 	
 	public static String ldaKeysFilename(String datasetName, int run) {
