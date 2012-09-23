@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 public class Log implements AutoCloseable {
-	
+	private static final boolean AUTOFLUSH = true;
 	private PrintStream[] logs;
 	
 	public Log() {
@@ -13,11 +13,11 @@ public class Log implements AutoCloseable {
 	}
 	
 	public Log(String filename) throws FileNotFoundException {
-		this(new PrintStream(new FileOutputStream(filename)));
+		this(new PrintStream(new FileOutputStream(filename), AUTOFLUSH));
 	}
 	
 	public Log(PrintStream logTo, String filename) throws FileNotFoundException {
-		this(logTo, new PrintStream(new FileOutputStream(filename)));
+		this(logTo, new PrintStream(new FileOutputStream(filename), AUTOFLUSH));
 	}
 	
 	public Log(PrintStream... logTo) {
