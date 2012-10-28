@@ -61,6 +61,14 @@ public class Config implements Serializable {
 		map.put(key.toString(), value);
 	}
 	
+	public void putClass(String key, Class<?> value) {
+		map.put(key, value);
+	}
+	
+	public void putClass(Enum<?> key, Class<?> value) {
+		map.put(key.toString(), value);
+	}
+	
 	public void putObj(String key, Object value) {
 		map.put(key, value);
 	}
@@ -128,6 +136,10 @@ public class Config implements Serializable {
 	
 	public String getString(Enum<?> key) {
 		return getString(key.toString());
+	}
+	
+	public Class<?> getClass(String key) {
+		return (Class<?>) map.get(key);
 	}
 	
 	public Object getObj(String key) {
