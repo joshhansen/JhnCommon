@@ -16,6 +16,7 @@ public final class Paths {
 	public static final String DOCTOPICS_EXT = ".doctopics";
 	public static final String MALLET_DATA_EXT = ".mallet";
 	public static final String FILENAME_IDX_EXT = ".filename_idx";
+	public static final String TOPIC_COUNTS_EXT = ".topic_counts";
 	
 	// Path hierarchy
 	public static String homeDir() {
@@ -125,5 +126,37 @@ public final class Paths {
 	
 	public static String malletDatasetFilenameIndexFilename(String datasetName) {
 		return malletDatasetsDir() + "/" + datasetName + FILENAME_IDX_EXT;
+	}
+	
+	public static String countsDir() {
+		return outputDir() + "/counts";
+	}
+	
+		public static String topicCountsDir() {
+			return countsDir() + "/topics";
+		}
+			public static String topicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
+				return topicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + TOPIC_COUNTS_EXT;
+			}
+			
+			/** Topic counts that are sums of type-topic counts where type is in target corpus and count >= minCount */
+			public static String restrictedTopicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
+				return topicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + "_restricted" + TOPIC_COUNTS_EXT;
+			}
+			
+			/** Topic counts that are sums of type-topic counts where topic has at least one type in corpus and count >= minCount */
+			public static String filteredTopicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
+				return topicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + "_filtered" + TOPIC_COUNTS_EXT;
+			}
+		
+		public static String typeTopicCountsDir() {
+			return countsDir() + "/type_topics";
+		}
+			public static String typeTopicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
+				return typeTopicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + ".ser";
+			}
+	
+	public static String extractedDataID(String topicWordIdxName, String datasetName, int minCount) {
+		return topicWordIdxName + ":" + datasetName + "_min" + minCount;
 	}
 }
