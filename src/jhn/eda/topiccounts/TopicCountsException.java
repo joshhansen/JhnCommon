@@ -1,4 +1,4 @@
-package jhn.wp.topiccounts;
+package jhn.eda.topiccounts;
 
 public class TopicCountsException extends Exception {
 	private static final long serialVersionUID = 1L;

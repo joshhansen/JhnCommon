@@ -1,4 +1,4 @@
-package jhn.wp.typetopiccounts;
+package jhn.eda.typetopiccounts;
 
 import java.io.Serializable;
 import java.util.Comparator;

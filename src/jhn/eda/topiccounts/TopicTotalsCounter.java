@@ -1,4 +1,4 @@
-package jhn.wp.topiccounts;
+package jhn.eda.topiccounts;
 
 import java.io.File;
 import java.io.IOException;

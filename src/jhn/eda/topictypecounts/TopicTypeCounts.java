@@ -1,4 +1,4 @@
-package jhn.wp.topictypecounts;
+package jhn.eda.topictypecounts;
 
 import java.util.Iterator;
 
