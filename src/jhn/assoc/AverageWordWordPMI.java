@@ -10,7 +10,6 @@ import java.util.Map;
 
 import jhn.Paths;
 import jhn.counts.Counter;
-import jhn.counts.CounterMap;
 import jhn.counts.d.DoubleCounterMap;
 import jhn.counts.d.o.o.ObjObjDoubleCounterMap;
 import jhn.counts.i.i.IntIntCounter;
