@@ -17,6 +17,9 @@ public final class Paths {
 	public static final String MALLET_DATA_EXT = ".mallet";
 	public static final String FILENAME_IDX_EXT = ".filename_idx";
 	public static final String TOPIC_COUNTS_EXT = ".topic_counts";
+	public static final String LIBSVM_EXT = ".libsvm";
+	public static final String PROPS_EXT = ".conf.ser";
+	public static final String TOPIC_MAPPING_EXT = ".ser";
 	
 	// Path hierarchy
 	public static String homeDir() {
@@ -129,7 +132,7 @@ public final class Paths {
 	}
 	
 	public static String countsDir() {
-		return outputDir() + "/counts";
+		return jhncOutputDir() + "/counts";
 	}
 	
 		public static String topicCountsDir() {
@@ -155,6 +158,20 @@ public final class Paths {
 			public static String typeTopicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
 				return typeTopicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + ".ser";
 			}
+			
+	public static String propsDir() {
+		return jhncOutputDir() + "/props";
+	}
+		public static String propsFilename(String topicWordIdxName, String datasetName, int minCount) {
+			return propsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + PROPS_EXT;
+		}
+		
+	public static String topicMappingsDir() {
+		return jhncOutputDir() + "/topic_mappings";
+	}
+		public static String topicMappingFilename(String topicWordIdxName, String datasetName, int minCount) {
+			return topicMappingsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + TOPIC_MAPPING_EXT;
+		}
 	
 	public static String extractedDataID(String topicWordIdxName, String datasetName, int minCount) {
 		return topicWordIdxName + ":" + datasetName + "_min" + minCount;
