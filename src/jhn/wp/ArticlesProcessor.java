@@ -220,7 +220,7 @@ public class ArticlesProcessor extends CorpusProcessor {
 	}
 	
 	private void assertWikiTextOK(String wikiText, String label) throws BadWikiTextException {
-		if(wikiText.startsWith("#REDIRECT") && !conf.isFalse(Options.SKIP_REDIRECTS)) {
+		if(wikiText.toLowerCase().startsWith("#redirect") && !conf.isFalse(Options.SKIP_REDIRECTS)) {
 			throw new RedirectException(label);
 		}
 	}
