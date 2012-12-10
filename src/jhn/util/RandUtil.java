@@ -3,6 +3,8 @@ package jhn.util;
 import java.util.List;
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.ints.IntSet;
+
 public class RandUtil {
 	public static final java.util.Random rand = new java.util.Random();
 	public static <T> T randItem(T[] arr) {
@@ -15,6 +17,10 @@ public class RandUtil {
 	
 	public static <T> T randItem(List<T> list) {
 		return list.get(rand.nextInt(list.size()));
+	}
+	
+	public static int randItem(IntSet set) {
+		return randItem(set.toIntArray());
 	}
 	
 	public static <T> T randItem(T[] arr, int n) {
