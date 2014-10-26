@@ -15,13 +15,15 @@ public class IndexCategoryCategories {
 		final String srcDir = System.getenv("HOME") + "/Data/dbpedia.org/3.7";
 		final String categoryCategoriesFilename = srcDir + "/skos_categories_en.nt.bz2";
 		
-		CorpusProcessor ccc = new CategoryCategoryProcessor(logFilename, errLogFilename, categoryCategoriesFilename);
-		
-		final String luceneDir = outputDir + "/" + name;
-		
-		ccc.addVisitor(new ItemwiseLuceneIndexingVisitor(luceneDir, Fields.categoryCategory));
-		ccc.addVisitor(new PrintingVisitor());
-		
-		ccc.process();
+		try(CorpusProcessor ccc = new CategoryCategoryProcessor(logFilename, errLogFilename, categoryCategoriesFilename)) {
+			final String luceneDir = outputDir + "/" + name;
+			
+			try(ItemwiseLuceneIndexingVisitor indexVisitor = new ItemwiseLuceneIndexingVisitor(luceneDir, Fields.categoryCategory)) {
+				ccc.addVisitor(indexVisitor);
+				ccc.addVisitor(new PrintingVisitor());
+				
+				ccc.process();
+			}
+		}
 	}
 }

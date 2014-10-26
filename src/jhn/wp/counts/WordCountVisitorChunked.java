@@ -70,11 +70,8 @@ public class WordCountVisitorChunked extends Visitor implements AutoCloseable {
 	
 	private void writeChunkToDisk() {
 		String filename = outputDir + "/" + chunkNum++ + ".counts";
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename));
-			
+		try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
 			IntIntRAMCounter.writeObj(wordCounts, oos);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
