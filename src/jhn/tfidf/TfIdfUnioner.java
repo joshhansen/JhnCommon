@@ -81,8 +81,6 @@ public class TfIdfUnioner {
 				}
 			}
 			
-			r.close();
-			
 			Util.serialize(selected, dest);
 		} catch (CorruptIndexException e) {
 			e.printStackTrace();
