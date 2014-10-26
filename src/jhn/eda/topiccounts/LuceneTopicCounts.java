@@ -1,9 +1,12 @@
 package jhn.eda.topiccounts;
 
+import java.io.File;
 import java.io.IOException;
 
+import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermFreqVector;
+import org.apache.lucene.store.FSDirectory;
 
 import jhn.wp.Fields;
 
@@ -36,6 +39,17 @@ public class LuceneTopicCounts implements TopicCounts, AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		topicWordIdx.close();
+	}
+	
+	public static void main(String[] args) throws Exception {
+		String topicWordIdxName = "wp_lucene4";
+		String topicWordIdxLuceneDir = jhn.Paths.topicWordIndexDir(topicWordIdxName);
+		IndexReader topicWordIdx = IndexReader.open(FSDirectory.open(new File(topicWordIdxLuceneDir)));
+		TopicCounts srcTopicCounts = new LuceneTopicCounts(topicWordIdx);
+		
+		for(int i = 0; i < 10; i++) {
+			System.out.println(i + ": " + srcTopicCounts.topicCount(i));
+		}
 	}
 
 }
