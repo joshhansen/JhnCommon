@@ -138,42 +138,45 @@ public final class Paths {
 		public static String topicCountsDir() {
 			return countsDir() + "/topics";
 		}
-			public static String topicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
-				return topicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + TOPIC_COUNTS_EXT;
+			public static String topicCountsFilename(ExtractorParams ep) {
+				return topicCountsDir() + "/" + extractedDataID(ep) + TOPIC_COUNTS_EXT;
 			}
 			
 			/** Topic counts that are sums of type-topic counts where type is in target corpus and count >= minCount */
-			public static String restrictedTopicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
-				return topicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + "_restricted" + TOPIC_COUNTS_EXT;
+			public static String restrictedTopicCountsFilename(ExtractorParams ep) {
+				return topicCountsDir() + "/" + extractedDataID(ep) + "_restricted" + TOPIC_COUNTS_EXT;
 			}
 			
 			/** Topic counts that are sums of type-topic counts where topic has at least one type in corpus and count >= minCount */
-			public static String filteredTopicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
-				return topicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + "_filtered" + TOPIC_COUNTS_EXT;
+			public static String filteredTopicCountsFilename(ExtractorParams ep) {
+				return topicCountsDir() + "/" + extractedDataID(ep) + "_filtered" + TOPIC_COUNTS_EXT;
 			}
 		
 		public static String typeTopicCountsDir() {
 			return countsDir() + "/type_topics";
 		}
-			public static String typeTopicCountsFilename(String topicWordIdxName, String datasetName, int minCount) {
-				return typeTopicCountsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + ".ser";
+			
+			public static String typeTopicCountsFilename(ExtractorParams ep) {
+				return typeTopicCountsDir() + "/" + extractedDataID(ep) + ".ser";
 			}
 			
 	public static String propsDir() {
 		return jhncOutputDir() + "/props";
 	}
-		public static String propsFilename(String topicWordIdxName, String datasetName, int minCount) {
-			return propsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + PROPS_EXT;
+		
+		public static String propsFilename(ExtractorParams ep) {
+			return propsDir() + "/" + extractedDataID(ep) + PROPS_EXT;
 		}
 		
 	public static String topicMappingsDir() {
 		return jhncOutputDir() + "/topic_mappings";
 	}
-		public static String topicMappingFilename(String topicWordIdxName, String datasetName, int minCount) {
-			return topicMappingsDir() + "/" + extractedDataID(topicWordIdxName, datasetName, minCount) + TOPIC_MAPPING_EXT;
+	
+		public static String topicMappingFilename(ExtractorParams ep) {
+			return topicMappingsDir() + "/" + extractedDataID(ep) + TOPIC_MAPPING_EXT;
 		}
 	
-	public static String extractedDataID(String topicWordIdxName, String datasetName, int minCount) {
-		return topicWordIdxName + ":" + datasetName + "_min" + minCount;
+	public static String extractedDataID(ExtractorParams ep) {
+		return ep.topicWordIdxName + ":" + ep.datasetName + "_min" + ep.minCount;
 	}
 }
