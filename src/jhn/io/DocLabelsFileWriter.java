@@ -16,7 +16,7 @@ public class DocLabelsFileWriter implements AutoCloseable {
 	public DocLabelsFileWriter(String outputFilename, int labelCount) throws FileNotFoundException {
 		this.labelCount = labelCount;
 		w = new PrintStream(new FileOutputStream(outputFilename));
-		w.println("#docnum,source");
+		w.print("#docnum,source");
 		for(int i = 1; i <= labelCount; i++) {
 			w.print(",label");
 			w.print(i);
