@@ -10,7 +10,11 @@ public interface DoubleCounter<T> extends Counter<T,Double> {
 	
 	void set(T key, double count);
 	
+//	void setIfAbsent(T key, double count);
+	
 	double getCountD(T key);
 	
 	double totalCountD();
+	
+	double defaultReturnValueD();
 }

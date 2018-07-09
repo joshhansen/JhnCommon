@@ -52,6 +52,11 @@ public class ObjDoubleCounter<T> extends AbstractDoubleCounter<T> {
 	public double totalCountD() {
 		return totalCount;
 	}
+	
+	@Override
+	public double defaultReturnValueD() {
+		return counts.defaultReturnValue();
+	}
 
 	private final Comparator<Entry<T,Double>> cmp = new Comparator<Entry<T,Double>>(){
 		@Override

@@ -70,6 +70,11 @@ public class ObjIntRAMCounter<K> extends AbstractIntCounter<K> {
 	}
 	
 	@Override
+	public int defaultReturnValueI() {
+		return counts.defaultReturnValue();
+	}
+	
+	@Override
 	public Set<Entry<K,Integer>> entries() {
 		return counts.entrySet();
 	}

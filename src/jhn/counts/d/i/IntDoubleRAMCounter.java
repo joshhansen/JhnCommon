@@ -53,6 +53,11 @@ public class IntDoubleRAMCounter extends AbstractIntDoubleCounter implements Tri
 		return totalCount;
 	}
 	
+	@Override
+	public double defaultReturnValueD() {
+		return counts.defaultReturnValue();
+	}
+	
 	public static final Comparator<Entry<Integer,Double>> cmp = new Comparator<Entry<Integer,Double>>(){
 		@Override
 		public int compare(Entry<Integer, Double> o1, Entry<Integer, Double> o2) {

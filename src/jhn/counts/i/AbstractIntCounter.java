@@ -16,6 +16,11 @@ public abstract class AbstractIntCounter<K> implements IntCounter<K> {
 	public Integer totalCount() {
 		return Integer.valueOf(totalCountI());
 	}
+	
+	@Override
+	public Integer defaultReturnValue() {
+		return Integer.valueOf(defaultReturnValueI());
+	}
 
 	@Override
 	public int incI(K key) {

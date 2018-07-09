@@ -15,4 +15,6 @@ public interface IntCounter<K> extends Counter<K,Integer> {
 	int getCountI(K key);
 	
 	int totalCountI();
+	
+	int defaultReturnValueI();
 }

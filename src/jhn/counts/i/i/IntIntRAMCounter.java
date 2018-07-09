@@ -66,6 +66,11 @@ public class IntIntRAMCounter extends AbstractIntIntCounter implements Serializa
 	}
 	
 	@Override
+	public int defaultReturnValueI() {
+		return counts.defaultReturnValue();
+	}
+	
+	@Override
 	public Set<Entry<Integer,Integer>> entries() {
 		return counts.entrySet();
 	}

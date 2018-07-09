@@ -12,6 +12,8 @@ public interface Counter<K,N extends Number> {
 	int size();
 	
 	N totalCount();
+	
+	N defaultReturnValue();
 
 	List<Entry<K, N>> topN(int n);
 	
@@ -24,6 +26,8 @@ public interface Counter<K,N extends Number> {
 	N inc(K key, N count);
 
 	void set(K key, N count);
+	
+//	void setIfAbsent(K key, N count);
 	
 	void reset();
 

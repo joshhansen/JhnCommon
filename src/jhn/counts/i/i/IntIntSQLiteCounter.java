@@ -58,6 +58,11 @@ public class IntIntSQLiteCounter extends AbstractIntIntCounter implements AutoCl
 	}
 	
 	@Override
+	public int defaultReturnValueI() {
+		return 0;
+	}
+	
+	@Override
 	public void set(int key, int count) {
 		throw new UnsupportedOperationException();
 	}

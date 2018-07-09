@@ -16,6 +16,11 @@ public abstract class AbstractDoubleCounter<K> implements DoubleCounter<K> {
 	public Double totalCount() {
 		return Double.valueOf(totalCountD());
 	}
+	
+	@Override
+	public Double defaultReturnValue() {
+		return Double.valueOf(defaultReturnValueD());
+	}
 
 	@Override
 	public Double inc(K key) {
