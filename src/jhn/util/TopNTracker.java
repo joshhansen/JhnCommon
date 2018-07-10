@@ -7,20 +7,20 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 
-public class TopNTracker {
-	private final Queue<Double> topNItems = new PriorityQueue<>();
+public class TopNTracker<T extends Comparable<T>> {
+	private final Queue<T> topNItems = new PriorityQueue<>();
 	private final int n;
 	public TopNTracker(final int n) {
 		this.n = n;
 	}
 	
-	public void add(double value) {
+	public void add(T value) {
 		topNItems.add(value);
 		if(topNItems.size() > n) topNItems.remove();
 	}
 	
-	public List<Double> topN() {
-		List<Double> topN = new ArrayList<>(n);
+	public List<T> topN() {
+		List<T> topN = new ArrayList<>(n);
 		while(!topNItems.isEmpty()) {
 			topN.add(topNItems.remove());
 		}

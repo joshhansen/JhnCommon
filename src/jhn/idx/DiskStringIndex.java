@@ -5,11 +5,13 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import jhn.Paths;
 
 /** The backing file must be sorted (ascending) */
-public class DiskStringIndex implements ReverseIndex<String> {
+public class DiskStringIndex implements Index<String> {
 	private String[] arr;
 	public DiskStringIndex(String filename) throws IOException {
 		try(BufferedReader r = new BufferedReader(new FileReader(filename))) {
@@ -60,6 +62,10 @@ public class DiskStringIndex implements ReverseIndex<String> {
 	public boolean contains(String value) {
 		return indexOf(value) != KEY_NOT_FOUND;
 	}
+	
+	public List<String> values() {
+		return Arrays.asList(arr);
+	}
 
 	public static void main(String[] args) throws IOException {
 		String filename = Paths.outputDir("JhnCommon")+"/word_sets/chunks/19.set";
@@ -72,5 +78,15 @@ public class DiskStringIndex implements ReverseIndex<String> {
 		System.out.println(idx.indexOf("zebra"));
 		System.out.print("^^^^^^: ");
 		System.out.println(idx.indexOf("^^^^^^"));
+	}
+
+	@Override
+	public int size() {
+		return arr.length;
+	}
+
+	@Override
+	public String objectAt(int idx) {
+		return arr[idx];
 	}
 }

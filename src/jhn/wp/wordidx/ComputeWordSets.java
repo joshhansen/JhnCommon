@@ -18,7 +18,7 @@ public class ComputeWordSets {
 			articlesFilename = args[0];
 			destDir = args[1];
 		} else {
-			destDir = Paths.outputDir("JhnCommon") + "/word_sets";
+			destDir = Paths.outputDir("JhnCommon") + "/word_sets2";
 			articlesFilename = Paths.dataDir("wikipedia.org") + "/enwiki-20120403-pages-articles.xml.bz2";
 		}
 		aggregateWords(articlesFilename, destDir + "/main.log", destDir + "/main.err", destDir +"/chunks",

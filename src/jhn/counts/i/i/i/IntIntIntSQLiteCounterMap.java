@@ -9,6 +9,10 @@ import java.util.Arrays;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectSet;
 
 import jhn.counts.Counter;
@@ -25,7 +29,9 @@ public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap imple
 	}
 	
 	private Connection db;
-	private PreparedStatement stmt;
+	private final PreparedStatement stmt;
+	private final PreparedStatement cocountEither;
+	private final PreparedStatement entropyStmt;
 	private final long totalCount;
 	public IntIntIntSQLiteCounterMap(String cocountsDbFilename) throws Exception {
 		this(DriverManager.getConnection("jdbc:sqlite:"	+ cocountsDbFilename));
@@ -34,6 +40,8 @@ public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap imple
 	public IntIntIntSQLiteCounterMap(Connection db) throws Exception {
 		this.db = db;
 		stmt = db.prepareStatement("select count from cocounts where word1idx=? and word2idx=?");
+		cocountEither = db.prepareStatement("SELECT word1idx, word2idx FROM cocounts WHERE word1idx=? OR word2idx=?");
+		entropyStmt = db.prepareStatement("SELECT count FROM cocounts WHERE word1idx=? OR word2idx=?");
 		totalCount = db.createStatement().executeQuery("select total_cocount from total_counts").getLong(1);
 	}
 	
@@ -57,6 +65,33 @@ public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap imple
 	@Override
 	public void close() throws SQLException {
 		db.close();
+	}
+	
+	public IntSet valuesForKey(int key) {
+		try {
+			cocountEither.setInt(1, key);
+			cocountEither.setInt(2, key);
+			
+			try(final ResultSet rs = cocountEither.executeQuery()) {
+			
+				final IntSet values = new IntOpenHashSet();
+				
+				while(rs.next()) {
+					final int first = rs.getInt(1);
+					if(first != key) {
+						values.add(first);
+					} else {
+						final int second = rs.getInt(2);
+						values.add(second);//assumes second != key
+					}
+				}
+				
+				return values;
+			}
+		} catch(SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -118,4 +153,26 @@ public class IntIntIntSQLiteCounterMap extends AbstractIntIntIntCounterMap imple
 		throw new UnsupportedOperationException();
 	}
 
+	public double entropyGivenKey(int key) throws SQLException {
+		entropyStmt.setInt(1, key);
+		entropyStmt.setInt(2, key);
+		
+		int total = 0;
+		IntList counts = new IntArrayList();
+		try(ResultSet rs = entropyStmt.executeQuery()) {
+			while(rs.next()) {
+				int count = rs.getInt(1);
+				counts.add(count);
+				total += count;
+			}
+		}
+		
+		double entropy = 0.0;
+		for(int count : counts) {
+			double prob = (double)count / (double)total;
+			entropy -= Math.log(prob) * prob;
+		}
+		return entropy;
+	}
+	
 }

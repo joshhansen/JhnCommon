@@ -37,9 +37,9 @@ public class DocLabelsFileWriter implements AutoCloseable {
 	}
 	
 	public void endDocument() {
-		if(docLabels != labelCount) {
-			throw new IllegalStateException("Specified " + docLabels + " labels; expected " + labelCount);
-		}
+//		if(docLabels != labelCount) {
+//			throw new IllegalStateException("Specified " + docLabels + " labels; expected " + labelCount);
+//		}
 		w.println();
 		docLabels = 0;
 	}

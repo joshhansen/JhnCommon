@@ -1,7 +1,5 @@
 package jhn.assoc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,30 +10,23 @@ import jhn.Paths;
 import jhn.counts.Counter;
 import jhn.counts.d.DoubleCounterMap;
 import jhn.counts.d.o.o.ObjObjDoubleCounterMap;
-import jhn.counts.i.i.IntIntCounter;
-import jhn.counts.i.i.IntIntSQLiteCounter;
-import jhn.counts.i.i.i.IntIntIntSQLiteCounterMap;
 import jhn.idx.DiskStringIndex;
-import jhn.idx.ReverseIndex;
 import jhn.util.Util;
 import jhn.wp.CorpusProcessor;
 
 
 public class AverageWordWordPMI implements AssociationMeasure<String,String>, AutoCloseable {
 	private static final boolean IGNORE_SELF_ASSOCIATION = false;
-	private final ReverseIndex<String> wordIdx;
-	private final IntIntCounter counts;
-	private final IntIntIntSQLiteCounterMap cocounts;
+//	private final ReverseIndex<String> wordIdx;
+	
+	private final WordWordPMI pmi;
+	
+	public AverageWordWordPMI(DiskStringIndex wordIdx, String countsDbFilename, String cocountsDbFilename) throws Exception {
+		pmi = new WordWordPMI(wordIdx, countsDbFilename, cocountsDbFilename);
+	}
 	
 	public AverageWordWordPMI(String wordIdxFilename, String countsDbFilename, String cocountsDbFilename) throws Exception {
-		wordIdx = new DiskStringIndex(wordIdxFilename);
-		
-		Class.forName("org.sqlite.JDBC");
-		
-		Connection countsDB = DriverManager.getConnection("jdbc:sqlite:" + countsDbFilename);
-		Connection cocountsDB = DriverManager.getConnection("jdbc:sqlite:" + cocountsDbFilename);
-		counts = new IntIntSQLiteCounter(countsDB);
-		cocounts = new IntIntIntSQLiteCounterMap(cocountsDB);
+		this(new DiskStringIndex(wordIdxFilename), countsDbFilename, cocountsDbFilename);
 	}
 
 
@@ -54,7 +45,7 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 					if(!word.isEmpty() && (
 							!IGNORE_SELF_ASSOCIATION || !labelWord.equals(word)
 						)) {
-						countsUsed.set(labelWord, word, wordWordPMI(labelWord, word));
+						countsUsed.set(labelWord, word, pmi.association(labelWord, word));
 //						totalPMI += wordWordPMI(labelWord, word);
 					}
 				}
@@ -78,10 +69,10 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 		});
 		
 		double totalPMI = countsUsed.totalCountD();
-		for(AssocEntry entry : entries.subList(0, Math.min(5, entries.size()))) {
-			System.out.println("\t" + entry);
-		}
-		System.out.println();
+//		for(AssocEntry entry : entries.subList(0, Math.min(5, entries.size()))) {
+//			System.out.println("\t" + entry);
+//		}
+//		System.out.println();
 		
 		return totalPMI / (labelWords.length * words.length);
 	}
@@ -102,30 +93,9 @@ public class AverageWordWordPMI implements AssociationMeasure<String,String>, Au
 		}
 	}
 
-	private double wordWordPMI(String word1, String word2) {
-		int word1idx = wordIdx.indexOf(word1);
-		int word2idx = wordIdx.indexOf(word2);
-		return smartLog(p_word_word(word1idx, word2idx)) - smartLog(p_word(word1idx)) - smartLog(p_word(word2idx));
-	}
-	
-	private static double smartLog(double x) {
-		if(x == 0.0) return 0.0;
-		return Math.log(x);
-	}
-
-	private double p_word(int wordIdx_) {
-		return (double) counts.getCount(wordIdx_) / (double) counts.totalCountI();
-	}
-	
-	private double p_word_word(int word1idx, int word2idx) {
-		return (double) cocounts.getCount(word1idx, word2idx) / (double) cocounts.totalCountL();
-	}
-	
 	@Override
 	public void close() throws Exception {
-		Util.closeIfPossible(wordIdx);
-		Util.closeIfPossible(counts);
-		Util.closeIfPossible(cocounts);
+		Util.closeIfPossible(pmi);
 	}
 	
 	public static void main(String[] args) throws Exception {

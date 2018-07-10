@@ -9,10 +9,11 @@ public class CountWordCooccurrences {
 	// Generate chunked co-occurrence counts
 	public static void main(String[] args) throws Exception {
 		final String cocountsDir = Paths.outputDir("JhnCommon") + "/cocounts";
-		final String outputDir = cocountsDir;// + "/depth";
+//		final String outputDir = cocountsDir;// + "/depth";
+		final String outputDir = cocountsDir + "/test";
 		
-		final String logFilename = cocountsDir + "/main.log";
-		final String errLogFilename = cocountsDir + "/main.err";
+		final String logFilename = outputDir + "/main.log";
+		final String errLogFilename = outputDir + "/main.err";
 		
 		final String srcDir = System.getenv("HOME") + "/Data/wikipedia.org";
 		final String articlesFilename = srcDir + "/enwiki-20120403-pages-articles.xml.bz2";
