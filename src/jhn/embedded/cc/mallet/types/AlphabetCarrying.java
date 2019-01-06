@@ -1,4 +1,4 @@
-package cc.mallet.types;
+package jhn.embedded.cc.mallet.types;
 
 /** An interface for objects that contain one or more Alphabets.
  * <p>  

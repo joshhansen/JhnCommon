@@ -12,7 +12,7 @@
    @author Andrew McCallum <a href="mailto:mccallum@cs.umass.edu">mccallum@cs.umass.edu</a>
  */
 
-package cc.mallet.types;
+package jhn.embedded.cc.mallet.types;
 
 import java.util.ArrayList;
 import java.io.*;

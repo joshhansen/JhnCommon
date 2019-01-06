@@ -6,8 +6,7 @@ import java.util.Iterator;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.TermFreqVector;
 
-import cc.mallet.types.Alphabet;
-
+import jhn.embedded.cc.mallet.types.Alphabet;
 import jhn.util.Util;
 import jhn.wp.Fields;
 
