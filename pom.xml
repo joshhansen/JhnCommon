@@ -27,21 +27,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>3.1</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>info.bliki.wiki</groupId>
 			<artifactId>bliki-core</artifactId>
 			<version>3.0.18</version>
-		</dependency>
-		<dependency>
-			<groupId>org.xerial</groupId>
-			<artifactId>sqlite-jdbc</artifactId>
-			<version>3.7.2</version>
 		</dependency>
 		<dependency>
 			<groupId>edu.jhu.nlp</groupId>
